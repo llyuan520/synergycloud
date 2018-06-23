@@ -1,11 +1,12 @@
 // Created by liuliyuan on 2018/6/22
 import React,{Component} from 'react'
-import { Layout,Menu,Avatar,Icon,Modal,Dropdown,Tooltip,Spin,Tag,message } from 'antd'
+import { Layout,Menu,Avatar,Icon,Modal,Dropdown,Tooltip,Tag,message } from 'antd'
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import NoticeIcon from '../NoticeIcon';
+import HeaderSearch from '../HeaderSearch'
 //import { request } from 'utils'
 import './header.less'
 //模拟数据
@@ -133,10 +134,21 @@ class WimsHeader extends Component {
                     type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
                     onClick={this.toggle}
                 />
-                <div style={{display: 'inline-block'}}>
+                <div style={{display: 'inline-block',lineHeight:' 44px'}}>
                     <h1>发票扫描验真平台</h1>
                 </div>
                 <div className='right'>
+                    <HeaderSearch
+                        className='action search'
+                        placeholder="站内搜索"
+                        dataSource={['搜索提示一', '搜索提示二', '搜索提示三']}
+                        onSearch={value => {
+                            console.log('input', value); // eslint-disable-line
+                        }}
+                        onPressEnter={value => {
+                            console.log('enter', value); // eslint-disable-line
+                        }}
+                    />
                     <Tooltip title="使用文档">
                         <a
                             target="_blank"
@@ -179,17 +191,24 @@ class WimsHeader extends Component {
                         />
                     </NoticeIcon>
 
-                    {this.props.username ? (
-                        <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
+                    <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
                           <span className='action account'>
                             <Avatar size="small" className='avatar' icon="user"  style={{ backgroundColor: '#87d068',color:'#fff'}} />
                               {/*src={'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'}*/}
+                              <span className='name'>admin</span>
+                          </span>
+                    </Dropdown>
+
+                    {/*{this.props.username ? (
+                        <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
+                          <span className='action account'>
+                            <Avatar size="small" className='avatar' icon="user"  style={{ backgroundColor: '#87d068',color:'#fff'}} />
                               <span className='name'>{ this.props.username }</span>
                           </span>
                         </Dropdown>
                     ) : (
                         <Spin size="small" style={{ marginLeft: 8 }} />
-                    )}
+                    )}*/}
 
 
                 </div>

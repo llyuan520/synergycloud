@@ -140,8 +140,12 @@ class SCSider extends Component {
                 className="vtax-custom-trigger"
             >
                 <div className="logo">
-                    {/*<img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="logo" />
-                     <img alt="Ant Design" src="https://gw.alipayobjects.com/zos/rmsportal/DkKNubTaaVsKURhcVGkh.svg" />*/}
+                    <Link to="/">
+                        <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="logo" />
+                        <span style={{color:'#ffffff'}}>合同履约协同</span>
+                    </Link>
+
+                    {/*<img alt="Ant Design" src="https://gw.alipayobjects.com/zos/rmsportal/DkKNubTaaVsKURhcVGkh.svg" />*/}
                     {/*<Link to="/">
                      <img src={logo} alt="logo" />
                      <h1>合同履约协同</h1>

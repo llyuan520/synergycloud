@@ -55,6 +55,7 @@ class Web extends Component{
         this.checkLoggedIn(nextProps)
     }
     render(){
+
         return(
             <Layout style={{backgroundColor:'#fff'}}>
                 <Sider
@@ -70,7 +71,15 @@ class Web extends Component{
                     />
 
                     <Content style={{ margin: '12px 12px 0'}}>
+
                         <Switch>
+                            {routes.map((route, i) => (
+                                <RouteWithSubRoutes key={i} {...route}/>
+                            ))}
+                            <Route path="*" component={()=><div>no match</div>} />
+                        </Switch>
+
+                        {/*<Switch>
                             {
                                 composeMenus(routes).map((route, i) => {
                                     return (
@@ -79,7 +88,7 @@ class Web extends Component{
                                 })
                             }
                             <Route path="*" component={()=><div>no match</div>} />
-                        </Switch>
+                        </Switch>*/}
                     </Content>
                     <Footer />
                 </Layout>
