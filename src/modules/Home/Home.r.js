@@ -1,12 +1,8 @@
 // Created by liuliyuan on 2018/6/23
 import React, { Component, Fragment } from 'react';
 import { Row, Radio, Col, Select, Tabs, List, Avatar, Card, Button, Divider, Dropdown, Icon,Menu } from 'antd';
-import { Link } from 'react-router-dom';
-import { changeChartArr } from 'utils';
-import { Chart, Geom, Axis,Coord, Legend, Tooltip} from 'bizcharts';
 import { yuan,Pie } from 'components/Charts';
-import debounce from 'lodash/debounce'
-import DotBadge from './DotBadge.r';
+import { EPie } from 'components/Echarts';
 
 import './index.less';
 
@@ -172,19 +168,56 @@ const salesTypeDataOffline = [
     },
 ];
 
+//饼图数据
+const pieOption = {
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+    },
+    series: [
+        {
+            name:'访问来源',
+            type:'pie',
+            radius: ['100%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                normal: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    show: true,
+                    textStyle: {
+                        fontSize: '30',
+                        fontWeight: 'bold'
+                    }
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            data:[
+                {value:335, name:'直接访问'},
+                {value:310, name:'邮件营销'},
+                {value:234, name:'联盟广告'},
+                {value:135, name:'视频广告'},
+                {value:1548, name:'搜索引擎'}
+            ]
+        }
+    ]
+};
+
+
 export default class Home extends Component {
-    constructor(props){
-        super(props);
-        this.resize = debounce(this.resize,500).bind(this)
-    }
 
     state = {
-        statisticsData: {
-            changeNumber: 10,
-            outputNumber: 20,
-            completionNumber: 30,
-            contractNumber: 40,
-        },
         loading:false,
         key: 'tab1',
         updateKey:Date.now(),
@@ -192,17 +225,7 @@ export default class Home extends Component {
     }
 
     componentDidMount() {
-        //this.resize = debounce(this.resize,300)
-        this.resize();
-        window.addEventListener('resize', this.resize);
 
-    }
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.resize);
-        this.resize.cancel();
-    }
-    resize() {
-        window.removeEventListener('resize', this.resize);
     }
 
     onTabChange = (key, type) => {
@@ -217,36 +240,8 @@ export default class Home extends Component {
 
     render(){
 
-        const { statisticsData,salesType } = this.state;
+        const { salesType } = this.state;
 
-        let datas = [
-            {
-                item: `变更：${statisticsData.changeNumber}`,
-                percent: statisticsData.changeNumber
-            },
-            {
-                item: `产值：${statisticsData.outputNumber}`,
-                percent: statisticsData.outputNumber
-            },
-            {
-                item: `竣工验收：${statisticsData.completionNumber}`,
-                percent: statisticsData.completionNumber
-            },
-            {
-                item: `合同结算：${statisticsData.contractNumber}`,
-                percent: statisticsData.contractNumber
-            },
-        ];
-        datas = changeChartArr(datas);
-
-        const topColResponsiveProps = {
-            xs: 24,
-            sm: 12,
-            md: 12,
-            lg: 12,
-            xl: 6,
-            style: { marginBottom: 24 },
-        };
 
 
         const salesPieData =
@@ -274,7 +269,7 @@ export default class Home extends Component {
                 {/*<Spin spinning={!loaded}>*/}
 
                 <Row gutter={24}>
-                    <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                    <Col span={16}>
                         <Card
                             //loading={loading}
                             className='salesCard'
@@ -291,119 +286,44 @@ export default class Home extends Component {
                                             <Radio.Button value="offline">门店</Radio.Button>
                                         </Radio.Group>
                                     </div>
+
+                                    <div className="salesTypeSelect">
+                                        <Select defaultValue="lucy" style={{ width: 220 }}>
+                                            <Option value="jack">喜盈佳</Option>
+                                            <Option value="lucy">票易通</Option>
+                                            <Option value="Yiminghe">测试</Option>
+                                        </Select>
+                                    </div>
                                 </div>
                             }
-                            style={{ marginTop: 24, minHeight: 509 }}
+                            style={{ marginTop: 15, minHeight: 303 }}
                         >
                             <h4 style={{ marginTop: 8, marginBottom: 32 }}>销售额</h4>
                             <Pie
                                 hasLegend
                                 /*subTitle="销售额"
-                                total={() => (
-                                    <span
-                                        dangerouslySetInnerHTML={{
-                                            __html: yuan(salesPieData.reduce((pre, now) => now.y + pre, 0)),
-                                        }}
-                                    />
-                                )}*/
+                                 total={() => (
+                                 <span
+                                 dangerouslySetInnerHTML={{
+                                 __html: yuan(salesPieData.reduce((pre, now) => now.y + pre, 0)),
+                                 }}
+                                 />
+                                 )}*/
                                 data={salesPieData}
                                 valueFormat={val => <span dangerouslySetInnerHTML={{ __html: yuan(val) }} />}
-                                height={248}
+                                height={200}
                                 lineWidth={4}
                             />
                         </Card>
                     </Col>
-                    <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-                        <div className="home-half-box">
-                            <p>产值报表</p>
-                        </div>
-                    </Col>
-                </Row>
-
-                <Row gutter={24}>
-                    <Col span={16}>
-                        <div className="home-half-box">
-                            <Row>
-                                <Col span={16}>
-                                    <Select defaultValue="lucy" style={{ width: 220 }}>
-                                        <Option value="jack">喜盈佳</Option>
-                                        <Option value="lucy">票易通</Option>
-                                        <Option value="Yiminghe">测试</Option>
-                                    </Select>
-                                </Col>
-                                <Col span={8} style={{textAlign: 'right'}}>
-                                    <Link className="home-half-tip-link" to={`/web/applicationForm?currentState=`}>详情</Link>
-                                </Col>
-                            </Row>
-
-
-                            <Chart height={300} data={datas} >
-                                 <Coord type={'theta'} radius={0.75} innerRadius={0.6} />
-                                 <Axis name="percent" />
-                                 <Legend position="right" offsetY={-window.innerHeight / 2 + 250} offsetX={-100} />
-                                <Tooltip
-                                    showTitle={false}
-                                    itemTpl='<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
-                                />
-                                <Geom
-                                    type="intervalStack"
-                                    position="percent"
-                                    //color='item'
-                                    color={['item', ['#1890FF', '#7ED321', '#F5A623', '#47ADBF']]}
-                                    style={{lineWidth: 1,stroke: '#fff',marginTop:10}}
-                                >
-                                </Geom>
-                            </Chart>
-
-                            {/*<Row className="home-half-abs">
-                                {
-                                    [
-                                        {
-                                            text: `变更：${statisticsData.changeNumber}`,
-                                            dotColor: '#1890FF'
-                                        },
-                                        {
-                                            text: `待审批：${statisticsData.changeNumber}`
-                                        },
-                                        {
-                                            text: `产值：${statisticsData.outputNumber}`,
-                                            dotColor: '#7ED321'
-                                        },
-                                        {
-                                            text: `待审批：${statisticsData.outputNumber}`
-                                        },
-                                        {
-                                            text: `竣工验收：${statisticsData.completionNumber}`,
-                                            dotColor: '#F5A623'
-                                        },
-                                        {
-                                            text: `待审批：${statisticsData.completionNumber}`
-                                        },
-                                        {
-                                            text: `合同结算：${statisticsData.contractNumber}`,
-                                            dotColor: '#47ADBF'
-                                        },
-                                        {
-                                            text: `待审批：${statisticsData.contractNumber}`
-                                        }
-                                    ].map( (item, i) => (
-                                        <Col key={i} span={12} style={{marginTop: 5}}>
-                                            <DotBadge
-                                                dotStyle={{backgroundColor: item.dotColor}}
-                                                text={item.text}
-                                            />
-                                        </Col>
-                                    ))
-                                }
-                            </Row>*/}
-                        </div>
-                    </Col>
                     <Col span={8}>
                         <div className="home-half-box">
                             <p>产值报表</p>
+                            <EPie option={pieOption} />
                         </div>
                     </Col>
                 </Row>
+
                 <Row gutter={24}>
                     <Col span={16}>
                         <Card

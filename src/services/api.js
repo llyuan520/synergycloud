@@ -9,13 +9,12 @@ export function accountLogin(options) {
     return request('/login', {
         method: 'POST',
         body:{
-            number: options.number,
+            identifier: options.identifier,
             password: options.password,
         }
-        //body: `number=${options.number}&password=${options.password}`,
     })
         .then(res=>{
-            dispatch(loggedIn.login())
+            //dispatch(loggedIn.login())
             if (res.code === 200) {
 
             }  else {
@@ -30,17 +29,16 @@ export function accountLogin(options) {
             }
         })
         .catch(err=>{
-            dispatch(loggedIn.login())
             options.fail && options.fail(err);
         })
 
     /*return request('/login', {
             method: 'POST',
             body:{
-                number: options.number,
+                identifier: options.identifier,
                 password: options.password,
             }
-            //body: `number=${options.number}&password=${options.password}`,
+            //body: `identifier=${options.identifier}&password=${options.password}`,
         })
         .then(res=>{
             console.log(res)
@@ -50,7 +48,7 @@ export function accountLogin(options) {
                 const result = res.result;
                 dispatch(token.increment(result.token))
                 //获取用户信息
-                dispatch(personal.increment({...result,username: options.number}))
+                dispatch(personal.increment({...result,username: options.identifier}))
                 dispatch(loggedIn.login())
             }  else {
                 return Promise.reject(res.msg);

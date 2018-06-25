@@ -7,14 +7,15 @@ import classNames from 'classnames';
 import ReactFitText from 'react-fittext';
 import debounce from 'lodash/debounce'
 /*import Debounce from 'lodash-decorators/debounce';
-import Bind from 'lodash-decorators/bind';
-import autoHeight from '../autoHeight';*/
+import Bind from 'lodash-decorators/bind';*/
+import autoHeight from '../autoHeight';
 
 import './index.less';
 
 /* eslint react/no-danger:0 */
 //@autoHeight()
-export default class Pie extends Component {
+//export default autoHeight()(Pie)
+class Pie extends Component {
     constructor(props){
         super(props);
         this.resize = this.resize.bind(this)
@@ -138,8 +139,6 @@ export default class Pie extends Component {
             colors,
             lineWidth = 1,
         } = this.props;
-
-        console.log(this.props);
 
         const { legendData, legendBlock } = this.state;
         const pieClassName = classNames('pie', className, {
@@ -265,3 +264,5 @@ export default class Pie extends Component {
         );
     }
 }
+
+export default autoHeight()(Pie)

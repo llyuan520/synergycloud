@@ -1,7 +1,18 @@
 // Created by liuliyuan on 2018/6/22
 import { notification } from 'antd';
-//import { store } from '../store';
+import { store } from '../store';
 import { logout } from '../services/api'
+
+const parseJsonToParams = data=>{
+    let str = '';
+    for(let key in data){
+        if(typeof data[key] !== 'undefined' && data[key] !== ''){
+            str += `${key}=${data[key]}&`
+        }
+    }
+    return str;
+}
+
 const codeMessage = {
     200: '服务器成功返回请求的数据。',
     201: '新建或修改数据成功。',
@@ -51,9 +62,9 @@ export default function request(url, options) {
         //credentials: 'include',
         method:'GET',
         cache: 'no-cache',
-        /*headers:{
+        headers:{
             Authorization:store.getState().user.get('token')
-        }*/
+        }
     };
     const newOptions = { ...defaultOptions, ...options };
 
@@ -70,13 +81,21 @@ export default function request(url, options) {
     }
 
     if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
+        debugger
         if (!(newOptions.body instanceof FormData)) {
             newOptions.headers = {
                 Accept: 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
+                //mode: "no-cors",
+                //'Content-Type': 'application/json; charset=utf-8',
+                'Content-Type':'application/x-www-form-urlencoded',
                 ...newOptions.headers,
             };
-            newOptions.body = JSON.stringify(newOptions.body);
+
+            console.log(parseJsonToParams(newOptions.body));
+            debugger
+            // newOptions.body = JSON.stringify(newOptions.body);
+            newOptions.body = parseJsonToParams(newOptions.body);
+
         } else {
             // newOptions.body is FormData
             newOptions.headers = {
