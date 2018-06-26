@@ -6,4 +6,4 @@ export { default as LoadingPage } from './LoadingPage';
 export { default as Footer } from './Footer';
 export { default as NoticeIcon } from './NoticeIcon';
 export { default as HeaderSearch } from './HeaderSearch';
-
+export { default as FormItems } from './RegisterAndForget';

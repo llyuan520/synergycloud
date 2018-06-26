@@ -2,9 +2,11 @@
 import React,{Component} from 'react';
 import PropTypes from 'prop-types'
 import {Form,Input,Button,Icon,Row,Col} from 'antd'
-import {connect} from 'react-redux';
+import {Link} from 'react-router-dom'
 import { compose } from 'redux';
+import {connect} from 'react-redux';
 import { accountLogin } from 'services/api';
+import {regRules} from 'utils'
 import './index.less';
 import qrcode from './imgs/qrcode.png'
 
@@ -30,7 +32,6 @@ class Login extends Component {
             if (!err) {
                 this.toggleLoading(true)
                 login({
-                    //username:values.username,
                     identifier:values.identifier,
                     password:values.password,
                     success:()=>{
@@ -40,7 +41,6 @@ class Login extends Component {
                         this.toggleLoading(false)
                     },
                 })
-
             }
         });
     }
@@ -114,8 +114,8 @@ class Login extends Component {
                                                 required: true, message: '请输入手机号码!'
                                             },
                                             {
-                                                pattern: /^1\d{10}$/,
-                                                message: '错误的手机号码格式！',
+                                                pattern:regRules.companyPhone,
+                                                message: regRules.message,
                                             }
                                         ],
                                     })(
@@ -138,8 +138,12 @@ class Login extends Component {
                                     )}
                                 </FormItem>
                                 <div style={{marginBottom: 20}}>
-                                    <a href="" style={{color:'#333'}}>忘记密码</a>
-                                    <a href="/register" style={{float: 'right'}}>新用户注册</a>
+                                    <Link style={{color:'#333'}} to="/forgetPassword">
+                                        忘记密码
+                                    </Link>
+                                    <Link style={{float: 'right'}} to="/register">
+                                        新用户注册
+                                    </Link>
                                 </div>
                                 <FormItem>
                                     <Button loading={this.state.loading} type="primary" htmlType="submit" className="loginFormButton">

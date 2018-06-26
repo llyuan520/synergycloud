@@ -4,6 +4,8 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { RouteWithSubRoutes } from './components';
 import Login from './modules/Login';
 import Register from './modules/Register'
+import ForgetPassword from './modules/ForgetPassword'
+import PersonInfo from './modules/PersonInfo'
 import { Layout } from 'antd';
 import Web from './modules/Web.r';
 import { wrapPage } from 'utils';
@@ -24,10 +26,21 @@ const routes = [
         name: '注册'
     },
     {
+        path: '/forgetPassword',
+        component: wrapPage('合同履约协同 - 忘记密码', ForgetPassword),
+        name: '忘记密码'
+    },
+    {
+        path: '/personInfo',
+        component: wrapPage('合同履约协同 - 完善资料', PersonInfo),
+        name: '完善资料'
+    },
+    {
         path: '*',
         redirect: true,
         to: '/web'
     },
+
 ];
 const mainRoute = (
     <Route

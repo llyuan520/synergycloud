@@ -301,14 +301,14 @@ export default class Home extends Component {
                             <h4 style={{ marginTop: 8, marginBottom: 32 }}>销售额</h4>
                             <Pie
                                 hasLegend
-                                /*subTitle="销售额"
+                                subTitle="销售额"
                                  total={() => (
                                  <span
                                  dangerouslySetInnerHTML={{
                                  __html: yuan(salesPieData.reduce((pre, now) => now.y + pre, 0)),
                                  }}
                                  />
-                                 )}*/
+                                 )}
                                 data={salesPieData}
                                 valueFormat={val => <span dangerouslySetInnerHTML={{ __html: yuan(val) }} />}
                                 height={200}

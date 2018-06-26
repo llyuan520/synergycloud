@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/6/22
 import {createActions,handleActions} from 'redux-actions';
 import {fromJS} from 'immutable';
-export const {personal,token,loggedIn} = createActions({
+export const {personal,token,loggedIn,isPersonInfo} = createActions({
     PERSONAL:{
         /**增加*/
         INCREMENT:info => info,
@@ -19,6 +19,10 @@ export const {personal,token,loggedIn} = createActions({
         LOGIN:() => true,
         /**删除*/
         LOGOUT:() => false
+    },
+    ISPERSONINFO:{
+        /**增加*/
+        INCREMENT:info => info,
     }
 })
 const initialState = fromJS({
@@ -36,7 +40,11 @@ const initialState = fromJS({
 
     /**是否登录成功*/
     loggedIn:false,
+
+    /*是否完成了个人资料*/
+    isPersonInfo:true,
 })
+
 export default handleActions({
     [personal.increment]:(state,{payload})=>{
         return state.set('personal',payload)
@@ -54,7 +62,6 @@ export default handleActions({
 },initialState)
 
 export const logout = dispatch => async ()=>{
-
     //登出
     dispatch(loggedIn.logout())
 }

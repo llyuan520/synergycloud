@@ -3,16 +3,6 @@ import { notification } from 'antd';
 import { store } from '../store';
 import { logout } from '../services/api'
 
-const parseJsonToParams = data=>{
-    let str = '';
-    for(let key in data){
-        if(typeof data[key] !== 'undefined' && data[key] !== ''){
-            str += `${key}=${data[key]}&`
-        }
-    }
-    return str;
-}
-
 const codeMessage = {
     200: '服务器成功返回请求的数据。',
     201: '新建或修改数据成功。',
@@ -58,6 +48,7 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
+
     const defaultOptions = {
         //credentials: 'include',
         method:'GET',
@@ -81,20 +72,15 @@ export default function request(url, options) {
     }
 
     if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
-        debugger
+
         if (!(newOptions.body instanceof FormData)) {
             newOptions.headers = {
                 Accept: 'application/json',
-                //mode: "no-cors",
-                //'Content-Type': 'application/json; charset=utf-8',
-                'Content-Type':'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json; charset=utf-8',
                 ...newOptions.headers,
             };
 
-            console.log(parseJsonToParams(newOptions.body));
-            debugger
-            // newOptions.body = JSON.stringify(newOptions.body);
-            newOptions.body = parseJsonToParams(newOptions.body);
+            newOptions.body = JSON.stringify(newOptions.body);
 
         } else {
             // newOptions.body is FormData
