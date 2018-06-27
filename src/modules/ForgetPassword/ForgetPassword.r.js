@@ -25,24 +25,24 @@ class ForgetPassword extends Component {
 
                 this.toggleLoading(true)
                 console.log(values);
-                 request('/forgetPassword', {
-                     method: 'POST',
-                     body: values
-                 })
-                     .then(res => {
-                         this.toggleLoading(false)
-                         if(res.state === 'ok'){
-                             message.success('修改密码成功!', 3);
-                             history.replace('/login');
-                             return ;
-                         } else {
+                request('/forgetPassword', {
+                    method: 'POST',
+                    body: values
+                })
+                    .then(res => {
+                        this.toggleLoading(false)
+                        if(res.state === 'ok'){
+                            message.success('修改密码成功!', 3);
+                            history.replace('/login');
+                            return ;
+                        } else {
                             return Promise.reject(res.message);
-                         }
-                     })
-                     .catch( resErr => {
-                         message.error(`${resErr}`);
-                         this.toggleLoading(false)
-                     });
+                        }
+                    })
+                    .catch( resErr => {
+                        message.error(`${resErr}`);
+                        this.toggleLoading(false)
+                    });
 
             }
         });

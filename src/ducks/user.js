@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/6/22
 import {createActions,handleActions} from 'redux-actions';
 import {fromJS} from 'immutable';
-export const {personal,token,loggedIn,isPersonInfo} = createActions({
+export const {personal,token,loggedIn,userInfoStatus} = createActions({
     PERSONAL:{
         /**增加*/
         INCREMENT:info => info,
@@ -14,15 +14,15 @@ export const {personal,token,loggedIn,isPersonInfo} = createActions({
         /**增加*/
         INCREMENT:type => type,
     },
+    USER_INFO_STATUS:{
+        /**增加*/
+        INCREMENT:type => type,
+    },
     LOGGED_IN:{
         /**增加*/
         LOGIN:() => true,
         /**删除*/
         LOGOUT:() => false
-    },
-    ISPERSONINFO:{
-        /**增加*/
-        INCREMENT:info => info,
     }
 })
 const initialState = fromJS({
@@ -42,7 +42,7 @@ const initialState = fromJS({
     loggedIn:false,
 
     /*是否完成了个人资料*/
-    isPersonInfo:true,
+    userInfoStatus:false,
 })
 
 export default handleActions({
@@ -52,14 +52,22 @@ export default handleActions({
     [token.increment]:(state,{payload})=>{
         return state.set('token',payload)
     },
+    [userInfoStatus.increment]:(state,{payload})=>{
+        return state.set('userInfoStatus',payload)
+    },
     [loggedIn.login]:(state,{payload})=>{
         return state.set('loggedIn',payload)
     },
     [loggedIn.logout]:state=>{
         localStorage.clear();
         return initialState
-    }
+    },
+
 },initialState)
+
+export const changeUserInfoStatus = dispatch => async (res)=>{
+    dispatch(userInfoStatus.increment(res))
+}
 
 export const logout = dispatch => async ()=>{
     //登出

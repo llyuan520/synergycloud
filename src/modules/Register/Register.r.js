@@ -25,9 +25,9 @@ class Register extends Component {
 
                 this.toggleLoading(true)
                 register({
-                    identifier: values.identifier,
+                    number: values.number,
                     password: values.password,
-                    confirm: values.password,
+                    confirm: values.confirm,
                     success:()=>{
                         if(isPersonInfo){
                             history.replace('/personInfo');

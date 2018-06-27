@@ -21,13 +21,16 @@ export default class PieReact extends Component {
     }
 
     componentDidMount(){
+
         setTimeout(()=>{
             this.onResize()
         },200)
+
         window.addEventListener('resize',this.onResize)
     }
     componentWillUnmount(){
         window.removeEventListener('resize',this.onResize)
+        //this.onResize = undefined;
     }
 
 

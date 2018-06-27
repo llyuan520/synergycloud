@@ -2,7 +2,7 @@
 import React,{Component} from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {RouteWithSubRoutes,Sider, Footer, Header} from 'components'
+import {RouteWithSubRoutes, Footer, Header} from 'components'
 import {Switch,Route } from 'react-router-dom';
 import {logout} from 'ducks/user'
 import { Layout } from 'antd';
@@ -16,27 +16,15 @@ const menusData = composeMenus(routes);
 
 class Web extends Component{
     static propTypes = {
-        collapsed:PropTypes.bool.isRequired,
         history:PropTypes.object.isRequired
     }
-    static defaultProps = {
-        collapsed:false,
-    }
-
     constructor(props) {
         super(props);
         this.state = {
-            collapsed:false,
             result:[],
         };
     }
 
-    //给其它组件传数据
-    changeCollapsed=collapsed=>{
-        this.mounted && this.setState({
-            collapsed
-        })
-    }
     checkLoggedIn= props =>{
         const {loggedIn,history} = props;
         if(!loggedIn){
@@ -58,38 +46,35 @@ class Web extends Component{
 
         return(
             <Layout style={{backgroundColor:'#fff'}}>
-                <Sider
-                    collapsed={this.state.collapsed}
-                    menusData={routes}
-                    changeCollapsed={this.changeCollapsed.bind(this)}
-                />
                 <Layout style={{ msFlex:'1 1 auto', msOverflowY: 'hidden',minHeight:'100vh'}}>
                     <Header
                         menusData={menusData}
-                        changeCollapsed={this.changeCollapsed.bind(this)}
                         logout={()=>this.props.logout()}
                     />
+                    <Content style={{width:'100%', maxWidth:1500,minWidth:1024,padding:'0 40px',marginLeft:'auto',marginRight:'auto'}}>
+                        <Layout style={{flex:1,margin: '12px 0'}}>
 
-                    <Content style={{ margin: '12px 12px 0'}}>
 
-                        <Switch>
-                            {routes.map((route, i) => (
-                                <RouteWithSubRoutes key={i} {...route}/>
-                            ))}
-                            <Route path="*" component={()=><div>no match</div>} />
-                        </Switch>
-
-                        {/*<Switch>
-                            {
-                                composeMenus(routes).map((route, i) => {
-                                    return (
+                                <Switch>
+                                    {routes.map((route, i) => (
                                         <RouteWithSubRoutes key={i} {...route}/>
-                                    )
-                                })
-                            }
-                            <Route path="*" component={()=><div>no match</div>} />
-                        </Switch>*/}
-                    </Content>
+                                    ))}
+                                    <Route path="*" component={()=><div>no match</div>} />
+                                </Switch>
+
+                                {/*<Switch>
+                                    {
+                                        composeMenus(routes).map((route, i) => {
+                                            return (
+                                                <RouteWithSubRoutes key={i} {...route}/>
+                                            )
+                                        })
+                                    }
+                                    <Route path="*" component={()=><div>no match</div>} />
+                                </Switch>*/}
+
+                            </Layout>
+                        </Content>
                     <Footer />
                 </Layout>
             </Layout>

@@ -33,14 +33,17 @@ class FormItems extends Component {
 
     handleFetchCaptcha = () => {
         const {form} = this.props;
-        const value = form.getFieldValue('identifier');
+        const value = form.getFieldValue('number');
         const regex = regRules.companyPhone;
 
         if (value) {
             if(regex.test(value)){
                 request('/captcha', {
                     method: 'POST',
-                    body: value
+                    body: {
+                        value,
+                        type: this.props.isModules === 'register' ? 'captcha_register' : 'captcha_forget',
+                    }
                 })
                     .then(res => {
                         if (res.state === 'ok') {
@@ -56,7 +59,7 @@ class FormItems extends Component {
             }
         }
 
-        form.validateFields(['identifier'], { force: true });
+        form.validateFields(['number'], { force: true });
     }
 
     onGetCaptcha = () => {
@@ -163,7 +166,7 @@ class FormItems extends Component {
                                     }
                                 </h2>
                                 <FormItem>
-                                    {getFieldDecorator('identifier', {
+                                    {getFieldDecorator('number', {
                                         initialValue: '18682302520',
                                         rules: [
                                             {
