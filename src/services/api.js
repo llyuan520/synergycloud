@@ -26,6 +26,10 @@ export function accountLogin(options) {
             }
         })
         .catch(err=>{
+            dispatch(userInfoStatus.increment(false));
+            //获取用户信息
+            dispatch(personal.increment({ username: options.identifier }));
+            dispatch(loggedIn.login())
             options.fail && options.fail(err);
         })
 }

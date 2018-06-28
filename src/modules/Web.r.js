@@ -52,7 +52,7 @@ class Web extends Component{
                         logout={()=>this.props.logout()}
                     />
                     <Content style={{width:'100%', maxWidth:1500,minWidth:1024,padding:'0 40px',marginLeft:'auto',marginRight:'auto'}}>
-                        <Layout style={{flex:1,margin: '12px 0'}}>
+                        <Layout style={{flex:1}}>
 
 
                                 <Switch>

@@ -1,6 +1,8 @@
 // Created by liuliyuan on 2018/6/22
-import {wrapPage} from 'utils'
+import wrapPage from 'components/TitlePage';
 import Home from './Home/index'
+import Instruct from './Instruct'
+
 
 const routes = [
     {
@@ -11,6 +13,7 @@ const routes = [
         exact:true
     }, {
         path:'/web/instruct',
+        component:wrapPage('合同履约协同平台 – 指令单',Instruct),
         name:'指令单',
         icon:'file',
         exact:true,

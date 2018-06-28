@@ -1,2 +1,2 @@
 // Created by liuliyuan on 2018/6/27
-1
+export { default } from './Instruct.r'

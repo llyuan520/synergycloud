@@ -1,12 +1,8 @@
 // Created by liuliyuan on 2018/6/22
 import request from './request'
-import React from 'react'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
-//import piwik from './piwik'
-import DocumentTitle from 'react-document-title'
-
-const wrapPage = (title,Component) => props => <DocumentTitle title={`${title}`}>{<Component {...props}/>}</DocumentTitle>
+import { getFields, wrapRows } from './getFields'
 
 const fMoney = (s,n=2)=>{
 
@@ -52,4 +48,4 @@ const changeChartArr = (arr) => {
     }
     return arr;
 }
-export {request,composeMenus,fMoney, changeChartArr,getQueryString,regRules,wrapPage/*piwik*/}
+export {request,composeMenus,fMoney, changeChartArr,getQueryString,regRules,getFields,wrapRows}

@@ -1,14 +1,17 @@
 // Created by liuliyuan on 2018/6/22
 import React from 'react';
+import { Layout } from 'antd';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { RouteWithSubRoutes } from './components';
+import wrapPage from 'components/TitlePage';
+
 import Login from './modules/Login';
 import Register from './modules/Register'
 import ForgetPassword from './modules/ForgetPassword'
 import PersonInfo from './modules/PersonInfo'
-import { Layout } from 'antd';
+
 import Web from './modules/Web.r';
-import { wrapPage } from 'utils';
+
 const routes = [
     {
         path: '/web',
