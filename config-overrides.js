@@ -1,4 +1,6 @@
 // Created by liuliyuan on 2018/6/22
+//TODO: javascriptEnabled: true,
+
 const { injectBabelPlugin } = require('react-app-rewired');
 const rewireLess = require('react-app-rewire-less');
 module.exports = function override(config, env) {

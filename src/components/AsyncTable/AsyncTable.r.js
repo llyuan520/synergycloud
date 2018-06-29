@@ -55,7 +55,7 @@ export default class AsyncTable extends Component{
         const props = nextProps || this.props;
         this.setState({ loaded: false });
         const composeParams = {
-            size: this.state.pagination.pageSize,
+            limit: this.state.pagination.pageSize,
             ...params,
             ...props.filters
         };
@@ -65,11 +65,12 @@ export default class AsyncTable extends Component{
         }).then((res) => {
 
             if(res.state === 'ok'){
-                const pagination = { ...this.state.pagination };
-                pagination.total = typeof res.data.total !== 'undefined' ? res.data.total : res.data.page.total;
-                pagination.pageSize = typeof res.data.size !== 'undefined' ? res.data.size : res.data.page.size;
 
-                let dataSource = res.data.records ? res.data.records : res.data.page.records;
+                const pagination = { ...this.state.pagination };
+                pagination.total =  res.count;
+                pagination.pageSize = res.limit;
+
+                let dataSource = res.data;
 
                 /** 给外部一个回调方法，可以得到每次变更后的data*/
                 props.tableProps.onDataChange && props.tableProps.onDataChange(dataSource)
@@ -81,7 +82,6 @@ export default class AsyncTable extends Component{
                      * 有的列表接口返回的结构不一样
                      * */
                     dataSource,
-                    footerDate: res.data,
                     selectedRowKeys:[],
                     pagination
                 },()=>{
@@ -119,10 +119,10 @@ export default class AsyncTable extends Component{
         //设置去掉排序默认设置的值
         let sor = sorter.order ? sorter.order.replace('end', '') : undefined;
         this.fetch({
-            size: pagination.pageSize,
-            current: pagination.current,
-            orderByField: sorter.field,
-            isAsc: sor ? sor === 'asc' : undefined,
+            limit: pagination.pageSize,
+            page: pagination.current,
+            orderField: sorter.field,
+            orderType: sor ? sor === 'asc' : undefined,
             ...filters,
             //...this.props.filters.values,
         });
@@ -141,14 +141,16 @@ export default class AsyncTable extends Component{
             ...props.tableProps.rowSelection
         };
         return(
-            <Table
-                {...props.tableProps}
-                dataSource={typeof props.tableProps.dataSource === 'undefined' ? dataSource : props.tableProps.dataSource}
-                rowSelection={ ( props.tableProps.onRowSelect || props.tableProps.rowSelection ) ? rowSelection : null}
-                pagination={props.tableProps.pagination ? pagination : false}
-                onChange={this.handleTableChange}
-                loading={!loaded}
-            />
+            <div className='asyncTable'>
+                <Table
+                    {...props.tableProps}
+                    dataSource={typeof props.tableProps.dataSource === 'undefined' ? dataSource : props.tableProps.dataSource}
+                    rowSelection={ ( props.tableProps.onRowSelect || props.tableProps.rowSelection ) ? rowSelection : null}
+                    pagination={props.tableProps.pagination ? pagination : false}
+                    onChange={this.handleTableChange}
+                    loading={!loaded}
+                />
+            </div>
         )
     }
 }

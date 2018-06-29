@@ -1,50 +1,38 @@
 // Created by liuliyuan on 2018/6/28
 import React,{Component} from 'react';
+import { Button,Icon } from 'antd'
 import { SearchTable } from '../../components'
+import { requestDict,setFormat } from '../../utils'
 import './index.less'
 
-const fieldsData = [
+
+const formatData=(data,t)=>{
+    return data.filter(d=>d.key === t)[0].label
+}
+
+const fieldsData = (context) => [
     {
         label:'项目名称',
-        fieldName:'projectName',
+        fieldName:'name',
         type:'input',
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目名称'
-                }
-            ]
-        },
     }, {
         label:'状态',
         fieldName:'status',
         type:'select',
-        options:[
-            {
-                label:'全部',
-                key:'all'
-            },
-            {
-                label:'我方股东',
-                key:'1'
-            },
-            {
-                label:'他方股东',
-                key:'2'
-            }
-        ],
+        options:[{label:'全部', key:''}].concat(context.state.statusData),
         fieldDecoratorOptions:{
-            rules:[
+            initialValue: '',
+            /*rules:[
                 {
                     required:true,
-                    message:'请选择状态'
+                    message:'请输入项目代码'
                 }
-            ]
+            ]*/
         },
         componentProps: {
             labelInkey:true,
         },
+
     }, {
         label:'项目代码',
         fieldName:'code',
@@ -157,24 +145,27 @@ const fieldsData = [
 const getColumns =(context)=>[
     {
         title: '指令单编号',
-        dataIndex: 'status',
+        dataIndex: 'number',
         className:'text-center',
     }, {
         title: '所属项目',
-        dataIndex: 'lastModifiedDate',
+        dataIndex: 'itemName',
         sorter: true
     },{
         title: '指令单类型',
-        dataIndex: 'region',
+        dataIndex: 'bill_type',
         sorter: true
     },{
         title: '创建时间',
-        dataIndex: 'orgName',
+        dataIndex: 'create_time',
         sorter: true
     },{
         title: '状态',
-        dataIndex: 'mainName',
-        sorter: true
+        dataIndex: 'status',
+        sorter: true,
+        render: (value, row, index)=>{
+            return formatData(context.state.statusData,value)
+        }
     }
 ];
 
@@ -182,6 +173,21 @@ class Instruct extends Component {
 
     state={
         updateKey:Date.now(),
+        statusData:[]
+    }
+
+
+    //去数据字典里面的状态
+    getStatus=()=>{
+        requestDict('com.moya.contract.enums.DirectiveStatusEnum',result=>{
+            this.setState({
+                statusData:setFormat(result)
+            })
+        })
+    }
+
+    componentDidMount() {
+        this.getStatus()
     }
 
     render(){
@@ -191,7 +197,7 @@ class Instruct extends Component {
             <SearchTable
                 searchOption={{
                     title:'指令单',
-                    fieldsData:fieldsData
+                    fieldsData:fieldsData(this)
                 }}
                 tableOption={{
                     key:this.state.updateKey,
@@ -200,7 +206,17 @@ class Instruct extends Component {
                     url:'/con/mdydirective/findListData',
                     scroll:{
                         x:1300
-                    }
+                    },
+
+                    cardProps:{
+                        title:<div>
+                            <Button type='primary' style={{marginRight:5}} >
+                                <Icon type="plus" />
+                                新增
+                            </Button>
+                        </div>
+                    },
+
                 }}
             />
         )

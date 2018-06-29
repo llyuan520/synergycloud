@@ -18,11 +18,6 @@ class SearchTable extends Component{
         spinning:false,
         doNotFetchDidMount:false,
         searchOption:{},
-        tableOption:{
-            bodyStyle:{
-                padding:24
-            }
-        }
 
     }
     constructor(props){
@@ -87,7 +82,7 @@ class SearchTable extends Component{
         const {tableUpDateKey,filters} = this.state;
         const {searchOption,tableOption,children,form,spinning,style} = this.props;
         return(
-            <Layout style={{background:'transparent',...style}} >
+            <Layout style={{background:'#fff',...style}} >
                 <Spin spinning={spinning}>
                     {
                         searchOption && <TableSearchListForm
@@ -97,30 +92,31 @@ class SearchTable extends Component{
                                             handleSearch={ values => this.handleSearch(values) }
                                         />
                     }
-                    <Card
-                        className="table-card"
-                        bordered={false}
-                        extra={tableOption.extra || null}
-                        {...tableOption.cardProps}
-                    >
-                        <div className="ISA-content">
+                    <div className="ISA-content">
+                        <Card
+                            className="table-card"
+                            bordered={false}
+                            extra={tableOption.extra || null}
+                            {...tableOption.cardProps}
+                        >
+
                             <AsyncTable url={tableOption.url}
-                                    updateKey={tableUpDateKey}
-                                    filters={filters}
-                                    tableProps={{
-                                        rowKey:record=>record[tableOption.rowKey] || record.id,
-                                        pagination:typeof tableOption.pagination === 'undefined' ? true : tableOption.pagination,
-                                        pageSize:tableOption.pageSize || 10,
-                                        onRow:tableOption.onRow || undefined,
-                                        rowSelection:tableOption.rowSelection || tableOption.onRowSelect || undefined,
-                                        onRowSelect:tableOption.onRowSelect || undefined,
-                                        columns:tableOption.columns,
-                                        onSuccess:tableOption.onSuccess || undefined,
-                                        scroll:tableOption.scroll || undefined,
-                                        onDataChange:tableOption.onDataChange || undefined,
-                                    }} />
-                        </div>
-                    </Card>
+                                updateKey={tableUpDateKey}
+                                filters={filters}
+                                tableProps={{
+                                    rowKey:record=>record[tableOption.rowKey] || record.id,
+                                    pagination:typeof tableOption.pagination === 'undefined' ? true : tableOption.pagination,
+                                    pageSize:tableOption.pageSize || 10,
+                                    onRow:tableOption.onRow || undefined,
+                                    rowSelection:tableOption.rowSelection || tableOption.onRowSelect || undefined,
+                                    onRowSelect:tableOption.onRowSelect || undefined,
+                                    columns:tableOption.columns,
+                                    onSuccess:tableOption.onSuccess || undefined,
+                                    scroll:tableOption.scroll || undefined,
+                                    onDataChange:tableOption.onDataChange || undefined,
+                                }} />
+                        </Card>
+                    </div>
                 </Spin>
                 {
                     children ? children : null

@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/6/28
 import React,{Component} from 'react';
 import PropTypes from 'prop-types'
-import { Affix, Row, Col, Form, Icon, Button, Card } from 'antd';
+import { Row, Col, Form, Icon, Button, Card } from 'antd';
 import moment from 'moment'
 import { getFields } from  '../../utils'
 import './index.less'
@@ -148,17 +148,17 @@ export default class TableSearchListForm extends Component {
     }
 
     render(){
-
+        //<Affix offsetTop={64} style={{ zIndex: 1,marginTop:64 }}></Affix>
         return(
-            <Affix offsetTop={64} style={{ zIndex: 1,marginTop:64 }}>
-                <Card bordered={false} className="tableSearchListForm">
-                    <div className="tableListForm">
-                        {
-                            this.renderSimpleForm()
-                        }
-                    </div>
-                </Card>
-            </Affix>
+
+            <Card bordered={false} className="tableSearchListForm">
+                <div className="tableListForm">
+                    {
+                        this.renderSimpleForm()
+                    }
+                </div>
+            </Card>
+
         )
     }
 }

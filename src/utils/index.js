@@ -53,7 +53,11 @@ const changeChartArr = (arr) => {
 
 const getDict = type => {
     return new Promise(function (resolve, reject) {
-        request(`/sys/dict/listBaseInfo/${type}`)
+        request('/enums',{
+            params: {
+                enum: type
+            }
+        })
             .then((res)=>{
                 if(res.state === 'ok'){
                     resolve(res.data)
@@ -71,6 +75,16 @@ const requestDict = async (type,callback)=>{
     callback(result)
 }
 
+//设置select值名不同
+const setFormat = data =>{
+    return data.map(item=>{
+        return{
+            //...item,
+            key:item.value,
+            label:item.name
+        }
+    })
+}
 
 export {
     request,
@@ -82,4 +96,5 @@ export {
     getFields,
     wrapRows,
     requestDict,
+    setFormat,
 }
