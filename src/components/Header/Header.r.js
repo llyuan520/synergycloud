@@ -154,7 +154,7 @@ class WimsHeader extends Component {
         );
         const noticeData = this.getNoticeData();
         return (
-            <Header className="header">
+            <Header className="header" style={{ position: 'fixed', zIndex: 2, width: '100%' }}>
                 <div style={{width:'100%', maxWidth:1500,minWidth:1024,padding:'0 40px',marginLeft:'auto',marginRight:'auto'}}>
                     {/*
 

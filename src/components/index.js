@@ -8,6 +8,7 @@ export { default as NoticeIcon } from './NoticeIcon';
 export { default as HeaderSearch } from './HeaderSearch';
 export { default as FormItems } from './RegisterAndForget';
 export { default as TableSearchListForm } from './TableSearchListForm';
+export { default as SearchTable } from './SearchTable'
 
 
 

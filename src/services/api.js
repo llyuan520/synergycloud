@@ -9,7 +9,7 @@ export function accountLogin(options) {
     return request('/login', {
         method: 'POST',
         body:{
-            identifier: options.number,
+            number: options.number,
             password: options.password,
         }
     })
@@ -19,17 +19,13 @@ export function accountLogin(options) {
                 dispatch(token.increment(res.token));
                 dispatch(userInfoStatus.increment(false));
                 //获取用户信息
-                dispatch(personal.increment({ username: options.identifier }));
+                dispatch(personal.increment({ username: options.number }));
                 dispatch(loggedIn.login())
             } else {
                 return Promise.reject(res.message);
             }
         })
         .catch(err=>{
-            dispatch(userInfoStatus.increment(false));
-            //获取用户信息
-            dispatch(personal.increment({ username: options.identifier }));
-            dispatch(loggedIn.login())
             options.fail && options.fail(err);
         })
 }

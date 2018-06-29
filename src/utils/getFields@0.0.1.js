@@ -8,13 +8,11 @@ const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { RangePicker,MonthPicker } = DatePicker;
 
-export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
+export const getFields = (form,fieldsData=[],rowItemNumbers=3) =>{
 
     const {getFieldDecorator,setFieldsValue,getFieldValue} = form;
-    let topColResponsiveProps = {
-        span:rowItemNumbers
-    };
-    /*switch (parseInt(rowItemNumbers, 0)){
+    let topColResponsiveProps = {};
+    switch (parseInt(rowItemNumbers, 0)){
         case 1:
             topColResponsiveProps ={ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 };
             break;
@@ -28,8 +26,8 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             topColResponsiveProps ={ xs: 24, sm: 12, md: 12, lg: 8, xl: 6 };
             break
         default:
-            //break
-    }*/
+        //break
+    }
 
     let defaultFormItemStyle={
         labelCol:{
@@ -185,15 +183,15 @@ export const wrapRows = (fields,rowItemNumbers) =>{
     let arr = [];
     for(let i = 0 ;i<fields.length;i+=row){
         arr.push(
-                fields.slice(i,i+row)
+            fields.slice(i,i+row)
         )
         /*arr.push(
-            <Row key={`row-${i}`} gutter={{ md: 8, lg: 24, xl: 48 }}>
-                 {
-                    fields.slice(i,i+row)
-                 }
-             </Row>
-        )*/
+         <Row key={`row-${i}`} gutter={{ md: 8, lg: 24, xl: 48 }}>
+         {
+         fields.slice(i,i+row)
+         }
+         </Row>
+         )*/
     }
     return arr;
 }

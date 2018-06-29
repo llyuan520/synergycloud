@@ -145,6 +145,7 @@ export default class Home extends Component {
     render(){
         return(
             <Fragment>
+                <div className="ISA-fragment">
                 {/*<Spin spinning={!loaded}>*/}
 
                 <Row gutter={24}>
@@ -270,6 +271,8 @@ export default class Home extends Component {
                 </Row>
 
                 {/*</Spin>*/}
+
+                </div>
             </Fragment>
         )
     }

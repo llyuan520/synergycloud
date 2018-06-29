@@ -1,8 +1,10 @@
 // Created by liuliyuan on 2018/6/22
+import { message } from 'antd';
 import request from './request'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
 import { getFields, wrapRows } from './getFields'
+//import { getFields, wrapRows } from './getFields@0.0.1'
 
 const fMoney = (s,n=2)=>{
 
@@ -48,4 +50,36 @@ const changeChartArr = (arr) => {
     }
     return arr;
 }
-export {request,composeMenus,fMoney, changeChartArr,getQueryString,regRules,getFields,wrapRows}
+
+const getDict = type => {
+    return new Promise(function (resolve, reject) {
+        request(`/sys/dict/listBaseInfo/${type}`)
+            .then((res)=>{
+                if(res.state === 'ok'){
+                    resolve(res.data)
+                }else{
+                    reject(res.message)
+                }
+            })
+            .catch(err => {
+                message.error(err.message)
+            })
+    })
+}
+const requestDict = async (type,callback)=>{
+    let result = await getDict(type);
+    callback(result)
+}
+
+
+export {
+    request,
+    composeMenus,
+    fMoney,
+    changeChartArr,
+    getQueryString,
+    regRules,
+    getFields,
+    wrapRows,
+    requestDict,
+}

@@ -51,30 +51,29 @@ class Web extends Component{
                         menusData={menusData}
                         logout={()=>this.props.logout()}
                     />
-                    <Content style={{width:'100%', maxWidth:1500,minWidth:1024,padding:'0 40px',marginLeft:'auto',marginRight:'auto'}}>
+                    <Content>
                         <Layout style={{flex:1}}>
 
+                            <Switch>
+                                {routes.map((route, i) => (
+                                    <RouteWithSubRoutes key={i} {...route}/>
+                                ))}
+                                <Route path="*" component={()=><div>no match</div>} />
+                            </Switch>
 
-                                <Switch>
-                                    {routes.map((route, i) => (
-                                        <RouteWithSubRoutes key={i} {...route}/>
-                                    ))}
-                                    <Route path="*" component={()=><div>no match</div>} />
-                                </Switch>
+                            {/*<Switch>
+                                {
+                                    composeMenus(routes).map((route, i) => {
+                                        return (
+                                            <RouteWithSubRoutes key={i} {...route}/>
+                                        )
+                                    })
+                                }
+                                <Route path="*" component={()=><div>no match</div>} />
+                            </Switch>*/}
 
-                                {/*<Switch>
-                                    {
-                                        composeMenus(routes).map((route, i) => {
-                                            return (
-                                                <RouteWithSubRoutes key={i} {...route}/>
-                                            )
-                                        })
-                                    }
-                                    <Route path="*" component={()=><div>no match</div>} />
-                                </Switch>*/}
-
-                            </Layout>
-                        </Content>
+                        </Layout>
+                    </Content>
                     <Footer />
                 </Layout>
             </Layout>
