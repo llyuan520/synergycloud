@@ -24,7 +24,10 @@ export default class TableSearchListForm extends Component {
             loading:false,
             expandForm: false,
             formValues: {},
-            fieldsData: props.fieldsData || []
+            fieldsData: props.fieldsData || [],
+            style:{
+                height:'0'
+            }
         }
     }
 
@@ -36,9 +39,17 @@ export default class TableSearchListForm extends Component {
         });
     };
 
+    handleAdvancedSearch = node => {
+        this.h = node.scrollHeight;
+    };
+
     toggleForm = () => {
+        const style = {
+            height: this.state.style.height === `${this.h}px` ? '0' : `${this.h}px`
+        };
         this.setState({
             expandForm: !this.state.expandForm,
+            style: style
         });
     };
 
@@ -111,37 +122,37 @@ export default class TableSearchListForm extends Component {
                                 <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                                     重置
                                 </Button>
-                                 <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                                    <Icon type="filter" />高级查询
-                                </a>
+                                {
+                                    this.props.fieldsData.length > 2 && <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                                        <Icon type="filter" />高级查询
+                                    </a>
+                                }
                             </span>
                         </Col>
                     </Row>
                 </div>
 
-                {
-                    this.props.fieldsData.length > 2 && (
-                    this.state.expandForm && <div className="ISA-content-bg">
-                                                <div className='ISA-content'>
-                                                    <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                                                        {
-                                                            this.renderAdvancedForm()
-                                                        }
-                                                    </Row>
-                                                    <div style={{ overflow: 'hidden' }}>
-                                                      <span style={{ float: 'right', marginBottom: 24 }}>
-                                                          <Button onClick={this.toggleForm}>
-                                                            取消
-                                                          </Button>
-                                                          <Button  style={{ marginLeft: 8 }} type="primary" htmlType="submit">
-                                                              查询
-                                                          </Button>
-                                                      </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                    )
-                }
+
+                {/*this.props.fieldsData.length > 2 && this.state.expandForm && */}
+                <div  ref={this.handleAdvancedSearch}  className="ISA-content-bg" style={this.state.style}>
+                    <div className='ISA-content'>
+                        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                            {
+                                this.renderAdvancedForm()
+                            }
+                        </Row>
+                        <div style={{ overflow: 'hidden' }}>
+                          <span style={{ float: 'right', marginBottom: 24 }}>
+                              <Button onClick={this.toggleForm}>
+                                取消
+                              </Button>
+                              <Button  style={{ marginLeft: 8 }} type="primary" htmlType="submit">
+                                  查询
+                              </Button>
+                          </span>
+                        </div>
+                    </div>
+                </div>
 
             </Form>
         );
