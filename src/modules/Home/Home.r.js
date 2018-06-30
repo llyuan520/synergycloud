@@ -1,9 +1,9 @@
 // Created by liuliyuan on 2018/6/23
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Row, Col, Select, Tabs, List, Avatar, Card, Button, Divider } from 'antd';
 import { PieReact } from 'components/ECharts';
 
-import './index.less';
+import './styles.less';
 
 const Option = Select.Option;
 const TabPane = Tabs.TabPane;
@@ -144,7 +144,7 @@ export default class Home extends Component {
 
     render(){
         return(
-            <Fragment>
+            <React.Fragment>
                 <div className="ISA-fragment">
                 {/*<Spin spinning={!loaded}>*/}
 
@@ -273,7 +273,7 @@ export default class Home extends Component {
                 {/*</Spin>*/}
 
                 </div>
-            </Fragment>
+            </React.Fragment>
         )
     }
 }

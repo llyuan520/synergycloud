@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { Row, Col, Form, Icon, Button, Card } from 'antd';
 import moment from 'moment'
 import { getFields } from  '../../utils'
-import './index.less'
+import './styles.less'
 
 export default class TableSearchListForm extends Component {
 
@@ -84,7 +84,7 @@ export default class TableSearchListForm extends Component {
     renderAdvancedForm() {
         const { fieldsData, form } = this.props;
         const nData = fieldsData.slice(2,fieldsData.length);
-        return getFields(form, nData, 8)
+        return getFields(form, nData)
     }
 
 
@@ -92,7 +92,7 @@ export default class TableSearchListForm extends Component {
         const { fieldsData, form, title } = this.props;
         const nData = fieldsData.slice(0,2);
         return (
-            <Form onSubmit={this.handleSearch} layout="inline">
+            <Form onSubmit={this.handleSearch} >
                 <div className='ISA-content ISA-simple'>
                     <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                         <Col span={6} className='submitTitle'>
@@ -100,7 +100,7 @@ export default class TableSearchListForm extends Component {
                         </Col>
 
                         {
-                            getFields(form, nData, 6)
+                            getFields(form, nData)
                         }
 
                         <Col span={6} className='submitCol'>

@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Input, Icon, AutoComplete } from 'antd';
 import classNames from 'classnames';
-import './index.less';
+import './styles.less';
 
 export default class HeaderSearch extends PureComponent {
     static defaultProps = {

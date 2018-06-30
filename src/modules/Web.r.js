@@ -8,7 +8,7 @@ import {logout} from 'ducks/user'
 import { Layout } from 'antd';
 import { composeMenus } from 'utils'
 import routes from './routes'
-import './index.less'
+import './styles.less'
 
 
 const { Content } = Layout;

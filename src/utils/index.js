@@ -1,10 +1,10 @@
 // Created by liuliyuan on 2018/6/22
-import { message } from 'antd';
+import React from 'react'
+import { message,Badge } from 'antd';
 import request from './request'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
-import { getFields, wrapRows } from './getFields'
-//import { getFields, wrapRows } from './getFields@0.0.1'
+import { getFields } from './getFields'
 
 const fMoney = (s,n=2)=>{
 
@@ -76,7 +76,7 @@ const requestDict = async (type,callback)=>{
 }
 
 //设置select值名不同
-const setFormat = data =>{
+const setSelectFormat = data =>{
     return data.map(item=>{
         return{
             //...item,
@@ -84,6 +84,52 @@ const setFormat = data =>{
             label:item.name
         }
     })
+}
+
+//匹配select的值
+const getSelectFormat=(data,t)=>{
+
+    const item = data.filter(d=>d.key === t)[0];
+    let status;
+    switch (item.key){
+        case '0':
+            status = 'success';  //已创建
+            break;
+        case '1' :
+            status = 'error'; //审批中
+            break;
+        case '2':
+            status = 'default'; //已审批
+            break;
+        case '3':
+            status = 'processing'; //审批拒绝
+            break;
+        case '4':
+            status = 'warning'; //已测算
+            break;
+        case '5':
+            status = 'success'; //部分下发
+            break;
+        case '6':
+            status = 'error'; //已下发
+            break;
+        case '7':
+            status = 'default'; //部分竣工
+            break;
+        case '8':
+            status = 'processing'; //已竣工
+            break;
+        case '9':
+            status = 'warning'; //部分结算
+            break;
+        case '10':
+            status = 'warning'; //已结算
+            break;
+        default:
+            //break
+    }
+
+    return <Badge status={status} text={item.label} /> ;
 }
 
 export {
@@ -94,7 +140,7 @@ export {
     getQueryString,
     regRules,
     getFields,
-    wrapRows,
     requestDict,
-    setFormat,
+    setSelectFormat,
+    getSelectFormat,
 }

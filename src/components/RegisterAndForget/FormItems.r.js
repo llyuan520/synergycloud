@@ -3,7 +3,7 @@ import React,{Component} from 'react';
 import {Form,Input,Button,Icon,Row,Col,Divider,message,Popover,Progress} from 'antd'
 import {Link} from 'react-router-dom'
 import { regRules,request } from 'utils';
-import './index.less'
+import './styles.less'
 
 const FormItem = Form.Item;
 

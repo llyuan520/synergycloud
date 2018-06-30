@@ -2,8 +2,8 @@
 import React, { createElement } from 'react';
 import { Button } from 'antd';
 import config from './typeConfig';
-import './index.less';
-//import styles from './index.less';
+import './styles.less';
+//import styles from './styles.less';
 
 export default ({ className='exception', linkElement = 'a', type, title, desc, img, actions, ...rest }) => {
     const pageType = type in config ? type : '404';

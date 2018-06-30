@@ -122,7 +122,7 @@ export default class AsyncTable extends Component{
             limit: pagination.pageSize,
             page: pagination.current,
             orderField: sorter.field,
-            orderType: sor ? sor === 'asc' : undefined,
+            orderType: sor,
             ...filters,
             //...this.props.filters.values,
         });
