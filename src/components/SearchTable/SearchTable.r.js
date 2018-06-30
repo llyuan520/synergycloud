@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {Layout,Card,Form,Spin} from 'antd'
 import TableSearchListForm from '../TableSearchListForm/index'
 import AsyncTable from '../AsyncTable/index'
-import './index.less'
+import './styles.less'
 
 class SearchTable extends Component{
     static propTypes = {
@@ -107,6 +107,7 @@ class SearchTable extends Component{
                                     rowKey:record=>record[tableOption.rowKey] || record.id,
                                     pagination:typeof tableOption.pagination === 'undefined' ? true : tableOption.pagination,
                                     pageSize:tableOption.pageSize || 10,
+                                    //size:'middle',
                                     onRow:tableOption.onRow || undefined,
                                     rowSelection:tableOption.rowSelection || tableOption.onRowSelect || undefined,
                                     onRowSelect:tableOption.onRowSelect || undefined,

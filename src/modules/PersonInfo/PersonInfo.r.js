@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom'
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { changeUserInfoStatus } from 'ducks/user'
-import './index.less'
+import './styles.less'
 
 const FormItem = Form.Item;
 

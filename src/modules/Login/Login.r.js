@@ -7,7 +7,7 @@ import { compose } from 'redux';
 import {connect} from 'react-redux';
 import { accountLogin } from 'services/api';
 import {regRules} from 'utils'
-import './index.less';
+import './styles.less';
 import qrcode from './imgs/qrcode.png'
 
 const FormItem = Form.Item;

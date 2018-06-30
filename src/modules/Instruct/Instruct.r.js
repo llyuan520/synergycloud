@@ -2,26 +2,23 @@
 import React,{Component} from 'react';
 import { Button,Icon } from 'antd'
 import { SearchTable } from '../../components'
-import { requestDict,setFormat } from '../../utils'
-import './index.less'
-
-
-const formatData=(data,t)=>{
-    return data.filter(d=>d.key === t)[0].label
-}
+import { requestDict,setSelectFormat,getSelectFormat } from '../../utils'
+import './styles.less'
 
 const fieldsData = (context) => [
     {
         label:'项目名称',
         fieldName:'name',
         type:'input',
+        span:6,
     }, {
         label:'状态',
         fieldName:'status',
         type:'select',
+        span:6,
         options:[{label:'全部', key:''}].concat(context.state.statusData),
         fieldDecoratorOptions:{
-            initialValue: '',
+            initialValue: {label:'全部', key:''},
             /*rules:[
                 {
                     required:true,
@@ -30,13 +27,14 @@ const fieldsData = (context) => [
             ]*/
         },
         componentProps: {
-            labelInkey:true,
+            labelInValue:true,
         },
 
     }, {
         label:'项目代码',
         fieldName:'code',
         type:'input',
+        span:8,
         fieldDecoratorOptions:{
             rules:[
                 {
@@ -49,6 +47,7 @@ const fieldsData = (context) => [
         label:'项目名称1',
         fieldName:'projectName1',
         type:'input',
+        span:8,
         fieldDecoratorOptions:{
             rules:[
                 {
@@ -61,6 +60,7 @@ const fieldsData = (context) => [
         label:'状态1',
         fieldName:'status1',
         type:'select',
+        span:8,
         options:[
             {
                 label:'全部',
@@ -84,12 +84,13 @@ const fieldsData = (context) => [
             ]
         },
         componentProps: {
-            labelInkey:true,
+            labelInValue:true,
         },
     }, {
         label:'项目代码1',
         fieldName:'code1',
         type:'input',
+        span:8,
         fieldDecoratorOptions:{
             rules:[
                 {
@@ -102,6 +103,7 @@ const fieldsData = (context) => [
         label:'项目名称2',
         fieldName:'projectName2',
         type:'input',
+        span:8,
         fieldDecoratorOptions:{
             rules:[
                 {
@@ -114,6 +116,7 @@ const fieldsData = (context) => [
         label: '状态2',
         fieldName: 'status2',
         type: 'select',
+        span:8,
         options: [
             {
                 label: '全部',
@@ -137,7 +140,7 @@ const fieldsData = (context) => [
             ]
         },
         componentProps: {
-            labelInkey: true,
+            labelInValue: true,
         },
     }
 ]
@@ -164,7 +167,7 @@ const getColumns =(context)=>[
         dataIndex: 'status',
         sorter: true,
         render: (value, row, index)=>{
-            return formatData(context.state.statusData,value)
+            return getSelectFormat(context.state.statusData,value)
         }
     }
 ];
@@ -181,7 +184,7 @@ class Instruct extends Component {
     getStatus=()=>{
         requestDict('com.moya.contract.enums.DirectiveStatusEnum',result=>{
             this.setState({
-                statusData:setFormat(result)
+                statusData:setSelectFormat(result)
             })
         })
     }
@@ -204,13 +207,10 @@ class Instruct extends Component {
                     pageSize:10,
                     columns:getColumns(this),
                     url:'/con/mdydirective/findListData',
-                    scroll:{
-                        x:1300
-                    },
-
+                    //scroll:{ x:1300 },
                     cardProps:{
                         title:<div>
-                            <Button type='primary' style={{marginRight:5}} >
+                            <Button type='primary' href={'/web/instruct/create'} style={{marginRight:5}} >
                                 <Icon type="plus" />
                                 新增
                             </Button>

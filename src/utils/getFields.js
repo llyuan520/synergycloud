@@ -1,6 +1,7 @@
 // Created by liuliyuan on 2018/6/28
 import React from 'react';
 import {Col,Form,Input,DatePicker,Select,Checkbox,Cascader,Radio,Switch } from 'antd'
+import { CusFormItem } from '../components'
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -8,13 +9,13 @@ const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { RangePicker,MonthPicker } = DatePicker;
 
-export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
+export const getFields = (form,fieldsData=[],layout) =>{
 
     const {getFieldDecorator,setFieldsValue,getFieldValue} = form;
-    let topColResponsiveProps = {
+   /* let topColResponsiveProps = {
         span:rowItemNumbers
     };
-    /*switch (parseInt(rowItemNumbers, 0)){
+    switch (parseInt(rowItemNumbers, 0)){
         case 1:
             topColResponsiveProps ={ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 };
             break;
@@ -31,7 +32,7 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             //break
     }*/
 
-    let defaultFormItemStyle={
+    let defaultFormItemStyle = layout === 'vertical' ? {} : {
         labelCol:{
             span:6
         },
@@ -85,15 +86,29 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             case 'switch':
                 CusComponent = Switch;
                 break;
+            case 'companyName':
+                CusComponent = CusFormItem.CompanyName;
+                break;
+            case 'asyncSelect':
+                CusComponent = CusFormItem.AsyncSelect;
+                break;
             default:
                 CusComponent = Input
         }
 
-
-
-        if(type==='select'){
+        if(type ==='companyName' || type === 'asyncSelect') {
             return (
-                <Col {...topColResponsiveProps} key={i}>
+                <Col span={item['span'] || 8} key={i}>
+                    <CusComponent label={item['label']} fieldName={item['fieldName']}
+                                  fieldDecoratorOptions={item.fieldDecoratorOptions}
+                                  decoratorOptions={item.fieldDecoratorOptions} formItemStyle={formItemStyle}
+                                  form={form} {...item['componentProps']} componentProps={item['componentProps']}/>
+                </Col>
+            )
+
+        }else if(type==='select'){
+            return (
+                <Col span={item['span'] || 8} key={i}>
                     <FormItem label={ item['hideLabel'] === true ? null : item['label'] }  {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions'],
@@ -113,7 +128,7 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             )
         }else if(type==='checkbox' || type==='radio'){
             return(
-                <Col {...topColResponsiveProps} key={i}>
+                <Col span={item['span'] || 8} key={i}>
                     <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             valuePropName: type,
@@ -126,7 +141,7 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             )
         }else if(type==='checkboxGroup' || type==='cascader' || type==='radioGroup'){
             return(
-                <Col {...topColResponsiveProps} key={i}>
+                <Col span={item['span'] || 8} key={i}>
                     <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions'],
@@ -138,7 +153,7 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             )
         }else if(type==='rangePicker'){
             return (
-                <Col {...topColResponsiveProps} key={i}>
+                <Col span={item['span'] || 8} key={i}>
                     <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions']
@@ -150,7 +165,7 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             )
         }else if(type==='switch'){
             return (
-                <Col {...topColResponsiveProps} key={i}>
+                <Col span={item['span'] || 8} key={i}>
                     <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             valuePropName: 'checked' ,
@@ -163,7 +178,7 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
             )
         }else{
             return (
-                <Col {...topColResponsiveProps} key={i}>
+                <Col span={item['span'] || 8} key={i}>
                     <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions']
@@ -178,23 +193,3 @@ export const getFields = (form,fieldsData=[],rowItemNumbers) =>{
     })
 
 }
-
-//调用 wrapRows(getFields(form,3,fieldsData), 3)
-export const wrapRows = (fields,rowItemNumbers) =>{
-    let row = parseInt(rowItemNumbers, 0);
-    let arr = [];
-    for(let i = 0 ;i<fields.length;i+=row){
-        arr.push(
-                fields.slice(i,i+row)
-        )
-        /*arr.push(
-            <Row key={`row-${i}`} gutter={{ md: 8, lg: 24, xl: 48 }}>
-                 {
-                    fields.slice(i,i+row)
-                 }
-             </Row>
-        )*/
-    }
-    return arr;
-}
-

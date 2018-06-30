@@ -31,14 +31,6 @@
   color: #fff;
 }
 
-:global {
-  .ant-layout {
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-}
-
-
 .menu {
   :global(.anticon) {
     margin-right: 8px;
@@ -280,4 +272,64 @@ only screen and (min-device-pixel-ratio : 1.5) {
   .set-search-width{
     width:300px;
   }
+}
+
+
+
+p{
+  margin-bottom:10px;
+}
+.ant-card-wider-padding .ant-card-body,.ant-card-body{
+  padding:12px;
+}
+.ant-card-head-title{
+  padding:0;
+  font-size:14px;
+}
+.ant-card-wider-padding .ant-card-head,.ant-card-head{
+  padding:7px 12px;
+  min-height:auto;
+}
+
+.ant-card.gray-card,.gray-card .ant-card-head {
+  background-color:rgba(253, 253, 253, 1);
+}
+.ant-steps-item-title{
+  padding-right: 0
+}
+.customlist-td{
+  overflow:hidden; /*超出的部分隐藏起来。*/
+  white-space:nowrap;/*不显示的地方用省略号...代替*/
+  -o-text-overflow:ellipsis;
+  text-overflow:ellipsis;
+  /* display: inline-block; */
+}
+.customlist-td-name{
+  width: 90px;
+}
+.customlist-td-money{
+  width: 80px;
+}
+.customlist-td-count{
+  width: 64px;
+  text-align: center;
+}
+.statistics-tips{
+  line-height: 40px;
+  border:1px solid rgb(186, 231, 255);
+  border-radius: 4px;
+  padding-left: 14px;
+  margin: 6px 0;
+  background: rgba(230, 247, 255, 1);
+
+}
+.statistics-tips i{
+  color: #1890ff;
+  margin-right: 6px;
+}
+.ant-message-notice-content{
+  padding: 20px;
+}
+.anticon-check-circle {
+  color:#52c41a !important
 }

@@ -9,6 +9,8 @@ export { default as HeaderSearch } from './HeaderSearch';
 export { default as FormItems } from './RegisterAndForget';
 export { default as TableSearchListForm } from './TableSearchListForm';
 export { default as SearchTable } from './SearchTable'
+export { default as CusFormItem } from './FormItems'
+export { default as UploadSingleFileWithButton } from './UploadSingleFileWithButton';
 
 
 

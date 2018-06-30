@@ -2,6 +2,7 @@
 import wrapPage from 'components/TitlePage';
 import Home from './Home/index'
 import Instruct from './Instruct'
+import CreateInstruct from './Instruct/Create'
 
 
 const routes = [
@@ -16,6 +17,11 @@ const routes = [
         component:wrapPage('合同履约协同平台 – 指令单',Instruct),
         name:'指令单',
         icon:'file',
+        exact:true,
+    }, {
+        path:'/web/instruct/create',
+        component:wrapPage('合同履约协同平台 – 新建指令单',CreateInstruct),
+        name:'新建指令单',
         exact:true,
     }, {
         path:'/web/output',

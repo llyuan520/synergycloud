@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import NoticeIcon from '../NoticeIcon';
 //import { request } from 'utils'
-import './header.less'
+import './styles.less'
 //模拟数据
 /*import mockAxios from '../../components/NoticeIcon/__mocks__/api.mock'
  mockAxios(request);*/
