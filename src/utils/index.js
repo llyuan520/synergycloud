@@ -32,6 +32,7 @@ const getQueryString=name=>{
     let r = window.location.search.substr(1).match(reg);
     if(r!==null)return  decodeURI(r[2]); return null;
 }
+
 const changeChartArr = (arr) => {
     let i = 0, sum = 0, allZreo = true;
     for (i = 0; i < arr.length; i++) {

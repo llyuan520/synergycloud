@@ -1,6 +1,6 @@
 // Created by liuliyuan on 2018/6/30
 import React,{Component} from 'react'
-import { Row, Col, Form, Card, Upload, Icon, message } from 'antd';
+import { Row, Col, Form, Card, Upload, Icon, message, Button } from 'antd';
 import { getFields } from  'utils'
 import { requestDict,setSelectFormat } from 'utils'
 import TableForm from './TableForm.r'
@@ -87,9 +87,8 @@ const tableData = [
 
         return(
             <React.Fragment>
-                <div className="advancedForm">
-                    <Form onSubmit={this.handleSearch} layout="vertical" hideRequiredMark>
-
+                <Form onSubmit={this.handleSearch} layout="vertical" hideRequiredMark>
+                    <div className="advancedForm">
                         <Card>
                             <p>指令单基本信息</p>
 
@@ -271,9 +270,11 @@ const tableData = [
                                 })(<TableForm />)}
                             </Row>
                         </Card>
-
-                    </Form>
-                </div>
+                    </div>
+                    <div className="steps-action">
+                        <Button type="primary" href="/web/instruct/create/assign"> 下一步，指定供应商 </Button>
+                    </div>
+                </Form>
             </React.Fragment>
         )
     }
