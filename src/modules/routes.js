@@ -2,8 +2,7 @@
 import wrapPage from 'components/TitlePage';
 import Home from './Home/index'
 import Instruct from './Instruct'
-import CreateInstruct from './Instruct/Create'
-
+import Create from './Instruct/Create'
 
 const routes = [
     {
@@ -20,9 +19,8 @@ const routes = [
         exact:true,
     }, {
         path:'/web/instruct/create',
-        component:wrapPage('合同履约协同平台 – 新建指令单',CreateInstruct),
+        component:wrapPage('合同履约协同平台 – 新建指令单',Create),
         name:'新建指令单',
-        exact:true,
     }, {
         path:'/web/output',
         name:'产值单',
@@ -44,6 +42,21 @@ const routes = [
         icon:'api',
         exact:true,
     }, {
+        path:'/403',
+        component:wrapPage('403',() => import('./Exception/403')),
+        name:'403',
+        exact:true,
+    }, {
+        path:'/404',
+        component:wrapPage('404',() => import('./Exception/404')),
+        name:'404',
+        exact:true,
+    }, {
+        path:'/500',
+        component:wrapPage('500',() => import('./Exception/500')),
+        name:'500',
+        exact:true,
+    },{
         path:'/web',
         redirect:true,
         to:'/web/home'

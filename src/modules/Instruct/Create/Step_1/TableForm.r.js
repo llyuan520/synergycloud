@@ -1,5 +1,5 @@
 // Created by liuliyuan on 2018/6/30
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { Table, Button, Input, message, Popconfirm, Divider } from 'antd';
 
 export default class TableForm extends PureComponent {
@@ -176,7 +176,7 @@ export default class TableForm extends PureComponent {
         ];
 
         return (
-            <Fragment>
+            <React.Fragment>
                 <Table
                     loading={this.state.loading}
                     columns={columns}
@@ -194,7 +194,7 @@ export default class TableForm extends PureComponent {
                 >
                     添加
                 </Button>
-            </Fragment>
+            </React.Fragment>
         );
     }
 }

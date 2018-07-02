@@ -16,7 +16,7 @@ const routes = [
     {
         path: '/web',
         component: Web,
-        name: '主页'
+        name: '主页',
     },
     {
         path: '/login',
@@ -37,6 +37,21 @@ const routes = [
         path: '/personInfo',
         component: wrapPage('合同履约协同 - 完善资料', PersonInfo),
         name: '完善资料'
+    },
+    {
+        path:'/403',
+        component:() => import('./modules/Exception/403'),
+        name:'403',
+    },
+    {
+        path:'/404',
+        component:() => import('./modules/Exception/404'),
+        name:'404',
+    },
+    {
+        path:'/500',
+        component:() => import('./modules/Exception/500'),
+        name:'500',
     },
     {
         path: '*',
