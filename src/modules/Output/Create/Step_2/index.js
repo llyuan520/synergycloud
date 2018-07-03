@@ -21,7 +21,7 @@ class Step2 extends Component {
     handleSubmit = (e) => {
         e && e.preventDefault();
         console.log(this.state.data)
-        this.props.history.push('/web/instruct/create/assign')
+        this.props.history.push('/web/output/create/present')
     }
 
     mounted = true;
@@ -41,8 +41,9 @@ class Step2 extends Component {
                 />
 
                 <div className="steps-action">
-                    <Button type="primary" onClick={this.handleSubmit} > 下一步，设置审批流 </Button>
-                    <Button style={{ marginLeft: 8 }} href="/web/instruct/create/write"> 上一步 </Button>
+                    <Button type="primary" onClick={this.handleSubmit} > 下一步</Button>
+                    <Button style={{ marginLeft: 8 }}> 保存 </Button>
+                    <Button style={{ marginLeft: 8 }} href="/web/output/create/write"> 上一步 </Button>
                 </div>
 
             </React.Fragment>

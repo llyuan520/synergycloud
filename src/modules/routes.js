@@ -3,7 +3,8 @@ import wrapPage from 'components/TitlePage';
 import Home from './Home/index'
 import Instruct from './Instruct'
 import Create from './Instruct/Create'
-import Output from "./Output";
+import Output from './Output';
+import OutputCreate from './Output/Create'
 
 const routes = [
   {
@@ -28,6 +29,10 @@ const routes = [
     component: wrapPage('合同履约协同平台 – 产值单', Output),
     icon: 'setting',
     exact: true,
+  }, {
+    path: '/web/output/create',
+    name: '新建产值单',
+    component: wrapPage('合同履约协同平台 – 新建产值单', OutputCreate),
   }, {
     path: '/web/accept',
     name: '竣工验收单',

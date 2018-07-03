@@ -4,7 +4,7 @@ import {  Row, Card, Form  } from 'antd';
 import DragSortTable from './DragSortingTable.r'
 import { getFields } from  'utils'
 
-class TabPane3 extends Component {
+class TabPane4 extends Component {
 
     state = {
         updateKey:Date.now(),
@@ -64,4 +64,4 @@ class TabPane3 extends Component {
         )
     }
 }
-export default Form.create()(TabPane3)
+export default Form.create()(TabPane4)

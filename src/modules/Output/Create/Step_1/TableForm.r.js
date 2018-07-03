@@ -1,206 +1,63 @@
 // Created by liuliyuan on 2018/6/30
-import React, { PureComponent } from 'react';
-import { Table, Button, message, Popconfirm, Divider } from 'antd';
-import { InputCell } from '../../../../components/EditableCell'
+import React, {PureComponent} from 'react';
+import {Table} from 'antd';
+
+const columns = [{
+  title: '合同名称',
+  dataIndex: 'name',
+}, {
+  title: '合同金额',
+  dataIndex: 'age',
+}, {
+  title: '甲方乙方',
+  dataIndex: 'address',
+}];
+const data = [{
+  key: '1',
+  name: 'John Brown',
+  age: 32,
+  address: 'New York No. 1 Lake Park',
+}, {
+  key: '2',
+  name: 'Jim Green',
+  age: 42,
+  address: 'London No. 1 Lake Park',
+}, {
+  key: '3',
+  name: 'Joe Black',
+  age: 32,
+  address: 'Sidney No. 1 Lake Park',
+}, {
+  key: '4',
+  name: 'Disabled User',
+  age: 99,
+  address: 'Sidney No. 1 Lake Park',
+}];
 
 export default class TableForm extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            data: props.value,
-            loading: false,
-        };
-    }
-    componentWillReceiveProps(nextProps) {
-        if ('value' in nextProps) {
-            this.setState({
-                data: nextProps.value,
-            });
-        }
-    }
-    getRowByKey(key, newData) {
-        return (newData || this.state.data).filter(item => item.key === key)[0];
-    }
-    index = 0;
-    cacheOriginData = {};
-    toggleEditable = (e, key) => {
-        e.preventDefault();
-        const newData = this.state.data.map(item => ({ ...item }));
-        const target = this.getRowByKey(key, newData);
-        if (target) {
-            // 进入编辑状态时保存原始数据
-            if (!target.editable) {
-                this.cacheOriginData[key] = { ...target };
-            }
-            target.editable = !target.editable;
-            this.setState({ data: newData });
-        }
-    };
-    remove(key) {
-        const newData = this.state.data.filter(item => item.key !== key);
-        this.setState({ data: newData });
-        this.props.onChange(newData);
-    }
-    newMember = () => {
-        const newData = this.state.data.map(item => ({ ...item }));
-        newData.push({
-            key: `NEW_TEMP_ID_${this.index}`,
-            name: '',
-            editable: true,
-            isNew: true,
-        });
-        this.index += 1;
-        this.setState({ data: newData });
-    };
-    handleKeyPress(e, key) {
-        if (e.key === 'Enter') {
-            this.saveRow(e, key);
-        }
-    }
-    handleFieldChange(e, fieldName, key) {
-        const newData = this.state.data.map(item => ({ ...item }));
-        const target = this.getRowByKey(key, newData);
-        if (target) {
-            target[fieldName] = e.target.value;
-            this.setState({ data: newData });
-        }
-    }
-    saveRow(e, key) {
-        e.persist();
+  render() {
+    const rowSelection = {
+      type: 'radio',
+      onChange: this.onChange,
+      onRowSelect: (selectedRowKeys, selectedRows) => {
         this.setState({
-            loading: true,
-        });
-        setTimeout(() => {
-            if (this.clickedCancel) {
-                this.clickedCancel = false;
-                return;
-            }
-            const target = this.getRowByKey(key) || {};
-            if (!target.workId || !target.name || !target.department || !target.annex) {
-                message.error('请填写完整成员信息。');
-                e.target.focus();
-                this.setState({
-                    loading: false,
-                });
-                return;
-            }
-            delete target.isNew;
-            this.toggleEditable(e, key);
-            console.log(this.state.data)
-            debugger
-            this.props.onChange(this.state.data);
-            this.setState({
-                loading: false,
-            });
-        }, 500);
-    }
-    cancel(e, key) {
-        this.clickedCancel = true;
-        e.preventDefault();
-        const newData = this.state.data.map(item => ({ ...item }));
-        const target = this.getRowByKey(key, newData);
-        if (this.cacheOriginData[key]) {
-            Object.assign(target, this.cacheOriginData[key]);
-            target.editable = false;
-            delete this.cacheOriginData[key];
-        }
-        this.setState({ data: newData });
-        this.clickedCancel = false;
-    }
-    render() {
-        const { getFieldDecorator } = this.props.form;
-        const columns = [
-            {
-                title: '序号',
-                dataIndex: 'key',
-                key: 'key',
-                width: '20%',
-            },
-            {
-                title: '变更项',
-                dataIndex: 'name',
-                key: 'name',
-                width: '60%',
-                render: (text, record) => {
-                    if (record.editable) {
-                        return (
-                            <InputCell
-                                fieldName={`list[${record.key}].name`}
-                                initialValue={text}
-                                componentProps={{
-                                    autoFocus:"autofocus",
-                                    placeholder:"成员姓名",
-                                    onChange:e => this.handleFieldChange(e, 'name', record.key),
-                                    onKeyPress:e => this.handleKeyPress(e, record.key),
-                                }}
-                                getFieldDecorator={getFieldDecorator}
-                            />
-                        );
-                    }
-                    return text;
-                },
-            },
-            {
-                title: '操作',
-                key: 'action',
-                render: (text, record) => {
-                    if (!!record.editable && this.state.loading) {
-                        return null;
-                    }
-                    if (record.editable) {
-                        if (record.isNew) {
-                            return (
-                                <span>
-                                  <a onClick={e => this.saveRow(e, record.key)}>添加</a>
-                                  <Divider type="vertical" />
-                                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                    <a style={{ color: '#f5222d' }}>删除</a>
-                                  </Popconfirm>
-                                </span>
-                            );
-                        }
-                        return (
-                            <span>
-                                <a onClick={e => this.saveRow(e, record.key)}>保存</a>
-                                <Divider type="vertical" />
-                                <a onClick={e => this.cancel(e, record.key)}>取消</a>
-                            </span>
-                        );
-                    }
-                    return (
-                        <span>
-                              <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
-                              <Divider type="vertical" />
-                              <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                <a style={{ color: '#f5222d' }}>删除</a>
-                              </Popconfirm>
-                        </span>
-                    );
-                },
-            },
-        ];
-
-        return (
-            <React.Fragment>
-                <Table
-                    loading={this.state.loading}
-                    columns={columns}
-                    dataSource={this.state.data}
-                    pagination={false}
-                    rowClassName={record => {
-                        return record.editable ? 'editable' : '';
-                    }}
-                />
-                <Button
-                    style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
-                    type="dashed"
-                    onClick={this.newMember}
-                    icon="plus"
-                >
-                    添加
-                </Button>
-            </React.Fragment>
-        );
-    }
+          id: selectedRowKeys[0],
+          selectedNodes: selectedRows[0],
+          onlyAdd: false,
+        })
+      },
+      onSelect: (...e) => {
+        this.props.next();
+        console.log(e);
+      },
+      rowSelection: {
+        type: 'radio',
+      },
+    };
+    return (
+    <React.Fragment>
+      <Table rowSelection={rowSelection} columns={columns} dataSource={data}/>
+    </React.Fragment>
+    );
+  }
 }
