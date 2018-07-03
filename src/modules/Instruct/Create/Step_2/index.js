@@ -21,7 +21,7 @@ class Step2 extends Component {
     handleSubmit = (e) => {
         e && e.preventDefault();
         console.log(this.state.data)
-        this.props.history.push('/web/instruct/create/assign')
+        this.props.history.push('/web/instruct/create/site')
     }
 
     mounted = true;
@@ -37,7 +37,7 @@ class Step2 extends Component {
                 <CustomizeTabs
                     tab="2"
                     props={this.props}
-                    TabPane_2={ <TabPane2 setData={this.setData.bind(this)} /> }
+                    TabPane_2={ <TabPane2 display={false} setData={this.setData.bind(this)} /> }
                 />
 
                 <div className="steps-action">

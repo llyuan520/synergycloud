@@ -30,7 +30,8 @@ export default class TabPane2 extends Component {
 
     render(){
 
-        const { visible,modalConfig } = this.state
+        const { visible,modalConfig } = this.state;
+        const { display } = this.props;
         return(
             <React.Fragment>
 
@@ -66,7 +67,7 @@ export default class TabPane2 extends Component {
                                 </React.Fragment>
                             }
                             extra={
-                                <React.Fragment>
+                                !display &&<React.Fragment>
                                     <a href="#/" style={{ marginRight:10 }}>编辑</a>
                                     <a href="#/" style={{ color: '#F07060' }}>删除</a>
                                 </React.Fragment>
@@ -107,7 +108,7 @@ export default class TabPane2 extends Component {
                                 </React.Fragment>
                             }
                             extra={
-                                <React.Fragment>
+                                !display && <React.Fragment>
                                     <a href="#/" style={{ marginRight:10 }}>编辑</a>
                                     <a href="#/" style={{ color: '#F07060' }}>删除</a>
                                 </React.Fragment>
@@ -166,7 +167,7 @@ export default class TabPane2 extends Component {
                                 </React.Fragment>
                             }
                             extra={
-                                <React.Fragment>
+                                !display && <React.Fragment>
                                     <a href="#/" style={{ marginRight:10 }}>编辑</a>
                                     <a href="#/" style={{ color: '#F07060' }}>删除</a>
                                 </React.Fragment>
@@ -199,14 +200,17 @@ export default class TabPane2 extends Component {
                         </Card>
                     </Card>
 
-                    <Button
-                        style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
-                        type="dashed"
-                        onClick={()=>this.showModal('add')}
-                        icon="plus"
-                    >
-                        指定供应商
-                    </Button>
+                    {
+                        !display && <Button
+                                        style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
+                                        type="dashed"
+                                        onClick={()=>this.showModal('add')}
+                                        icon="plus"
+                                    >
+                                        指定供应商
+                                    </Button>
+                    }
+
 
                 </Card>
 

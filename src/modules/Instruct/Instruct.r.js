@@ -12,12 +12,12 @@ const fieldsData = (context) => [
         type:'input',
         span:6,
         fieldDecoratorOptions:{
-            rules:[
+            /*rules:[
                 {
                     required:true,
                     message:'请输入项目名称'
                 }
-            ]
+            ]*/
         },
     }, {
         label:'状态',
@@ -142,9 +142,9 @@ class Instruct extends Component {
 
     //去数据字典里面的状态
     getStatus=()=>{
-        requestDict('com.moya.contract.enums.DirectiveStatusEnum',result=>{
+        requestDict(`['com.moya.contract.enums.DirectiveStatusEnum']`,result=>{
             this.setState({
-                statusData:setSelectFormat(result)
+                statusData:setSelectFormat(result['DirectiveStatusEnum'])
             })
         })
     }
@@ -167,6 +167,7 @@ class Instruct extends Component {
                     pageSize:10,
                     columns:getColumns(this),
                     url:'/con/mdydirective/findListData',
+                    //url:'/con/output/findListData',
                     //scroll:{ x:1300 },
                     cardProps:{
                         title:<div>
