@@ -1,5 +1,6 @@
 // Created by liuliyuan on 2018/6/30
 import React,{Component} from 'react'
+import {withRouter} from 'react-router-dom'
 import { Row, Col, Form, Card, Upload, Icon, message, Button } from 'antd';
 import { getFields } from  'utils'
 import { requestDict,setSelectFormat } from 'utils'
@@ -45,6 +46,15 @@ const tableData = [
          statusData:[]
      }
 
+     handleSubmit = (e) => {
+         e && e.preventDefault();
+         this.props.form.validateFields((err, values) => {
+            if(err) return;
+            console.log(values)
+             this.props.history.push('/web/instruct/create/assign')
+         });
+     }
+
      handleChange = (info) => {
          if (info.file.status === 'uploading') {
              this.setState({ loading: true });
@@ -87,7 +97,7 @@ const tableData = [
 
         return(
             <React.Fragment>
-                <Form onSubmit={this.handleSearch} layout="vertical" hideRequiredMark>
+                <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
                     <div className="advancedForm">
                         <Card>
                             <p>指令单基本信息</p>
@@ -102,12 +112,12 @@ const tableData = [
                                             span:8,
                                             formItemStyle:null,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },{
                                             label:'选择项目',
@@ -138,12 +148,12 @@ const tableData = [
                                             span:8,
                                             formItemStyle:null,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },{
                                             label:'变更类型',
@@ -153,12 +163,12 @@ const tableData = [
                                             options:[{label:'全部', key:''}].concat(this.state.statusData),
                                             fieldDecoratorOptions:{
                                                 initialValue:{label:'全部', key:''},
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择变更类型'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                             componentProps: {
                                                 labelInValue:true,
@@ -171,12 +181,12 @@ const tableData = [
                                             options:[{label:'全部', key:''}].concat(this.state.statusData),
                                             fieldDecoratorOptions:{
                                                 initialValue:{label:'全部', key:''},
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择变更类型'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                             componentProps: {
                                                 labelInValue:true,
@@ -197,12 +207,12 @@ const tableData = [
                                             span:24,
                                             formItemStyle:null,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },{
                                             label:'变更详情',
@@ -210,12 +220,12 @@ const tableData = [
                                             type:'textArea',
                                             span:24,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择变更类型'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },
 
@@ -241,17 +251,17 @@ const tableData = [
                                         getFields(form, [
                                             {
                                                 label:'图纸编号',
-                                                fieldName:'code',
+                                                fieldName:'drawingNumbers',
                                                 type:'input',
                                                 span:24,
                                                 formItemStyle:null,
                                                 fieldDecoratorOptions:{
-                                                    rules:[
+                                                    /*rules:[
                                                         {
                                                             required:true,
                                                             message:'请选择图纸编号'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 },
                                             },
 
@@ -267,12 +277,12 @@ const tableData = [
                             <Row gutter={24}>
                                 {getFieldDecorator('members', {
                                     initialValue: tableData,
-                                })(<TableForm />)}
+                                })(<TableForm form={this.props.form} />)}
                             </Row>
                         </Card>
                     </div>
                     <div className="steps-action">
-                        <Button type="primary" href="/web/instruct/create/assign"> 下一步，指定供应商 </Button>
+                        <Button type="primary" onClick={this.handleSubmit}> 下一步，指定供应商 </Button>
                     </div>
                 </Form>
             </React.Fragment>
@@ -281,4 +291,4 @@ const tableData = [
 
 }
 
-export default Form.create()(Step1)
+export default Form.create()(withRouter(Step1))

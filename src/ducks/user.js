@@ -59,7 +59,6 @@ export default handleActions({
         return state.set('loggedIn',payload)
     },
     [loggedIn.logout]:state=>{
-        localStorage.clear();
         return initialState
     },
 

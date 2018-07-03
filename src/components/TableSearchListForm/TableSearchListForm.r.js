@@ -26,7 +26,7 @@ export default class TableSearchListForm extends Component {
             formValues: {},
             fieldsData: props.fieldsData || [],
             style:{
-                height:'0'
+                height:'0px'
             }
         }
     }
@@ -45,7 +45,7 @@ export default class TableSearchListForm extends Component {
 
     toggleForm = () => {
         const style = {
-            height: this.state.style.height === `${this.h}px` ? '0' : `${this.h}px`
+            height: this.state.style.height === `${this.h}px` ? '0px' : `${this.h}px`
         };
         this.setState({
             expandForm: !this.state.expandForm,
@@ -134,7 +134,7 @@ export default class TableSearchListForm extends Component {
 
 
                 {/*this.props.fieldsData.length > 2 && this.state.expandForm && */}
-                <div  ref={this.handleAdvancedSearch}  className="ISA-content-bg" style={this.state.style}>
+                <div ref={this.handleAdvancedSearch}  className="ISA-content-bg" style={this.state.style}>
                     <div className='ISA-content'>
                         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                             {

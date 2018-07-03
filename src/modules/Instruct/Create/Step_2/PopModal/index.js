@@ -21,11 +21,14 @@ class PopModal extends Component{
         })
         console.log(key, name);
     }
+
     handleSubmit = (e) => {
         e && e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                //console.log('Received values of form: ', values);
+                this.props.setData(values)
+                this.props.toggleModalVisible(false);
+                /*
                 const type = this.props.modalConfig.type;
                 switch (type){
                     case 'add':
@@ -41,7 +44,7 @@ class PopModal extends Component{
                 this.setState({
                     initData:{}
                 })
-                this.props.toggleModalVisible(false);
+                */
 
             }
         });
@@ -112,12 +115,12 @@ class PopModal extends Component{
                                     options: [{label: '全部', key: ''}],
                                     fieldDecoratorOptions: {
                                         initialValue: {label: '全部', key: ''},
-                                        rules: [
+                                        /*rules: [
                                             {
                                                 required: true,
                                                 message: '请选择合同及供应商'
                                             }
-                                        ]
+                                        ]*/
                                     },
                                     componentProps: {
                                         labelInValue: true,
@@ -148,11 +151,6 @@ class PopModal extends Component{
                                                             //initialValue: parseInt(record.incomeTaxAuth,0) === 1,
                                                             valuePropName: 'checked',
                                                         },
-                                                        componentProps:{
-                                                            onChange:()=>{
-
-                                                            }
-                                                        }
 
                                                     },
 
@@ -227,12 +225,12 @@ class PopModal extends Component{
                                                     //size:2
                                                 },
                                                 fieldDecoratorOptions:{
-                                                    rules:[
+                                                    /*rules:[
                                                         {
                                                             required:true,
                                                             message:'请上传文件'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 },
                                             }
                                         ])
@@ -297,12 +295,12 @@ class PopModal extends Component{
                                                     //size:2
                                                 },
                                                 fieldDecoratorOptions:{
-                                                    rules:[
+                                                    /*rules:[
                                                         {
                                                             required:true,
                                                             message:'请上传文件'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 },
                                             }
                                         ])
@@ -350,12 +348,12 @@ class PopModal extends Component{
                                                 },
                                                 fieldDecoratorOptions: {
                                                     //initialValue: (initData && [moment(initData.subordinatePeriodStart, 'YYYY-MM-DD'), moment(initData.subordinatePeriodEnd, 'YYYY-MM-DD')]),
-                                                    rules: [
+                                                    /*rules: [
                                                         {
                                                             required: true,
                                                             message: '请选择预计工作时间'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 }
                                             }
 
@@ -461,12 +459,12 @@ class PopModal extends Component{
                                                     //size:2
                                                 },
                                                 fieldDecoratorOptions:{
-                                                    rules:[
+                                                    /*rules:[
                                                         {
                                                             required:true,
                                                             message:'请上传文件'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 },
                                             }
                                         ])
@@ -531,12 +529,12 @@ class PopModal extends Component{
                                                     //size:2
                                                 },
                                                 fieldDecoratorOptions:{
-                                                    rules:[
+                                                    /*rules:[
                                                         {
                                                             required:true,
                                                             message:'请上传文件'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 },
                                             }
                                         ])
@@ -584,12 +582,12 @@ class PopModal extends Component{
                                                 },
                                                 fieldDecoratorOptions: {
                                                     //initialValue: (initData && [moment(initData.subordinatePeriodStart, 'YYYY-MM-DD'), moment(initData.subordinatePeriodEnd, 'YYYY-MM-DD')]),
-                                                    rules: [
+                                                    /*rules: [
                                                         {
                                                             required: true,
                                                             message: '请选择预计工作时间'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 }
                                             }
 

@@ -1,6 +1,7 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
 import { Tabs } from 'antd';
+import TabPane1 from '../Step_1/tab1'
 
 import './styles.less'
 
@@ -12,7 +13,7 @@ export default class CustomizeTabs extends Component {
         this.state={
             updateKey:Date.now(),
             loading: false,
-            activeKey: props.tab || '1'
+            activeKey: props.tab  || '1'
         }
     }
 
@@ -21,17 +22,15 @@ export default class CustomizeTabs extends Component {
     }
 
     render(){
-        const { TabPane_1, TabPane_2, TabPane_3 } = this.props;
+        const { TabPane_2, TabPane_3 } = this.props;
         return(
             <React.Fragment>
 
                 <div className="tabs-main">
                     <Tabs activeKey={this.state.activeKey} onChange={this.onChange}>
-                        {
-                            TabPane_1 && <TabPane tab="指令单信息" key="1">
-                                            { TabPane_1 }
-                                        </TabPane>
-                        }
+                         <TabPane tab="指令单信息" key="1">
+                            <TabPane1 props={this.props} />
+                        </TabPane>
                         {
                             TabPane_2 && <TabPane tab="指定供应商" key="2">
                                             { TabPane_2 }

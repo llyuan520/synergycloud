@@ -1,14 +1,32 @@
 // Created by liuliyuan on 2018/6/30
 import React,{Component} from 'react'
+import {withRouter} from 'react-router-dom'
 import { Button } from 'antd';
 import CustomizeTabs from '../Tabs'
-import TabPane1 from '../Step_1/tab1'
 import TabPane2 from './tab2'
 
-export default class Step2 extends Component {
+class Step2 extends Component {
     state={
         updateKey:Date.now(),
         visible:false,
+        data:{},
+    }
+
+    setData = data =>{
+        this.mounted && this.setState({
+            data
+        })
+    }
+
+    handleSubmit = (e) => {
+        e && e.preventDefault();
+        console.log(this.state.data)
+        this.props.history.push('/web/instruct/create/assign')
+    }
+
+    mounted = true;
+    componentWillUnmount(){
+        this.mounted = null;
     }
 
     render(){
@@ -18,12 +36,12 @@ export default class Step2 extends Component {
 
                 <CustomizeTabs
                     tab="2"
-                    TabPane_1={ TabPane1(this.props) }
-                    TabPane_2={ <TabPane2 /> }
+                    props={this.props}
+                    TabPane_2={ <TabPane2 setData={this.setData.bind(this)} /> }
                 />
 
                 <div className="steps-action">
-                    <Button type="primary" href="/web/instruct/create/site" > 下一步，设置审批流 </Button>
+                    <Button type="primary" onClick={this.handleSubmit} > 下一步，设置审批流 </Button>
                     <Button style={{ marginLeft: 8 }} href="/web/instruct/create/write"> 上一步 </Button>
                 </div>
 
@@ -31,3 +49,5 @@ export default class Step2 extends Component {
         )
     }
 }
+
+export default withRouter(Step2)

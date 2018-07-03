@@ -215,6 +215,7 @@ export default class TabPane2 extends Component {
                     visible={visible}
                     modalConfig={modalConfig}
                     toggleModalVisible={this.toggleModalVisible}
+                    setData={this.props.setData}
                 />
             </React.Fragment>
         )

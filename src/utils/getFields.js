@@ -166,7 +166,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
             )
         }else if(type==='checkboxGroup' || type==='cascader' || type==='radioGroup'){
             return(
-                <Col span={item['span'] || 8} key={i}>
+                <Col span={item['span'] || 8} key={i} className={(type==='checkboxGroup' || type==='radioGroup') ? 'fix-ie10-formItem-textArea' : ''}>
                     <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions'],
@@ -217,7 +217,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
             )
         }else{
             return (
-                <Col span={item['span'] || 8} key={i}>
+                <Col span={item['span'] || 8} key={i} className={type==='textArea' ? 'fix-ie10-formItem-textArea' : ''}>
                     <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions']
