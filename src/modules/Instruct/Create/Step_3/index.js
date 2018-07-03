@@ -2,7 +2,6 @@
 import React,{Component} from 'react'
 import { Button } from 'antd';
 import CustomizeTabs from '../Tabs'
-import TabPane1 from '../Step_1/tab1'
 import TabPane2 from '../Step_2/tab2'
 import TabPane3 from './tab3'
 
@@ -19,7 +18,6 @@ export default class Step3 extends Component {
 
                 <CustomizeTabs
                     tab="3"
-                    TabPane_1={ TabPane1(this.props) }
                     TabPane_2={ <TabPane2 /> }
                     TabPane_3={ <TabPane3 /> }
                 />

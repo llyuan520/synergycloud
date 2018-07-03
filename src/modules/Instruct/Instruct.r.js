@@ -11,6 +11,14 @@ const fieldsData = (context) => [
         fieldName:'name',
         type:'input',
         span:6,
+        fieldDecoratorOptions:{
+            rules:[
+                {
+                    required:true,
+                    message:'请输入项目名称'
+                }
+            ]
+        },
     }, {
         label:'状态',
         fieldName:'status',
@@ -19,12 +27,12 @@ const fieldsData = (context) => [
         options:[{label:'全部', key:''}].concat(context.state.statusData),
         fieldDecoratorOptions:{
             initialValue: {label:'全部', key:''},
-            /*rules:[
+            rules:[
                 {
                     required:true,
                     message:'请输入项目代码'
                 }
-            ]*/
+            ]
         },
         componentProps: {
             labelInValue:true,
@@ -35,27 +43,11 @@ const fieldsData = (context) => [
         fieldName:'code',
         type:'input',
         span:8,
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目代码'
-                }
-            ]
-        },
     },{
         label:'项目名称1',
         fieldName:'projectName1',
         type:'input',
         span:8,
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目名称'
-                }
-            ]
-        },
     }, {
         label:'状态1',
         fieldName:'status1',
@@ -75,14 +67,6 @@ const fieldsData = (context) => [
                 key:'2'
             }
         ],
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请选择状态'
-                }
-            ]
-        },
         componentProps: {
             labelInValue:true,
         },
@@ -91,27 +75,11 @@ const fieldsData = (context) => [
         fieldName:'code1',
         type:'input',
         span:8,
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目代码'
-                }
-            ]
-        },
     },{
         label:'项目名称2',
         fieldName:'projectName2',
         type:'input',
         span:8,
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目名称'
-                }
-            ]
-        },
     }, {
         label: '状态2',
         fieldName: 'status2',
@@ -131,14 +99,6 @@ const fieldsData = (context) => [
                 key: '2'
             }
         ],
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请选择状态'
-                }
-            ]
-        },
         componentProps: {
             labelInValue: true,
         },

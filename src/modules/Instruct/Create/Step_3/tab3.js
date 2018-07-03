@@ -21,7 +21,7 @@ class TabPane3 extends Component {
                             paddingTop:0
                         }}
                     >
-                        <Row gutter={24}>
+                        <Row gutter={24} style={{ marginBottom: 12 }}>
                             {
                                 getFields(form, [
                                     {
