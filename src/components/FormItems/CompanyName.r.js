@@ -6,15 +6,15 @@ import {request} from 'utils'
 const FormItem = Form.Item;
 const Option = Select.Option
 function fetchTaxMain(value, callback) {
-    request('/taxsubject/listByName',{
+    request('/con/mdydirective/findCompanyByContract',{
         params:{
             name:value,
-            size:100
+            //size:100
         }
     })
         .then((res) => {
             if(res.state === 'ok'){
-                const result = res.data.records || res.data;
+                const result = res.data;
                 const newData = [];
                 result.forEach((r) => {
                     newData.push({
@@ -50,29 +50,29 @@ export default class CompanyName extends Component{
                 span:18
             }
         },
-        fieldName:'mainId',
+        fieldName:'supplier',
         whetherShowAll:false,
         notShowAll:false,
         fieldDecoratorOptions:{
         }
     }
     state={
-        mainTaxItems:[]
+        companyItems:[]
     }
-    /*onSearch = (value) => {
-     this.props.onSearch && this.props.onSearch(value)
-     if(typeof value !== 'undefined' && value !== null){
-     fetchTaxMain(value, data => {
-     this.mounted && this.setState({
-     mainTaxItems:data
-     })
-     });
-     }
-     }*/
+    onSearch = (value) => {
+        this.props.onSearch && this.props.onSearch(value)
+        if(typeof value !== 'undefined' && value !== null){
+            fetchTaxMain(value, data => {
+                this.mounted && this.setState({
+                    companyItems:data
+                })
+            });
+        }
+    }
     componentDidMount(){
         fetchTaxMain('',data => {
             this.mounted && this.setState({
-                mainTaxItems: data
+                companyItems: data
             })
         });
     }
@@ -81,7 +81,7 @@ export default class CompanyName extends Component{
         this.mounted=null;
     }
     render(){
-        const {mainTaxItems}=this.state;
+        const {companyItems}=this.state;
         const {getFieldDecorator} = this.props.form;
         const {formItemStyle,fieldName,initialValue,fieldDecoratorOptions,componentProps} = this.props;
         return(
@@ -94,12 +94,12 @@ export default class CompanyName extends Component{
                         showSearch
                         style={{ width: '100%' }}
                         optionFilterProp="children"
-                        // onSearch={this.onSearch}
+                        onSearch={this.onSearch}
                         placeholder="请选择企业"
                         {...componentProps}
                     >
                         {
-                            mainTaxItems.map((item,i)=>(
+                            companyItems.map((item,i)=>(
                                 <Option key={i} value={item.key}>{item.label}</Option>
                             ))
                         }

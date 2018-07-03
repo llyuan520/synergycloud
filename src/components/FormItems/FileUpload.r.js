@@ -15,7 +15,7 @@ export default class FileUpload extends Component{
             name:'file',
             action:'/',
             buttonText:'Click to upload',
-            multiple:false
+            multiple:false,
         }
     }
     render(){
@@ -41,9 +41,12 @@ export default class FileUpload extends Component{
         };
         return(
             <Upload {...props} {...props.componentProps} >
-                <Button size="small" disabled={fileList && fileList.length>=1}>
+                {
+                    !(fileList && fileList.length>=1) && <Icon type="upload" style={{ fontSize: 16, color: '#08c' }} />
+                }
+               {/* <Button size="small" disabled={fileList && fileList.length>=1}>
                     <Icon type="upload" />{props.componentProps.buttonText}
-                </Button>
+                </Button>*/}
                 {
                     props.componentProps.explain && <span style={{color:'#ccc',marginLeft:5}}>{props.componentProps.explain}</span>
                 }

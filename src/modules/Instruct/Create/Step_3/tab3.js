@@ -1,20 +1,18 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
-import {  Row, Card, Form  } from 'antd';
+import {  Row, Card  } from 'antd';
 import DragSortTable from './DragSortingTable.r'
 import { getFields } from  'utils'
 
-class TabPane3 extends Component {
+export default class TabPane3 extends Component {
 
     state = {
         updateKey:Date.now(),
     }
-    render(){
-        const { form } = this.props;
 
+    render(){
         return(
             <React.Fragment>
-                <Form onSubmit={this.handleSearch} >
                     <Card
                         bordered={false}
                         bodyStyle={{
@@ -23,7 +21,7 @@ class TabPane3 extends Component {
                     >
                         <Row gutter={24} style={{ marginBottom: 12 }}>
                             {
-                                getFields(form, [
+                                getFields(this.props.form, [
                                     {
                                         label:'审批模板',
                                         fieldName:'approvalTemplate',
@@ -59,9 +57,8 @@ class TabPane3 extends Component {
 
                         <DragSortTable form={this.props.form} />
                     </Card>
-                </Form>
+
             </React.Fragment>
         )
     }
 }
-export default Form.create()(TabPane3)
