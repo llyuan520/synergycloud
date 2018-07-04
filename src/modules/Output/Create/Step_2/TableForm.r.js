@@ -96,7 +96,6 @@ export default class TableForm extends PureComponent {
       delete target.isNew;
       this.toggleEditable(e, key);
       console.log(this.state.data)
-      debugger
       this.props.onChange(this.state.data);
       this.setState({
         loading: false,
