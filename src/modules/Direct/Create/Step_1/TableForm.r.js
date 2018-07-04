@@ -1,6 +1,7 @@
 // Created by liuliyuan on 2018/6/30
-import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, Input, message, Popconfirm, Divider } from 'antd';
+import React, { PureComponent } from 'react';
+import { Table, Button, message, Popconfirm, Divider } from 'antd';
+import { InputCell } from '../../../../components/EditableCell'
 
 export default class TableForm extends PureComponent {
     constructor(props) {
@@ -108,6 +109,7 @@ export default class TableForm extends PureComponent {
         this.clickedCancel = false;
     }
     render() {
+        const { getFieldDecorator } = this.props.form;
         const columns = [
             {
                 title: '序号',
@@ -123,12 +125,16 @@ export default class TableForm extends PureComponent {
                 render: (text, record) => {
                     if (record.editable) {
                         return (
-                            <Input
-                                value={text}
-                                autoFocus
-                                onChange={e => this.handleFieldChange(e, 'name', record.key)}
-                                onKeyPress={e => this.handleKeyPress(e, record.key)}
-                                placeholder="成员姓名"
+                            <InputCell
+                                fieldName={`list[${record.key}].name`}
+                                initialValue={text}
+                                componentProps={{
+                                    autoFocus:"autofocus",
+                                    placeholder:"成员姓名",
+                                    onChange:e => this.handleFieldChange(e, 'name', record.key),
+                                    onKeyPress:e => this.handleKeyPress(e, record.key),
+                                }}
+                                getFieldDecorator={getFieldDecorator}
                             />
                         );
                     }
@@ -176,7 +182,7 @@ export default class TableForm extends PureComponent {
         ];
 
         return (
-            <Fragment>
+            <React.Fragment>
                 <Table
                     loading={this.state.loading}
                     columns={columns}
@@ -194,7 +200,7 @@ export default class TableForm extends PureComponent {
                 >
                     添加
                 </Button>
-            </Fragment>
+            </React.Fragment>
         );
     }
 }

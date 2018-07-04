@@ -1,8 +1,8 @@
 // Created by liuliyuan on 2018/6/30
 import React,{Component} from 'react'
-import { Row, Col, Form, Card, Upload, Icon, message } from 'antd';
-import { getFields } from  'utils'
-import { requestDict,setSelectFormat } from 'utils'
+import {withRouter} from 'react-router-dom'
+import { Row, Col, Form, Card, Upload, Icon, message, Button } from 'antd';
+import { getFields,request,requestDict,setSelectFormat } from  'utils'
 import TableForm from './TableForm.r'
 
 function getBase64(img, callback) {
@@ -42,7 +42,17 @@ const tableData = [
      state={
          updateKey:Date.now(),
          loading: false,
-         statusData:[]
+         changeTypeData:[],
+         specialtyData:[],
+     }
+
+     handleSubmit = (e) => {
+         e && e.preventDefault();
+         this.props.form.validateFields((err, values) => {
+            if(err) return;
+            console.log(values)
+             this.props.history.push('/web/direct/create/assign')
+         });
      }
 
      handleChange = (info) => {
@@ -60,16 +70,32 @@ const tableData = [
      }
 
      //去数据字典里面的状态
-     getStatus=()=>{
-         requestDict('com.moya.contract.enums.DirectiveStatusEnum',result=>{
+     getChangeType=()=>{
+         requestDict(`['com.moya.contract.enums.MdyDirectiveTypeEnum']`,result=>{
              this.setState({
-                 statusData:setSelectFormat(result)
+                 changeTypeData:setSelectFormat(result.MdyDirectiveTypeEnum)
              })
          })
      }
+     getSpecialty=()=>{
+         request('/con/mdydirective/initData')
+             .then((res) => {
+                 if(res.state === 'ok'){
+                     this.setState({
+                         specialtyData:setSelectFormat(res.data)
+                     })
+                 } else {
+                     return Promise.reject(res.message);
+                 }
+             })
+             .catch(err => {
+                 message.error(err.message)
+             })
+     }
 
      componentDidMount() {
-         this.getStatus()
+         this.getChangeType();
+         this.getSpecialty()
      }
 
     render(){
@@ -87,9 +113,8 @@ const tableData = [
 
         return(
             <React.Fragment>
-                <div className="advancedForm">
-                    <Form onSubmit={this.handleSearch} layout="vertical" hideRequiredMark>
-
+                <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
+                    <div className="advancedForm">
                         <Card>
                             <p>指令单基本信息</p>
 
@@ -98,18 +123,18 @@ const tableData = [
                                     getFields(form, [
                                         {
                                             label:'选择企业',
-                                            fieldName:'company',
+                                            fieldName:'supplier',
                                             type:'companyName',
                                             span:8,
                                             formItemStyle:null,
-                                            fieldDecoratorOptions:{
+                                            /*fieldDecoratorOptions:{
                                                 rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
                                                 ]
-                                            },
+                                            },*/
                                         },{
                                             label:'选择项目',
                                             fieldName:'project',
@@ -117,11 +142,12 @@ const tableData = [
                                             span:8,
                                             formItemStyle:null,
                                             componentProps:{
-                                                fieldTextName:'itemName',
+                                                fieldTextName:'name',
                                                 fieldValueName:'id',
                                                 doNotFetchDidMount:true,
-                                                fetchAble:getFieldValue('company') || false,
-                                                url:`/project/list/${getFieldValue('company')}`,
+                                                fetchAble:getFieldValue('supplier') || false,
+                                                url:`/con/mdydirective/findItemByCompanyId?company_id=${getFieldValue('supplier')}`,
+
                                             }
                                         },
 
@@ -139,27 +165,27 @@ const tableData = [
                                             span:8,
                                             formItemStyle:null,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },{
                                             label:'变更类型',
                                             fieldName:'type',
                                             type:'select',
                                             span:8,
-                                            options:[{label:'全部', key:''}].concat(this.state.statusData),
+                                            options:this.state.changeTypeData,
                                             fieldDecoratorOptions:{
-                                                initialValue:{label:'全部', key:''},
-                                                rules:[
+                                                //initialValue:{label:'全部', key:''},
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择变更类型'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                             componentProps: {
                                                 labelInValue:true,
@@ -169,15 +195,15 @@ const tableData = [
                                             fieldName:'profession',
                                             type:'select',
                                             span:8,
-                                            options:[{label:'全部', key:''}].concat(this.state.statusData),
+                                            options:this.state.specialtyData,
                                             fieldDecoratorOptions:{
-                                                initialValue:{label:'全部', key:''},
-                                                rules:[
+                                                //initialValue:{label:'全部', key:''},
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择变更类型'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                             componentProps: {
                                                 labelInValue:true,
@@ -198,12 +224,12 @@ const tableData = [
                                             span:24,
                                             formItemStyle:null,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },{
                                             label:'变更详情',
@@ -211,12 +237,12 @@ const tableData = [
                                             type:'textArea',
                                             span:24,
                                             fieldDecoratorOptions:{
-                                                rules:[
+                                                /*rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择变更类型'
                                                     }
-                                                ]
+                                                ]*/
                                             },
                                         },
 
@@ -242,17 +268,17 @@ const tableData = [
                                         getFields(form, [
                                             {
                                                 label:'图纸编号',
-                                                fieldName:'code',
+                                                fieldName:'drawingNumbers',
                                                 type:'input',
                                                 span:24,
                                                 formItemStyle:null,
                                                 fieldDecoratorOptions:{
-                                                    rules:[
+                                                    /*rules:[
                                                         {
                                                             required:true,
                                                             message:'请选择图纸编号'
                                                         }
-                                                    ]
+                                                    ]*/
                                                 },
                                             },
 
@@ -268,16 +294,18 @@ const tableData = [
                             <Row gutter={24}>
                                 {getFieldDecorator('members', {
                                     initialValue: tableData,
-                                })(<TableForm />)}
+                                })(<TableForm form={this.props.form} />)}
                             </Row>
                         </Card>
-
-                    </Form>
-                </div>
+                    </div>
+                    <div className="steps-action">
+                        <Button type="primary" onClick={this.handleSubmit}> 下一步，指定供应商 </Button>
+                    </div>
+                </Form>
             </React.Fragment>
         )
     }
 
 }
 
-export default Form.create()(Step1)
+export default Form.create()(withRouter(Step1))

@@ -8,6 +8,14 @@ const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const { RangePicker,MonthPicker } = DatePicker;
+const normFile = (e) => {
+    console.log('Upload event:', e);
+    if (Array.isArray(e)) {
+        return e;
+    }
+    return e && e.fileList;
+}
+
 
 export const getFields = (form,fieldsData=[],layout) =>{
 
@@ -48,7 +56,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
     return fieldsData.map((item,i)=>{
         let CusComponent;
         const type = item.type;
-        let formItemStyle = item.formItemStyle || defaultFormItemStyle;
+        let formItemStyle = item['hideLabel'] !== true ? item.formItemStyle || defaultFormItemStyle : {}
         switch (type){
             case 'input':
                 CusComponent = Input;
@@ -92,6 +100,9 @@ export const getFields = (form,fieldsData=[],layout) =>{
             case 'asyncSelect':
                 CusComponent = CusFormItem.AsyncSelect;
                 break;
+            case 'fileUpload':
+                CusComponent = CusFormItem.FileUpload;
+                break;
             default:
                 CusComponent = Input
         }
@@ -109,7 +120,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
         }else if(type==='select'){
             return (
                 <Col span={item['span'] || 8} key={i}>
-                    <FormItem label={ item['hideLabel'] === true ? null : item['label'] }  {...formItemStyle}>
+                    <FormItem label={ item['hideLabel'] !== true && item['label'] }  {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions'],
                         })(
@@ -129,20 +140,34 @@ export const getFields = (form,fieldsData=[],layout) =>{
         }else if(type==='checkbox' || type==='radio'){
             return(
                 <Col span={item['span'] || 8} key={i}>
-                    <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
-                        {getFieldDecorator(item['fieldName'],{
-                            valuePropName: type,
-                            ...item['fieldDecoratorOptions']
-                        })(
-                            <CusComponent {...item['componentProps']} />
-                        )}
-                    </FormItem>
+
+                    {   // showLayout inline：表示文字显示在选择框的后面
+                        item['showLayout'] === 'inline' ? (
+                            <FormItem {...formItemStyle}>
+                                {getFieldDecorator(item['fieldName'],{
+                                    valuePropName: type,
+                                    ...item['fieldDecoratorOptions']
+                                })(
+                                    item['hideLabel'] === true ? <CusComponent {...item['componentProps']} /> : <CusComponent {...item['componentProps']} >{item['label']}</CusComponent>
+                                )}
+                            </FormItem>
+                        ):(
+                            <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
+                                {getFieldDecorator(item['fieldName'],{
+                                    valuePropName: type,
+                                    ...item['fieldDecoratorOptions']
+                                })(
+                                    <CusComponent {...item['componentProps']} />
+                                )}
+                            </FormItem>
+                        )
+                    }
                 </Col>
             )
         }else if(type==='checkboxGroup' || type==='cascader' || type==='radioGroup'){
             return(
-                <Col span={item['span'] || 8} key={i}>
-                    <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
+                <Col span={item['span'] || 8} key={i} className={(type==='checkboxGroup' || type==='radioGroup') ? 'fix-ie10-formItem-textArea' : ''}>
+                    <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions'],
                         })(
@@ -154,7 +179,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
         }else if(type==='rangePicker'){
             return (
                 <Col span={item['span'] || 8} key={i}>
-                    <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
+                    <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions']
                         })(
@@ -166,7 +191,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
         }else if(type==='switch'){
             return (
                 <Col span={item['span'] || 8} key={i}>
-                    <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
+                    <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             valuePropName: 'checked' ,
                             ...item['fieldDecoratorOptions']
@@ -176,10 +201,24 @@ export const getFields = (form,fieldsData=[],layout) =>{
                     </FormItem>
                 </Col>
             )
+        }else if(type==='fileUpload'){
+            return(
+                <Col key={i} span={item['span'] || 8} className={type==='fileUpload' ? 'fix-ie10-formItem-fileUpload' : ''}>
+                    <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
+                        {getFieldDecorator(item['fieldName'],{
+                            valuePropName: 'fileList',
+                            getValueFromEvent:normFile,
+                            ...item['fieldDecoratorOptions']
+                        })(
+                            <CusComponent setFieldsValue={fileList=>setFieldsValue({[item['fileName']]:fileList})} componentProps={item['componentProps']} />
+                        )}
+                    </FormItem>
+                </Col>
+            )
         }else{
             return (
-                <Col span={item['span'] || 8} key={i}>
-                    <FormItem label={item['hideLabel'] === true ? null : item['label']} {...formItemStyle}>
+                <Col span={item['span'] || 8} key={i} className={type==='textArea' ? 'fix-ie10-formItem-textArea' : ''}>
+                    <FormItem label={item['hideLabel'] !== true && item['label']} {...formItemStyle}>
                         {getFieldDecorator(item['fieldName'],{
                             ...item['fieldDecoratorOptions']
                         })(

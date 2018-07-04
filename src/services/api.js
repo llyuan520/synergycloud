@@ -16,7 +16,7 @@ export function accountLogin(options) {
         .then(res=>{
             if(res.state === 'ok'){
                 options.success && options.success();
-                dispatch(token.increment(res.token));
+                dispatch(token.increment(res.data.token));
                 dispatch(userInfoStatus.increment(false));
                 //获取用户信息
                 dispatch(personal.increment({ username: options.number }));
@@ -42,7 +42,7 @@ export function accountRegister(options) {
         .then(res=>{
             if(res.state === 'ok'){
                 options.success && options.success();
-                dispatch(token.increment(res.token));
+                dispatch(token.increment(res.data.token));
                 dispatch(userInfoStatus.increment(false));
                 //获取用户信息
                 dispatch(personal.increment({ username: options.number }));

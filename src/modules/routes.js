@@ -1,8 +1,13 @@
 // Created by liuliyuan on 2018/6/22
 import wrapPage from 'components/TitlePage';
 import Home from './Home/index'
-import Instruct from './Instruct'
-import CreateInstruct from './Instruct/Create'
+import Direct from './Direct'
+import Create from './Direct/Create'
+import CostMeasure from './Direct/Cost'
+import SendDirect from './Direct/Send'
+import SignDirect from './Direct/Sign'
+import CompleteConfirm from './Direct/Complete'
+import ChangeSettleAccounts from './Direct/Change'
 
 
 const routes = [
@@ -13,15 +18,39 @@ const routes = [
         icon:'home',
         exact:true
     }, {
-        path:'/web/instruct',
-        component:wrapPage('合同履约协同平台 – 指令单',Instruct),
+        path:'/web/direct',
+        component:wrapPage('合同履约协同平台 – 指令单', Direct),
         name:'指令单',
         icon:'file',
         exact:true,
     }, {
-        path:'/web/instruct/create',
-        component:wrapPage('合同履约协同平台 – 新建指令单',CreateInstruct),
+        path:'/web/direct/create',
+        component:wrapPage('合同履约协同平台 – 新建指令单',Create),
         name:'新建指令单',
+    }, {
+        path:'/web/direct/cost',
+        component:wrapPage('合同履约协同平台 – 成本测算',CostMeasure),
+        name:'成本测算',
+        exact:true,
+    }, {
+        path:'/web/direct/send',
+        component:wrapPage('合同履约协同平台 – 下发指令',SendDirect),
+        name:'下发指令',
+        exact:true,
+    }, {
+        path:'/web/direct/sign',
+        component:wrapPage('合同履约协同平台 – 签收指令',SignDirect),
+        name:'签收指令',
+        exact:true,
+    }, {
+        path:'/web/direct/complete',
+        component:wrapPage('合同履约协同平台 – 完工确认',CompleteConfirm),
+        name:'完工确认',
+        exact:true,
+    }, {
+        path:'/web/direct/change',
+        component:wrapPage('合同履约协同平台 – 变更结算',ChangeSettleAccounts),
+        name:'变更结算',
         exact:true,
     }, {
         path:'/web/output',
@@ -44,6 +73,21 @@ const routes = [
         icon:'api',
         exact:true,
     }, {
+        path:'/403',
+        component:wrapPage('403',() => import('./Exception/403')),
+        name:'403',
+        exact:true,
+    }, {
+        path:'/404',
+        component:wrapPage('404',() => import('./Exception/404')),
+        name:'404',
+        exact:true,
+    }, {
+        path:'/500',
+        component:wrapPage('500',() => import('./Exception/500')),
+        name:'500',
+        exact:true,
+    },{
         path:'/web',
         redirect:true,
         to:'/web/home'
