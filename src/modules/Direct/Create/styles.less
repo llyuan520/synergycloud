@@ -1,0 +1,38 @@
+// custom footer for fixed footer toolbar
+.advancedForm + div {
+  padding-bottom: 64px;
+}
+
+.advancedForm {
+  :global {
+    .ant-form .ant-row:last-child .ant-form-item {
+      margin-bottom: 24px;
+    }
+    .ant-table td {
+      transition: none !important;
+    }
+  }
+  .ant-card{
+    -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    border-color: rgba(0, 0, 0, 0.09);
+    margin-bottom: 25px;
+
+    .ant-card-body >p {
+      margin-bottom: 24px;
+    }
+  }
+
+  .upload-tip {
+    color: #ccc;
+    font-size: 12px;
+  }
+}
+
+
+.editable {
+  td {
+    padding-top: 13px !important;
+    padding-bottom: 12.5px !important;
+  }
+}

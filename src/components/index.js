@@ -11,6 +11,10 @@ export { default as TableSearchListForm } from './TableSearchListForm';
 export { default as SearchTable } from './SearchTable'
 export { default as CusFormItem } from './FormItems'
 export { default as UploadSingleFileWithButton } from './UploadSingleFileWithButton';
+export { default as Steps } from './Steps';
+export { default as Tabs } from './Tabs';
+export { default as CustomizeStepsAndTabs } from './CustomizeStepsAndTabs';
+
 
 
 

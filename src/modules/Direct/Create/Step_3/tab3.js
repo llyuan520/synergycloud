@@ -1,15 +1,14 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
-import {  Row, Card  } from 'antd';
+import { Row, Card  } from 'antd';
 import DragSortTable from './DragSortingTable.r'
 import { getFields } from  'utils'
 
-export default class TabPane3 extends Component {
+class TabPane3 extends Component {
 
     state = {
         updateKey:Date.now(),
     }
-
     render(){
         return(
             <React.Fragment>
@@ -57,8 +56,9 @@ export default class TabPane3 extends Component {
 
                         <DragSortTable form={this.props.form} />
                     </Card>
-
             </React.Fragment>
         )
     }
 }
+
+export default TabPane3
