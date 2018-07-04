@@ -1,6 +1,5 @@
 // Created by liuliyuan on 2018/7/4
 import React,{Component} from 'react'
-import { getFields,request,requestDict,setSelectFormat } from  'utils'
 
 export default class BasicLayout extends Component {
     render(){
