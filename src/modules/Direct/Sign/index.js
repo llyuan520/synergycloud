@@ -2,7 +2,6 @@
 import React,{Component} from 'react'
 import { Form, Card, Button, Row, Col, Collapse   } from 'antd';
 import BasicLayout from '../../../components/BasicLayout'
-import { getFields,request,requestDict,setSelectFormat } from  'utils'
 import TabPane1 from '../../../modules/Direct/Create/Step_1/tab1'
 
 const Panel = Collapse.Panel;
