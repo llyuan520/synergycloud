@@ -1,69 +1,91 @@
-// Created by liuliyuan on 2018/6/30
-import React, {PureComponent} from 'react';
-import {Table, Button, Input, InputNumber, Popconfirm, Form} from 'antd';
-import './style.less'
+import {Table, Input, Icon, Button, Popconfirm} from 'antd';
+import React from "react";
+import './style.less';
 import _ from 'lodash'
 
-const FormItem = Form.Item;
-const EditableContext = React.createContext();
-
-const EditableRow = ({form, index, ...props}) => (
-<EditableContext.Provider value={form}>
-  <tr {...props} />
-</EditableContext.Provider>
-);
-
-const EditableFormRow = Form.create()(EditableRow);
-
 class EditableCell extends React.Component {
-  getInput = () => {
-    if (this.props.inputType === 'number') {
-      return <InputNumber/>;
+  state = {
+    value: this.props.value,
+    editable: false,
+  }
+
+  handleChange = (e) => {
+    const value = e.target.value;
+    this.setState({value});
+  }
+
+  check = () => {
+    this.setState({editable: false});
+    if (this.props.onChange) {
+      this.props.onChange(this.state.value);
     }
-    return <Input/>;
-  };
+  }
+
+  edit = () => {
+    this.setState({editable: true});
+  }
 
   render() {
-    const {
-      editing,
-      dataIndex,
-      title,
-      inputType,
-      record,
-      index,
-      ...restProps
-    } = this.props;
+    const {value, editable} = this.state;
     return (
-    <EditableContext.Consumer>
-      {(form) => {
-        const {getFieldDecorator} = form;
-        return (
-        <td {...restProps}>
-          {editing ? (
-          <FormItem style={{margin: 0}}>
-            {getFieldDecorator(dataIndex, {
-              rules: [{
-                required: true,
-                message: `Please Input ${title}!`,
-              }],
-              initialValue: record[dataIndex],
-            })(this.getInput())}
-          </FormItem>
-          ) : restProps.children}
-        </td>
-        );
-      }}
-    </EditableContext.Consumer>
+    <div className="editable-cell">
+      {
+        editable ? (
+        <Input
+        value={value}
+        onChange={this.handleChange}
+        onPressEnter={this.check}
+        suffix={(
+        <Icon
+        type="check"
+        className="editable-cell-icon-check"
+        onClick={this.check}
+        />
+        )}
+        />
+        ) : (
+        <div style={{paddingRight: 24}}>
+          {value || ' '}
+          <Icon
+          type="edit"
+          className="editable-cell-icon"
+          onClick={this.edit}
+          />
+        </div>
+        )
+      }
+    </div>
     );
   }
 }
 
-export default class TableForm extends PureComponent {
+export default class TableForm extends React.Component {
   constructor(props) {
     super(props);
+    this.columns = [];
+    console.log(props);
+    _.map(props.columns, item => {
+      if (item.editable) {
+        this.columns.push({
+          title: item.title,
+          dataIndex: 'name',
+          render: (text, record) => (
+          <EditableCell
+          value={text}
+          onChange={this.onCellChange(record.key, 'name')}
+          />
+          ),
+        })
+      } else {
+        this.columns.push({
+          title: item.title,
+          dataIndex: 'name',
+        })
+      }
+    })
+
     this.state = {
-      selectedRowKeys: [], // Check here to configure the default column
-      loading: false,
+      selectedRowKeys: [],
       dataSource: [{
         key: '0',
         name: 'Edward King 0',
@@ -74,11 +96,32 @@ export default class TableForm extends PureComponent {
         name: 'Edward King 1',
         age: '32',
         address: 'London, Park Lane no. 1',
-      }]
-    }
+      }],
+      count: 2,
+    };
   }
 
-  addLine() {
+  onCellChange = (key, dataIndex) => {
+    return (value) => {
+      const dataSource = [...this.state.dataSource];
+      const target = dataSource.find(item => item.key === key);
+      if (target) {
+        target[dataIndex] = value;
+        this.setState({dataSource});
+      }
+    };
+  }
+
+  onDelete(key) {
+    key = key + '';
+    let dataSource = [];
+    _.map(this.state.dataSource, item => {
+      item.key = key && dataSource.pop(item)
+    });
+    this.setState({dataSource});
+  }
+
+  handleAdd = () => {
     const {count, dataSource} = this.state;
     const newData = {
       key: count,
@@ -92,16 +135,11 @@ export default class TableForm extends PureComponent {
     });
   }
 
-  deleteLine() {
-    const {selectedRowKeys, dataSource} = this.state;
-    const data = _.cloneDeep(dataSource);
-    console.log(selectedRowKeys);
-    selectedRowKeys.map(item => {
-      data.splice(item, 1)
-    });
-    console.log(data, dataSource);
-    this.setState({
-      dataSource: data
+  handleDelete = () => {
+    const {selectedRowKeys} = this.state;
+    selectedRowKeys.sort().reverse().map(item => {
+      console.log(item);
+      this.onDelete(item)
     })
   }
 
@@ -111,32 +149,32 @@ export default class TableForm extends PureComponent {
   }
 
   render() {
-    const {count, dataSource} = this.state;
-    const {button, title, columns, headerText} = this.props;
-    const {selectedRowKeys} = this.state;
+    const {props} = this;
+    const columns = this.columns;
+    const {selectedRowKeys, dataSource} = this.state;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
     return (
-    <div>
-      <div className="tab-title">{title}</div>
+    <div className="m10">
       <div>
-        <Button type="primary" style={{marginLeft: 8, marginBottom: 10}}
-                onClick={() => this.addLine()}>{button[0]}</Button>
-        <Button style={{marginLeft: 8, marginBottom: 10}} disabled={!hasSelected}
-                onClick={() => this.deleteLine()}>{button[1]}</Button>
-        <span style={{marginLeft: 8}}>
-            {hasSelected ? `选择了 ${selectedRowKeys.length} 项` : ''}
+        <Button onClick={this.handleAdd} type="primary" style={{marginBottom: 16}}>
+          {props.button}
+        </Button>
+        <Button disabled={!hasSelected} onClick={this.handleDelete} style={{marginBottom: 16, marginLeft: 10}}>
+          删除
+        </Button>
+        <span style={{marginLeft: 8}} className="red">
+            {hasSelected ? `选择了 ${selectedRowKeys.length} 列` : ''}
           </span>
         {
-          headerText && <span className="r headerText">{headerText}</span>
+          props.headerText && <span className="r headerText">{props.headerText}</span>
         }
       </div>
-      <Table rowSelection={rowSelection} dataSource={dataSource} columns={columns} rowClassName="editable-row"
-             pagination={false}/>
+      <Table dataSource={dataSource} pagination={false} columns={columns} rowSelection={rowSelection}/>
     </div>
-    )
+    );
   }
 }
