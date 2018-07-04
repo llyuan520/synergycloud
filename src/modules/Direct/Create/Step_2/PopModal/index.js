@@ -137,14 +137,13 @@ class PopModal extends Component{
                             header={
                                 <React.Fragment>
                                     <Row gutter={24} className='popModal-row-item'>
-                                        <Col span={1}>
+                                        <Col span={4}>
                                             {
                                                 getFields(props.form, [
                                                     {
-                                                        label: '变更项',
+                                                        label: <span style={{ fontWeight: 'bold' }}>变更项1</span>,
                                                         fieldName: 'incomeTaxAuth',
                                                         type: 'checkbox',
-                                                        hideLabel:true,
                                                         showLayout:'inline',
                                                         span: 24,
                                                         fieldDecoratorOptions: {
@@ -157,13 +156,10 @@ class PopModal extends Component{
                                                 ])
                                             }
                                         </Col>
-                                        <Col span={23}>
-                                            <span style={{ fontWeight: 'bold' }}>变更项1</span>
+                                        <Col span={20}>
                                             <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，三房一厅的方案修改布线</span>
                                         </Col>
                                     </Row>
-
-
                                 </React.Fragment>
                             }
                         >
@@ -371,11 +367,11 @@ class PopModal extends Component{
                             header={
                                 <React.Fragment>
                                     <Row gutter={24} className='popModal-row-item'>
-                                        <Col span={1}>
+                                        <Col span={4}>
                                             {
                                                 getFields(props.form, [
                                                     {
-                                                        label: '变更项2',
+                                                        label: <span style={{ fontWeight: 'bold' }}>变更项1</span>,
                                                         fieldName: 'incomeTaxAuth2',
                                                         type: 'checkbox',
                                                         hideLabel:true,
@@ -391,8 +387,7 @@ class PopModal extends Component{
                                                 ])
                                             }
                                         </Col>
-                                        <Col span={23}>
-                                            <span style={{ fontWeight: 'bold' }}>变更项1</span>
+                                        <Col span={20}>
                                             <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，三房一厅的方案修改布线</span>
                                         </Col>
                                     </Row>

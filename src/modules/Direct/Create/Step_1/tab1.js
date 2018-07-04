@@ -4,7 +4,7 @@ import {  Row, Col, Card } from 'antd';
 
 const TabPane1 = (props)=>{
     return (
-        <Card bordered={false}>
+        <div style={{ padding:'24px 32px', ...props.style }}>
             <Row gutter={24}>
                 <Col span={8}>
                     <p>项目名称</p>
@@ -15,7 +15,7 @@ const TabPane1 = (props)=>{
                     <p>变更编号变更编号变更编号变更编号变更编号变更编号变更编号</p>
                 </Col>
             </Row>
-            <Row gutter={24}>
+            <Row gutter={24} style={{ marginTop:24 }}>
                 <Col span={8}>
                     <p>变更类型</p>
                     <p>变更类型</p>
@@ -25,19 +25,19 @@ const TabPane1 = (props)=>{
                     <p>土建类</p>
                 </Col>
             </Row>
-            <Row gutter={24}>
+            <Row gutter={24} style={{ marginTop:24 }}>
                 <Col span={24}>
                     <p>变更主题</p>
                     <p>变更主题变更主题变更主题变更主题变更主题变更主题变更主题变更主题变更主题变更主题变更主题变更主题变更主题</p>
                 </Col>
             </Row>
-            <Row gutter={24}>
+            <Row gutter={24} style={{ marginTop:24 }}>
                 <Col span={24}>
                     <p>变更原因详情</p>
                     <p>变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情变更原因详情</p>
                 </Col>
             </Row>
-            <Row gutter={24}>
+            <Row gutter={24} style={{ marginTop:24 }}>
                 <Col span={3}>
                     <img src='www.baidu.com' alt="avatar" />
                 </Col>
@@ -46,7 +46,7 @@ const TabPane1 = (props)=>{
                     <p>00002300000023</p>
                 </Col>
             </Row>
-        </Card>
+        </div>
     )
 }
 
