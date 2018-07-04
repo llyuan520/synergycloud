@@ -16,10 +16,9 @@ export default class AsyncSelect extends Component{
         fieldValueName:PropTypes.string.isRequired,
         label:PropTypes.string.isRequired,
         url:PropTypes.string.isRequired,
+        params:PropTypes.object,
         selectOptions:PropTypes.object,
         doNotFetchDidMount:PropTypes.bool,
-        whetherShowAll:PropTypes.bool,
-        notShowAll:PropTypes.bool,
         decoratorOptions:PropTypes.object,
 
         //外部条件，用来提供给外部控制该组件是否要异步获取信息的条件，可选
@@ -37,8 +36,6 @@ export default class AsyncSelect extends Component{
             }
         },
         label:'field',
-        whetherShowAll:false,
-        notShowAll:false,
         selectOptions:{
 
         },
@@ -84,14 +81,16 @@ export default class AsyncSelect extends Component{
     }
     fetch(url){
         this.toggleLoaded(false)
-        request.get(url || this.props.url)
-            .then(({data}) => {
-                if(data.code===200 && this.mounted){
+        request(url || this.props.url)
+            .then((res) => {
+                if(res.state === 'ok' && this.mounted){
                     this.toggleLoaded(true)
-                    const result = data.data.records || data.data;
+                    const result = res.data;
                     this.setState({
-                        dataSource:this.props.transformData(result)
+                        dataSource: this.props.transformData(result)
                     })
+                } else {
+                    return Promise.reject(res.message);
                 }
             })
             .catch(err => {

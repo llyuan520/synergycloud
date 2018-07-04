@@ -2,8 +2,7 @@
 import React,{Component} from 'react'
 import {withRouter} from 'react-router-dom'
 import { Row, Col, Form, Card, Upload, Icon, message, Button } from 'antd';
-import { getFields } from  'utils'
-import { requestDict,setSelectFormat } from 'utils'
+import { getFields,request,requestDict,setSelectFormat } from  'utils'
 import TableForm from './TableForm.r'
 
 function getBase64(img, callback) {
@@ -43,7 +42,8 @@ const tableData = [
      state={
          updateKey:Date.now(),
          loading: false,
-         statusData:[]
+         changeTypeData:[],
+         specialtyData:[],
      }
 
      handleSubmit = (e) => {
@@ -70,16 +70,32 @@ const tableData = [
      }
 
      //去数据字典里面的状态
-     getStatus=()=>{
-         requestDict('com.moya.contract.enums.DirectiveStatusEnum',result=>{
+     getChangeType=()=>{
+         requestDict(`['com.moya.contract.enums.MdyDirectiveTypeEnum']`,result=>{
              this.setState({
-                 statusData:setSelectFormat(result)
+                 changeTypeData:setSelectFormat(result.MdyDirectiveTypeEnum)
              })
          })
      }
+     getSpecialty=()=>{
+         request('/con/mdydirective/initData')
+             .then((res) => {
+                 if(res.state === 'ok'){
+                     this.setState({
+                         specialtyData:setSelectFormat(res.data)
+                     })
+                 } else {
+                     return Promise.reject(res.message);
+                 }
+             })
+             .catch(err => {
+                 message.error(err.message)
+             })
+     }
 
      componentDidMount() {
-         this.getStatus()
+         this.getChangeType();
+         this.getSpecialty()
      }
 
     render(){
@@ -107,17 +123,17 @@ const tableData = [
                                     getFields(form, [
                                         {
                                             label:'选择企业',
-                                            fieldName:'company',
+                                            fieldName:'supplier',
                                             type:'companyName',
                                             span:8,
                                             formItemStyle:null,
                                             fieldDecoratorOptions:{
-                                                /*rules:[
+                                                rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
-                                                ]*/
+                                                ]
                                             },
                                         },{
                                             label:'选择项目',
@@ -126,11 +142,12 @@ const tableData = [
                                             span:8,
                                             formItemStyle:null,
                                             componentProps:{
-                                                fieldTextName:'itemName',
+                                                fieldTextName:'name',
                                                 fieldValueName:'id',
                                                 doNotFetchDidMount:true,
-                                                fetchAble:getFieldValue('company') || false,
-                                                url:`/project/list/${getFieldValue('company')}`,
+                                                fetchAble:getFieldValue('supplier') || false,
+                                                url:`/con/mdydirective/findItemByCompanyId?company_id=${getFieldValue('supplier')}`,
+
                                             }
                                         },
 
@@ -160,9 +177,9 @@ const tableData = [
                                             fieldName:'type',
                                             type:'select',
                                             span:8,
-                                            options:[{label:'全部', key:''}].concat(this.state.statusData),
+                                            options:this.state.changeTypeData,
                                             fieldDecoratorOptions:{
-                                                initialValue:{label:'全部', key:''},
+                                                //initialValue:{label:'全部', key:''},
                                                 /*rules:[
                                                     {
                                                         required:true,
@@ -178,9 +195,9 @@ const tableData = [
                                             fieldName:'profession',
                                             type:'select',
                                             span:8,
-                                            options:[{label:'全部', key:''}].concat(this.state.statusData),
+                                            options:this.state.specialtyData,
                                             fieldDecoratorOptions:{
-                                                initialValue:{label:'全部', key:''},
+                                                //initialValue:{label:'全部', key:''},
                                                 /*rules:[
                                                     {
                                                         required:true,
