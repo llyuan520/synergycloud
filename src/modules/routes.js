@@ -1,8 +1,14 @@
 // Created by liuliyuan on 2018/6/22
 import wrapPage from 'components/TitlePage';
 import Home from './Home/index'
-import Instruct from './Instruct'
-import Create from './Instruct/Create'
+import Direct from './Direct'
+import Create from './Direct/Create'
+import CostMeasure from './Direct/Cost'
+import SendDirect from './Direct/Send'
+import SignDirect from './Direct/Sign'
+import CompleteConfirm from './Direct/Complete'
+import ChangeSettleAccounts from './Direct/Change'
+
 import Output from './Output';
 import OutputCreate from './Output/Create'
 
@@ -14,15 +20,35 @@ const routes = [
     icon: 'home',
     exact: true
   }, {
-    path: '/web/instruct',
-    component: wrapPage('合同履约协同平台 – 指令单', Instruct),
+    path: '/web/direct',
+    component: wrapPage('合同履约协同平台 – 指令单', Direct),
     name: '指令单',
     icon: 'file',
     exact: true,
   }, {
-    path: '/web/instruct/create',
+    path: '/web/direct/create',
     component: wrapPage('合同履约协同平台 – 新建指令单', Create),
     name: '新建指令单',
+  }, {
+    path: '/web/direct/cost',
+    component: wrapPage('合同履约协同平台 – 成本测算', CostMeasure),
+    name: '成本测算',
+  }, {
+    path: '/web/direct/send',
+    component: wrapPage('合同履约协同平台 – 下发指令', SendDirect),
+    name: '下发指令',
+  }, {
+    path: '/web/direct/sign',
+    component: wrapPage('合同履约协同平台 – 签收指令', SignDirect),
+    name: '签收指令',
+  }, {
+    path: '/web/direct/complete',
+    component: wrapPage('合同履约协同平台 – 完工确认', CompleteConfirm),
+    name: '完工确认',
+  }, {
+    path: '/web/direct/change',
+    component: wrapPage('合同履约协同平台 – 变更结算', ChangeSettleAccounts),
+    name: '变更结算',
   }, {
     path: '/web/output',
     name: '产值单',

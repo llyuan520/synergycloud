@@ -51,7 +51,7 @@ const tableData = [
          this.props.form.validateFields((err, values) => {
             if(err) return;
             console.log(values)
-             this.props.history.push('/web/instruct/create/assign')
+             this.props.history.push('/web/direct/create/assign')
          });
      }
 
@@ -127,14 +127,14 @@ const tableData = [
                                             type:'companyName',
                                             span:8,
                                             formItemStyle:null,
-                                            fieldDecoratorOptions:{
+                                            /*fieldDecoratorOptions:{
                                                 rules:[
                                                     {
                                                         required:true,
                                                         message:'请选择企业'
                                                     }
                                                 ]
-                                            },
+                                            },*/
                                         },{
                                             label:'选择项目',
                                             fieldName:'project',
