@@ -14,6 +14,9 @@ export { default as UploadSingleFileWithButton } from './UploadSingleFileWithBut
 export { default as Steps } from './Steps';
 export { default as Tabs } from './Tabs';
 export { default as CustomizeStepsAndTabs } from './CustomizeStepsAndTabs';
+export { default as CustomizeStaticTabs } from './CustomizeStaticTabs';
+export { default as BasicLayout} from './BasicLayout';
+
 
 
 

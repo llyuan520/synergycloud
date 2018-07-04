@@ -31,22 +31,27 @@ const routes = [
         path:'/web/direct/cost',
         component:wrapPage('合同履约协同平台 – 成本测算',CostMeasure),
         name:'成本测算',
+        exact:true,
     }, {
         path:'/web/direct/send',
         component:wrapPage('合同履约协同平台 – 下发指令',SendDirect),
         name:'下发指令',
+        exact:true,
     }, {
         path:'/web/direct/sign',
         component:wrapPage('合同履约协同平台 – 签收指令',SignDirect),
         name:'签收指令',
+        exact:true,
     }, {
         path:'/web/direct/complete',
         component:wrapPage('合同履约协同平台 – 完工确认',CompleteConfirm),
         name:'完工确认',
+        exact:true,
     }, {
         path:'/web/direct/change',
         component:wrapPage('合同履约协同平台 – 变更结算',ChangeSettleAccounts),
         name:'变更结算',
+        exact:true,
     }, {
         path:'/web/output',
         name:'产值单',

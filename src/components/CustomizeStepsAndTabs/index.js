@@ -9,13 +9,15 @@ export default class CustomizeStepsAndTabs extends Component {
 
     render(){
         const { title, steps, routes } = this.props;
+        const isShowSteps = steps && steps.steps && steps.steps.length > 0;
         return(
             <div className="ISA-fragment ISA-bgColor">
                 <React.Fragment>
                     <h2> {title} </h2>
                     <div className="steps-main">
-                        <Steps {...steps} />
-
+                        {
+                            isShowSteps && <Steps {...steps} />
+                        }
                         <div className="steps-content">
                             <Switch>
                                 {routes.map((route, i) => (

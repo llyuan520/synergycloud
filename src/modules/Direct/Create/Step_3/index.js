@@ -61,7 +61,7 @@ class Step3 extends Component {
                                 <Button style={{ marginLeft: 8 }} href="/web/direct/create/assign"> 上一步 </Button>
                             </div>
                         }
-                    />>
+                    />
                 </Form>
             </React.Fragment>
         )
