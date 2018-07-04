@@ -158,7 +158,7 @@ class Step1 extends Component {
 
                 ], 'vertical')
               }
-              <Col className="gutter-row pb8" span={8}>
+              <Col className="gutter-row pb21" span={8}>
                 <Button type="primary">搜索</Button>
               </Col>
             </Row>

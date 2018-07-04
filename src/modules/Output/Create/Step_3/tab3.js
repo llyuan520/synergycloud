@@ -3,65 +3,77 @@
  * @fanz
  */
 import React from 'react'
-import {Row, Card, Form} from 'antd';
+import {Row, Card, Form, Table, Divider} from 'antd';
 import {getFields} from 'utils'
+import TableForm from "./TableForm.r";
+
+const buttonDetails = ['添加明细信息', '删除'];
+const buttonList = ['添加发票', '删除'];
+const columnsDetails = [{
+  title: '大类名称',
+  dataIndex: 'name',
+  key: 'name',
+}, {
+  title: '商品名称',
+  dataIndex: 'age',
+  key: 'age',
+}, {
+  title: '数量/单位',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '单价',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '税率',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '不含税金额',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '含税金额',
+  dataIndex: 'address',
+  key: 'address',
+},];
+
+const columnsList = [{
+  title: '发票代码',
+  dataIndex: 'name',
+  key: 'name',
+}, {
+  title: '发票号码',
+  dataIndex: 'age',
+  key: 'age',
+}, {
+  title: '开票日期',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '税率',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '含税金额',
+  dataIndex: 'address',
+  key: 'address',
+}, {
+  title: '发票状态',
+  dataIndex: 'address',
+  key: 'address',
+}];
 
 class TabPane3 extends React.Component {
 
-  state = {
-    updateKey: Date.now(),
-  }
 
   render() {
-    const {form} = this.props;
-
     return (
     <React.Fragment>
-      <Form onSubmit={this.handleSearch}>
-        <Card
-        bordered={false}
-        bodyStyle={{
-          paddingTop: 0
-        }}
-        >
-          <Row gutter={24} style={{marginBottom: 12}}>
-            {
-              getFields(form, [
-                {
-                  label: '审批模板',
-                  fieldName: 'approvalTemplate',
-                  type: 'select',
-                  span: 8,
-                  options: [{label: '全部', key: ''}],
-                  fieldDecoratorOptions: {
-                    initialValue: {label: '全部', key: ''},
-                    rules: [
-                      {
-                        required: true,
-                        message: '请选择变更类型'
-                      }
-                    ]
-                  },
-                  componentProps: {
-                    labelInValue: true,
-                  },
-                }, {
-                  label: '抄送',
-                  fieldName: 'copy',
-                  type: 'select',
-                  span: 16,
-                  options: [],
-                  componentProps: {
-                    mode: 'tags'
-                  }
-                },
-
-              ])
-            }
-          </Row>
-
-        </Card>
-      </Form>
+      <TableForm title="产值明细" button={buttonDetails} columns={columnsDetails}/>
+      <Divider/>
+      <TableForm title="发票列表" button={buttonList} columns={columnsList} headerText="发票类型：增值税专票"/>
     </React.Fragment>
     )
   }

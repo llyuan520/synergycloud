@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/6/30
 import React, {PureComponent} from 'react';
 import {Table, Button, message, Popconfirm, Divider} from 'antd';
-import {InputCell} from '../../../../components/EditableCell'
+import PopModal from './PopModal'
 
 export default class TableForm extends PureComponent {
   constructor(props) {
@@ -10,7 +10,28 @@ export default class TableForm extends PureComponent {
     this.state = {
       data: props.value || [],
       loading: false,
+      visible: false,
+      modalConfig: {
+        type: ''
+      },
     };
+  }
+
+
+  toggleModalVisible = visible => {
+    this.setState({
+      visible
+    })
+  }
+
+  showModal = type => {
+    this.toggleModalVisible(true)
+    this.setState({
+      modalConfig: {
+        type,
+        id: this.state.selectedRowKeys
+      }
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -183,11 +204,11 @@ export default class TableForm extends PureComponent {
         },
       },
     ];
-
+    const {visible, modalConfig} = this.state;
     return (
     <React.Fragment>
       <div className="table-operations">
-        <Button className="ml10">邀请填写</Button>
+        <Button className="ml10" onClick={() => this.showModal('add')}>邀请填写</Button>
         <Button className="ml10" icon="plus" onClick={this.newMember}>添加</Button>
       </div>
       <Table
@@ -198,6 +219,12 @@ export default class TableForm extends PureComponent {
       rowClassName={record => {
         return record.editable ? 'editable' : '';
       }}
+      />
+      <PopModal
+      visible={visible}
+      modalConfig={modalConfig}
+      toggleModalVisible={this.toggleModalVisible}
+      setData={this.props.setData}
       />
     </React.Fragment>
     );
