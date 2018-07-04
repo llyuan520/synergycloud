@@ -132,7 +132,7 @@ const getColumns =(context)=>[
     }
 ];
 
-class Instruct extends Component {
+class Direct extends Component {
 
     state={
         updateKey:Date.now(),
@@ -171,7 +171,7 @@ class Instruct extends Component {
                     //scroll:{ x:1300 },
                     cardProps:{
                         title:<div>
-                            <Button type='primary' href={'/web/instruct/create'} style={{marginRight:5}} >
+                            <Button type='primary' href='/web/direct/create' style={{marginRight:5}} >
                                 <Icon type="plus" />
                                 新增
                             </Button>
@@ -184,4 +184,4 @@ class Instruct extends Component {
     }
 }
 
-export default Instruct;
+export default Direct;

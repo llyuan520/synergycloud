@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
 import PropTypes from 'prop-types'
-import {Button,Icon,Upload} from 'antd'
+import {Icon,Upload} from 'antd'
 export default class FileUpload extends Component{
     state = {
         fileList: [],
