@@ -20,7 +20,7 @@ export default class ISATabs extends Component {
     }
 
     render(){
-        const { tabPaneOptions, stepsAction } = this.props;
+        const { tabPaneOptions, children, stepsAction } = this.props;
         return(
             <React.Fragment>
 
@@ -38,6 +38,10 @@ export default class ISATabs extends Component {
                         }
                     </Tabs>
                 </div>
+
+                {
+                    children ? children : null
+                }
 
                 <div className="steps-action">
                     {
