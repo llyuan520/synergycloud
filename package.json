@@ -6,7 +6,7 @@
     "@antv/data-set": "^0.8.9",
     "antd": "^3.6.3",
     "axios": "^0.18.0",
-    "cz-conventional-changelog": "^2.1.0",
+    "bignumber.js": "^7.2.1",
     "echarts": "^4.1.0",
     "echarts-for-react": "^2.0.13",
     "history": "^4.7.2",
