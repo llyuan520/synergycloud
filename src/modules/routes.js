@@ -8,7 +8,9 @@ import SendDirect from './Direct/Send'
 import SignDirect from './Direct/Sign'
 import CompleteConfirm from './Direct/Complete'
 import ChangeSettleAccounts from './Direct/Change'
-
+// import CreateInstruct from './Instruct/Create'
+import Project from './Project'
+import CreateProject from './Project/Create'
 
 const routes = [
     {
@@ -64,8 +66,14 @@ const routes = [
         exact:true,
     }, {
         path:'/web/project',
+        component:wrapPage('合同履约协同平台 – 项目管理', Project),
         name:'项目管理',
         icon:'api',
+        exact:true,
+    }, {
+        path:'/web/project/create',
+        component:wrapPage('合同履约协同平台 – 新建项目', CreateProject),
+        name:'新建项目',
         exact:true,
     }, {
         path:'/403',
