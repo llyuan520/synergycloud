@@ -45,7 +45,7 @@ export default class Step3 extends Component {
       }
       stepsAction={
         <div className="steps-action">
-          <Button type="primary"> 下一步 </Button>
+          <Button type="primary"> 提交 </Button>
           <Button style={{marginLeft: 8}}> 保存 </Button>
           <Button style={{marginLeft: 8}} href="/web/output/create/present"> 上一步 </Button>
         </div>

@@ -3,11 +3,9 @@
  * Created by fanzhe on 2018/7/5
  */
 import React, {Component} from 'react';
-import {Button, Modal, Form, Row, Col, Collapse, Divider, Input} from 'antd';
-import {getFields} from 'utils'
+import {Button, Modal, Form, Row, Col, Divider, Input} from 'antd';
 import './styles.less'
 
-const Panel = Collapse.Panel;
 
 class PopModal extends Component {
   static defaultProps = {
