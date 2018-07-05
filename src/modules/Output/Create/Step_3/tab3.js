@@ -3,8 +3,7 @@
  * Created by fanzhe on 2018/7/5
  */
 import React from 'react'
-import {Row, Card, Form, Table, Divider} from 'antd';
-import {getFields} from 'utils'
+import {Form, Divider} from 'antd';
 import TableForm from "./TableForm.r";
 
 const columnsDetails = [{
@@ -61,7 +60,8 @@ class TabPane3 extends React.Component {
     <React.Fragment>
       <TableForm disabled={this.props.disabled} title="产值明细" button="添加明细信息" columns={columnsDetails}/>
       <Divider/>
-      <TableForm  disabled={this.props.disabled} title="发票列表" button="添加发票" columns={columnsList} headerText="发票类型：增值税专票"/>
+      <TableForm disabled={this.props.disabled} title="发票列表" button="添加发票" columns={columnsList}
+                 headerText="发票类型：增值税专票"/>
     </React.Fragment>
     )
   }

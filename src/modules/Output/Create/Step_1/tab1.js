@@ -3,7 +3,7 @@
  * Created by fanzhe on 2018/7/5
  */
 import React from 'react'
-import {Row, Col, Card} from 'antd';
+import {Row, Col} from 'antd';
 import "./styles.less"
 
 const TabPane1 = (props) => {
