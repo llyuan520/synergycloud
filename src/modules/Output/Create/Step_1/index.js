@@ -36,6 +36,20 @@ class Step1 extends Component {
         })
     }
 
+    getConName = () => {
+        request("/con/contract/getContractByName")
+        .then(res=>{
+            console.log(res);
+        })
+    }
+
+    getConNum = () => {
+        request("/con/contract/getContractByNumber")
+        .then(res=>{
+            console.log(res);
+        })
+    }
+
     getList = () => {
         request('/con/contract/findListData')
         .then(res => {
@@ -56,7 +70,7 @@ class Step1 extends Component {
 
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
-        const {disabled, tableData} = this.state;
+        const {disabled, tableData, conName, conNum, statusData} = this.state;
         console.log(tableData);
         return (
         <React.Fragment>
@@ -69,23 +83,18 @@ class Step1 extends Component {
                                 getFields(form, [{
                                     label: '合同名称：',
                                     fieldName: 'number',
-                                    type: 'input',
+                                    type: 'select',
                                     span: 8,
-                                    formItemStyle: null,
-                                    fieldDecoratorOptions: {
-                                        /*rules:[
-                                            {
-                                                required:true,
-                                                message:'请选择企业'
-                                            }
-                                        ]*/
+                                    options: [{label: '全部', key: ''}].concat(conName),
+                                    componentProps: {
+                                        filterOption: (input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                     },
                                 }, {
                                     label: '合同编号：',
                                     fieldName: 'type',
                                     type: 'select',
                                     span: 8,
-                                    options: [{label: '全部', key: ''}].concat(this.state.statusData),
+                                    options: [{label: '全部', key: ''}].concat(conNum),
                                     fieldDecoratorOptions: {
                                         initialValue: {label: '全部', key: ''},
                                         /*rules:[
@@ -105,7 +114,7 @@ class Step1 extends Component {
                                         fieldName: 'type',
                                         type: 'select',
                                         span: 8,
-                                        options: [{label: '全部', key: ''}].concat(this.state.statusData),
+                                        options: [{label: '全部', key: ''}].concat(statusData),
                                         fieldDecoratorOptions: {
                                             initialValue: {label: '全部', key: ''},
                                             /*rules:[
