@@ -1,6 +1,6 @@
 /**
  *
- * @fanz
+ * Created by fanzhe on 2018/7/5
  */
 import React from 'react'
 import {Row, Card, Form, Table, Divider} from 'antd';

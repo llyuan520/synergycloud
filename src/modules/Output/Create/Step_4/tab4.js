@@ -1,4 +1,7 @@
-// Created by liuliyuan on 2018/7/2
+/**
+ *
+ * Created by fanzhe on 2018/7/5
+ */
 import React, {Component} from 'react'
 import {Row, Card, Form} from 'antd';
 import DragSortTable from './DragSortingTable.r'

@@ -1,4 +1,7 @@
-// Created by liuliyuan on 2018/6/30
+/**
+ *
+ * Created by fanzhe on 2018/7/5
+ */
 import React, {Component} from 'react'
 import {withRouter} from 'react-router-dom'
 import {Row, Col, Form, Card, Upload, Icon, message, Button} from 'antd';

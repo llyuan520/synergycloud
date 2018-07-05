@@ -1,3 +1,7 @@
+/**
+ *
+ * Created by fanzhe on 2018/7/5
+ */
 import React from 'react'
 import CustomizeTabs from '../../../../components/Tabs/index'
 import TabPane2 from "../Step_2/tab2";

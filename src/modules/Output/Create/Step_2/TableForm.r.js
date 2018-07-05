@@ -1,3 +1,7 @@
+/**
+ *
+ * Created by fanzhe on 2018/7/5
+ */
 import {Table, Input, InputNumber, Popconfirm, Form, Button} from 'antd';
 import React from "react";
 import PopModal from './PopModal'

@@ -1,4 +1,7 @@
-// Created by liuliyuan on 2018/6/30
+/**
+ *
+ * Created by fanzhe on 2018/7/5
+ */
 import React, {PureComponent} from 'react';
 import {Table} from 'antd';
 

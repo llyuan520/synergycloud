@@ -1,4 +1,7 @@
-// Created by liuliyuan on 2018/7/2
+/**
+ *
+ * Created by fanzhe on 2018/7/5
+ */
 import wrapPage from 'components/TitlePage';
 import ChooseContract from '../Output/Create/Step_1'
 import FillProgress from '../Output/Create/Step_2'
