@@ -21,11 +21,11 @@ export default class Step2 extends React.Component {
           },
           {
             title: '形象进展',
-            component: <TabPane2/>
+            component: <TabPane2 disabled={true}/>
           },
           {
             title: '产值明细和发票',
-            component: <TabPane3/>
+            component: <TabPane3 />
           }
         ]
       }

@@ -6,7 +6,11 @@ export default class TabPane2 extends Component {
   render() {
     return (
     <div>
-      <TableForm/>
+      <TableForm
+      disabled={this.props.disabled}
+      onChange={() => {
+        console.log(1);
+      }}/>
     </div>
     )
   }

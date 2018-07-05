@@ -1,8 +1,8 @@
 // Created by liuliyuan on 2018/7/2
-import React,{Component} from 'react'
-import {  Row, Card, Form  } from 'antd';
+import React, {Component} from 'react'
+import {Row, Card, Form} from 'antd';
 import DragSortTable from './DragSortingTable.r'
-import { getFields } from  'utils'
+import {getFields} from 'utils'
 
 class TabPane4 extends Component {
 

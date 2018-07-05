@@ -59,9 +59,9 @@ class TabPane3 extends React.Component {
   render() {
     return (
     <React.Fragment>
-      <TableForm title="产值明细" button="添加明细信息" columns={columnsDetails}/>
+      <TableForm disabled={this.props.disabled} title="产值明细" button="添加明细信息" columns={columnsDetails}/>
       <Divider/>
-      <TableForm title="发票列表" button="添加发票" columns={columnsList} headerText="发票类型：增值税专票"/>
+      <TableForm  disabled={this.props.disabled} title="发票列表" button="添加发票" columns={columnsList} headerText="发票类型：增值税专票"/>
     </React.Fragment>
     )
   }

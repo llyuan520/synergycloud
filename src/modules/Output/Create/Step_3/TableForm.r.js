@@ -63,9 +63,8 @@ export default class TableForm extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [];
-    console.log(props);
     _.map(props.columns, item => {
-      if (item.editable) {
+      if (item.editable && !props.disabled) {
         this.columns.push({
           title: item.title,
           dataIndex: 'name',
@@ -152,7 +151,7 @@ export default class TableForm extends React.Component {
     const {props} = this;
     const columns = this.columns;
     const {selectedRowKeys, dataSource} = this.state;
-    const rowSelection = {
+    const rowSelection = !props.disabled && {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
@@ -160,10 +159,11 @@ export default class TableForm extends React.Component {
     return (
     <div className="m10">
       <div>
-        <Button onClick={this.handleAdd} type="primary" style={{marginBottom: 16}}>
+        <Button disabled={props.disabled} onClick={this.handleAdd} type="primary" style={{marginBottom: 16}}>
           {props.button}
         </Button>
-        <Button disabled={!hasSelected} onClick={this.handleDelete} style={{marginBottom: 16, marginLeft: 10}}>
+        <Button disabled={!hasSelected || props.disabled} onClick={this.handleDelete}
+                style={{marginBottom: 16, marginLeft: 10}}>
           删除
         </Button>
         <span style={{marginLeft: 8}} className="red">

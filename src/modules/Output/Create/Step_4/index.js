@@ -28,15 +28,15 @@ export default class Step3 extends Component {
           },
           {
             title: '形象进展',
-            component: <TabPane2/>
+            component: <TabPane2 disabled={true}/>
           },
           {
             title: '产值明细和发票',
-            component: <TabPane3/>
+            component: <TabPane3 disabled={true}/>
           },
           {
             title: '设置审批流',
-            component: <TabPane4/>
+            component: <TabPane4 />
           }
         ]
       }

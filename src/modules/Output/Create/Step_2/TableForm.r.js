@@ -1,27 +1,163 @@
-// Created by liuliyuan on 2018/6/30
-import React, {PureComponent} from 'react';
-import {Table, Button, message, Popconfirm, Divider} from 'antd';
+import {Table, Input, InputNumber, Popconfirm, Form, Button} from 'antd';
+import React from "react";
 import PopModal from './PopModal'
+import './styles.less'
 
-export default class TableForm extends PureComponent {
+const data = [];
+for (let i = 0; i < 2; i++) {
+  data.push({
+    key: i.toString(),
+    name: `Edrward ${i}`,
+    age: 32,
+    address: `London Park no. ${i}`,
+  });
+}
+const FormItem = Form.Item;
+const EditableContext = React.createContext();
+
+const EditableRow = ({form, index, ...props}) => (
+<EditableContext.Provider value={form}>
+  <tr {...props} />
+</EditableContext.Provider>
+);
+
+const EditableFormRow = Form.create()(EditableRow);
+
+class EditableCell extends React.Component {
+  getInput = () => {
+    if (this.props.inputType === 'number') {
+      return <InputNumber/>;
+    }
+    return <Input/>;
+  };
+
+  render() {
+    const {
+      editing,
+      dataIndex,
+      title,
+      inputType,
+      record,
+      index,
+      ...restProps
+    } = this.props;
+    return (
+    <EditableContext.Consumer>
+      {(form) => {
+        const {getFieldDecorator} = form;
+        return (
+        <td {...restProps}>
+          {editing ? (
+          <FormItem style={{margin: 0}}>
+            {getFieldDecorator(dataIndex, {
+              rules: [{
+                required: true,
+                message: `Please Input ${title}!`,
+              }],
+              initialValue: record[dataIndex],
+            })(this.getInput())}
+          </FormItem>
+          ) : restProps.children}
+        </td>
+        );
+      }}
+    </EditableContext.Consumer>
+    );
+  }
+}
+
+export default class TableForm extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      data: props.value || [],
+      editingKey: '',
+      data: props.value || data,
       loading: false,
       visible: false,
       modalConfig: {
         type: ''
       },
+      count: 2
     };
+    console.log(props.disabled);
+    this.columns = [
+      {
+        title: 'name',
+        dataIndex: 'name',
+        width: '25%',
+        editable: true,
+      },
+      {
+        title: 'age',
+        dataIndex: 'age',
+        width: '15%',
+        editable: true,
+      },
+      {
+        title: 'address',
+        dataIndex: 'address',
+        width: '40%',
+        editable: true,
+      },
+      {
+        title: 'operation',
+        dataIndex: 'operation',
+        render: (text, record) => {
+          const editable = this.isEditing(record);
+          return (
+          !props.disabled && <div>
+            {editable ? (
+            <span>
+                  <EditableContext.Consumer>
+                    {form => (
+                    <a
+                    href="javascript:;"
+                    onClick={() => this.save(form, record.key)}
+                    style={{marginRight: 8}}
+                    >
+                      保存
+                    </a>
+                    )}
+                  </EditableContext.Consumer>
+                    <a onClick={() => this.cancel(record.key)}>取消</a>
+                </span>
+            ) : (
+            <span>
+              <a onClick={() => this.edit(record.key)}>编辑</a>
+               <Popconfirm
+               title="确定要取消吗？"
+               onConfirm={() => this.onDelete(record.key)}
+               >
+                <a className="ml10">删除</a>
+                 </Popconfirm>
+            </span>
+            )}
+          </div>
+          );
+        },
+      },
+    ];
   }
 
 
-  toggleModalVisible = visible => {
+  onDelete = (key) => {
+    console.log(key);
+    const dataSource = [...this.state.data];
+    this.setState({data: dataSource.filter(item => item.key !== key)});
+  }
+
+  handleAdd = () => {
+    const {count, data} = this.state;
+    const newData = {
+      key: count,
+      name: `Edward King ${count}`,
+      age: 32,
+      address: `London, Park Lane no. ${count}`,
+    };
     this.setState({
-      visible
-    })
+      data: [...data, newData],
+      count: count + 1,
+    });
   }
 
   showModal = type => {
@@ -32,193 +168,84 @@ export default class TableForm extends PureComponent {
         id: this.state.selectedRowKeys
       }
     })
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if ('value' in nextProps) {
-      this.setState({
-        data: nextProps.value,
-      });
-    }
-  }
-
-  getRowByKey(key, newData) {
-    return (newData || this.state.data).filter(item => item.key === key)[0];
-  }
-
-  index = 0;
-  cacheOriginData = {};
-  toggleEditable = (e, key) => {
-    e.preventDefault();
-    const newData = this.state.data.map(item => ({...item}));
-    const target = this.getRowByKey(key, newData);
-    if (target) {
-      // 进入编辑状态时保存原始数据
-      if (!target.editable) {
-        this.cacheOriginData[key] = {...target};
-      }
-      target.editable = !target.editable;
-      this.setState({data: newData});
-    }
   };
 
-  remove(key) {
-    const newData = this.state.data.filter(item => item.key !== key);
-    this.setState({data: newData});
-    this.props.onChange(newData);
-  }
-
-  newMember = () => {
-    const newData = this.state.data.map(item => ({...item}));
-    newData.push({
-      key: `NEW_TEMP_ID_${this.index}`,
-      name: '',
-      editable: true,
-      isNew: true,
-    });
-    this.index += 1;
-    this.setState({data: newData});
-  };
-
-  handleKeyPress(e, key) {
-    if (e.key === 'Enter') {
-      this.saveRow(e, key);
-    }
-  }
-
-  handleFieldChange(e, fieldName, key) {
-    const newData = this.state.data.map(item => ({...item}));
-    const target = this.getRowByKey(key, newData);
-    if (target) {
-      target[fieldName] = e.target.value;
-      this.setState({data: newData});
-    }
-  }
-
-  saveRow(e, key) {
-    e.persist();
+  toggleModalVisible = visible => {
     this.setState({
-      loading: true,
-    });
-    setTimeout(() => {
-      if (this.clickedCancel) {
-        this.clickedCancel = false;
-        return;
-      }
-      const target = this.getRowByKey(key) || {};
-      if (!target.workId || !target.name || !target.department || !target.annex) {
-        message.error('请填写完整成员信息。');
-        e.target.focus();
-        this.setState({
-          loading: false,
-        });
-        return;
-      }
-      delete target.isNew;
-      this.toggleEditable(e, key);
-      console.log(this.state.data)
-      this.props.onChange(this.state.data);
-      this.setState({
-        loading: false,
-      });
-    }, 500);
+      visible
+    })
+  };
+
+  isEditing = (record) => {
+    return record.key === this.state.editingKey;
+  };
+
+  edit(key) {
+    this.setState({editingKey: key});
   }
 
-  cancel(e, key) {
-    this.clickedCancel = true;
-    e.preventDefault();
-    const newData = this.state.data.map(item => ({...item}));
-    const target = this.getRowByKey(key, newData);
-    if (this.cacheOriginData[key]) {
-      Object.assign(target, this.cacheOriginData[key]);
-      target.editable = false;
-      delete this.cacheOriginData[key];
-    }
-    this.setState({data: newData});
-    this.clickedCancel = false;
+  save(form, key) {
+    form.validateFields((error, row) => {
+      if (error) {
+        return;
+      }
+      const newData = [...this.state.data];
+      const index = newData.findIndex(item => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        this.setState({data: newData, editingKey: ''});
+      } else {
+        newData.push(data);
+        this.setState({data: newData, editingKey: ''});
+      }
+    });
   }
+
+  cancel = () => {
+    this.setState({editingKey: ''});
+  };
 
   render() {
-    const columns = [
-      {
-        title: '序号',
-        dataIndex: 'key',
-        key: 'key',
+    const components = {
+      body: {
+        row: EditableFormRow,
+        cell: EditableCell,
       },
-      {
-        title: '栋号',
-        dataIndex: 'key',
-        key: 'key',
-      },
-      {
-        title: '本期形象进度',
-        dataIndex: 'key',
-        key: 'key',
-      },
-      {
-        title: '累计形象进度',
-        dataIndex: 'key',
-        key: 'key',
-      },
-      {
-        title: '附件',
-        dataIndex: 'name',
-        key: 'name',
-      },
-      {
-        title: '操作',
-        key: 'action',
-        render: (text, record) => {
-          if (!!record.editable && this.state.loading) {
-            return null;
-          }
-          if (record.editable) {
-            if (record.isNew) {
-              return (
-              <span>
-                                  <a onClick={e => this.saveRow(e, record.key)}>添加</a>
-                                  <Divider type="vertical"/>
-                                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                    <a style={{color: '#f5222d'}}>删除</a>
-                                  </Popconfirm>
-                                </span>
-              );
-            }
-            return (
-            <span>
-                                <a onClick={e => this.saveRow(e, record.key)}>保存</a>
-                                <Divider type="vertical"/>
-                                <a onClick={e => this.cancel(e, record.key)}>取消</a>
-                            </span>
-            );
-          }
-          return (
-          <span>
-                              <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
-                              <Divider type="vertical"/>
-                              <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                <a style={{color: '#f5222d'}}>删除</a>
-                              </Popconfirm>
-                        </span>
-          );
-        },
-      },
-    ];
-    const {visible, modalConfig} = this.state;
+    };
+
+    const columns = this.columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+      return {
+        ...col,
+        onCell: record => ({
+          record,
+          inputType: col.dataIndex === 'age' ? 'number' : 'text',
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: this.isEditing(record),
+        }),
+      };
+    });
+    const {disabled} = this.props;
+    const {visible, modalConfig, data} = this.state;
     return (
-    <React.Fragment>
+    <div>
       <div className="table-operations">
-        <Button className="ml10" onClick={() => this.showModal('add')}>邀请填写</Button>
-        <Button className="ml10" icon="plus" onClick={this.newMember}>添加</Button>
+        <Button className="ml10" disabled={disabled} onClick={() => this.showModal('add')}>邀请填写</Button>
+        <Button className="ml10" disabled={disabled} icon="plus" onClick={() => this.handleAdd()}>添加</Button>
       </div>
       <Table
-      loading={this.state.loading}
+      components={components}
+      bordered
+      dataSource={data}
       columns={columns}
-      dataSource={this.state.data}
-      pagination={false}
-      rowClassName={record => {
-        return record.editable ? 'editable' : '';
-      }}
+      rowClassName="editable-row"
       />
       <PopModal
       visible={visible}
@@ -226,7 +253,7 @@ export default class TableForm extends PureComponent {
       toggleModalVisible={this.toggleModalVisible}
       setData={this.props.setData}
       />
-    </React.Fragment>
+    </div>
     );
   }
 }

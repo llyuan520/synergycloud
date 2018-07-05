@@ -46,7 +46,7 @@ class Step2 extends Component {
           },
           {
             title: '形象进展',
-            component: <TabPane2 setData={this.setData.bind(this)}/>
+            component: <TabPane2  setData={this.setData.bind(this)}/>
           }
         ]
       }
