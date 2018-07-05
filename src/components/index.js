@@ -16,6 +16,8 @@ export { default as Tabs } from './Tabs';
 export { default as CustomizeStepsAndTabs } from './CustomizeStepsAndTabs';
 export { default as CustomizeStaticTabs } from './CustomizeStaticTabs';
 export { default as BasicLayout} from './BasicLayout';
+export { default as FileExport} from './FileExport';
+
 
 
 
