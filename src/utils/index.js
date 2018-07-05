@@ -5,7 +5,8 @@ import {BigNumber} from 'bignumber.js'
 import request from './request'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
-import { getFields } from './getFields'
+import {getFields} from './getFields'
+import {BigNumber} from 'bignumber.js'
 
 const fMoney = (s,n=2)=>{
     if(s === 0){
@@ -24,46 +25,46 @@ const fMoney = (s,n=2)=>{
     }
 }
 
-const getQueryString=name=>{
-    let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+const getQueryString = name => {
+    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     let r = window.location.search.substr(1).match(reg);
-    if(r!==null)return  decodeURI(r[2]); return null;
+    if (r !== null) return decodeURI(r[2]);
+    return null;
 }
-
 const getDict = type => {
     return new Promise(function (resolve, reject) {
-        request('/enums',{
+        request('/enums', {
             params: {
                 enum: type
             }
         })
-            .then((res)=>{
-                if(res.state === 'ok'){
-                    resolve(res.data)
-                }else{
-                    reject(res.message)
-                }
-            })
-            .catch(err => {
-                message.error(err.message)
-            })
+        .then((res) => {
+            if (res.state === 'ok') {
+                resolve(res.data)
+            } else {
+                reject(res.message)
+            }
+        })
+        .catch(err => {
+            message.error(err.message)
+        })
     })
 }
-const requestDict = async (type,callback)=>{
+const requestDict = async (type, callback) => {
     let result = await getDict(type);
     callback(result)
 }
 
 //设置select值名不同
-const setSelectFormat = data =>{
-    if(data === undefined){
+const setSelectFormat = data => {
+    if (data === undefined) {
         return []
     } else {
-        return data.map(item=>{
-            return{
+        return data.map(item => {
+            return {
                 //...item,
-                key:item.value,
-                label:item.name
+                key: item.value,
+                label: item.name
             }
         })
     }
@@ -79,49 +80,51 @@ const parseJsonToParams = data=>{
     return str;
 }
 //匹配select的值
-const getSelectFormat=(data,t)=>{
+const getSelectFormat = (data, t) => {
 
-    const item = data.filter(d=>d.key === t)[0];
+    const item = data.filter(d => d.key === t)[0];
     let status;
-    switch (item.key){
-        case '0':
-            status = 'success';  //已创建
-            break;
-        case '1' :
-            status = 'error'; //审批中
-            break;
-        case '2':
-            status = 'default'; //已审批
-            break;
-        case '3':
-            status = 'processing'; //审批拒绝
-            break;
-        case '4':
-            status = 'warning'; //已测算
-            break;
-        case '5':
-            status = 'success'; //部分下发
-            break;
-        case '6':
-            status = 'error'; //已下发
-            break;
-        case '7':
-            status = 'default'; //部分竣工
-            break;
-        case '8':
-            status = 'processing'; //已竣工
-            break;
-        case '9':
-            status = 'warning'; //部分结算
-            break;
-        case '10':
-            status = 'warning'; //已结算
-            break;
-        default:
-            //break
+    if (item) {
+        switch (item.key) {
+            case '0':
+                status = 'success';  //已创建
+                break;
+            case '1' :
+                status = 'error'; //审批中
+                break;
+            case '2':
+                status = 'default'; //已审批
+                break;
+            case '3':
+                status = 'processing'; //审批拒绝
+                break;
+            case '4':
+                status = 'warning'; //已测算
+                break;
+            case '5':
+                status = 'success'; //部分下发
+                break;
+            case '6':
+                status = 'error'; //已下发
+                break;
+            case '7':
+                status = 'default'; //部分竣工
+                break;
+            case '8':
+                status = 'processing'; //已竣工
+                break;
+            case '9':
+                status = 'warning'; //部分结算
+                break;
+            case '10':
+                status = 'warning'; //已结算
+                break;
+            default:
+        //break
+        }
     }
 
-    return <Badge status={status} text={item.label} /> ;
+    return <Badge status={status} text={item && item.label}/>;
 }
 
 export {

@@ -86,21 +86,22 @@ export default class TableForm extends React.Component {
     console.log(props.disabled);
     this.columns = [
       {
-        title: 'name',
-        dataIndex: 'name',
-        width: '25%',
+        title: '序号',
+      },
+      {
+        title: '栋号',
         editable: true,
       },
       {
-        title: 'age',
-        dataIndex: 'age',
-        width: '15%',
+        title: '本期形象进度',
         editable: true,
       },
       {
-        title: 'address',
-        dataIndex: 'address',
-        width: '40%',
+        title: '累计形象进度',
+        editable: true,
+      },
+      {
+        title: '附件',
         editable: true,
       },
       {
@@ -246,7 +247,6 @@ export default class TableForm extends React.Component {
       </div>
       <Table
       components={components}
-      bordered
       dataSource={data}
       columns={columns}
       rowClassName="editable-row"

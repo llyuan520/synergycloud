@@ -2,7 +2,7 @@
  *
  * Created by fanzhe on 2018/7/5
  */
-import {Table, Input, Icon, Button, Popconfirm} from 'antd';
+import {Table, Input, Icon, Button} from 'antd';
 import React from "react";
 import './style.less';
 import _ from 'lodash'

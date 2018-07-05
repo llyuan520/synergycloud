@@ -60,38 +60,6 @@ class Create extends Component {
               <Route path="*" component={()=><div>no match</div>} />
             </Switch>
           </div>
-
-          {/*<div className="steps-action">
-                            {
-                                current < steps.length - 1
-                                && (
-                                    <React.Fragment>
-                                        {
-                                            current === 0 && <Button type="primary" href="/web/instruct/create/assign" onClick={() => this.next()}> 下一步，指定供应商 </Button>
-                                        }
-                                        {
-                                            current === 1 && <Button type="primary" href="/web/instruct/create/site" onClick={() => this.next()}> 下一步，设置审批流 </Button>
-                                        }
-                                    </React.Fragment>
-                                )
-                            }
-                            {
-                                current === steps.length - 1
-                                &&
-                                <React.Fragment>
-                                    <Button type="primary" onClick={() => message.success('Processing complete!')} style={{marginRight:8}}>提交</Button>
-                                    <Button onClick={() => message.success('Processing complete!')}>保存</Button>
-                                </React.Fragment>
-                            }
-                            {
-                                current > 0
-                                && (
-                                    <Button style={{ marginLeft: 8 }} onClick={() => this.prev()}>
-                                        上一步
-                                    </Button>
-                                )
-                            }
-                        </div>*/}
         </div>
       </React.Fragment>
     </div>

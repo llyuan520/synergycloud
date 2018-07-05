@@ -6,39 +6,50 @@ import React, {PureComponent} from 'react';
 import {Table} from 'antd';
 
 const columns = [{
-  title: '合同名称',
-  dataIndex: 'name',
+  title: (
+  <div className="apply-form-list-th">
+    <p className="apply-form-list-p1">合同名称</p>
+    <p className="apply-form-list-p2">合同编号</p>
+  </div>
+  ),
+  width: "40%",
+  render: (e) => {
+    return (
+    <div className="apply-form-list-th">
+      <p className="apply-form-list-p1">{e.contract_name}</p>
+      <p className="apply-form-list-p2">{e.archive_code}</p>
+    </div>
+    )
+  }
 }, {
   title: '合同金额',
-  dataIndex: 'age',
+  dataIndex: 'new_amount',
+  key: 'new_amount',
 }, {
-  title: '甲方乙方',
-  dataIndex: 'address',
-}];
-const data = [{
-  key: '1',
-  name: 'John Brown',
-  age: 32,
-  address: 'New York No. 1 Lake Park',
-}, {
-  key: '2',
-  name: 'Jim Green',
-  age: 42,
-  address: 'London No. 1 Lake Park',
-}, {
-  key: '3',
-  name: 'Joe Black',
-  age: 32,
-  address: 'Sidney No. 1 Lake Park',
-}, {
-  key: '4',
-  name: 'Disabled User',
-  age: 99,
-  address: 'Sidney No. 1 Lake Park',
-}];
+  title: (
+  <div>
+    <p className="apply-form-list-p1">甲方</p>
+    <p className="apply-form-list-p1">乙方</p>
+  </div>
+  ),
+    render: (e) => {
+        return (
+        <div className="apply-form-list-th">
+            <p className="apply-form-list-p1">{e.Acompanyname}</p>
+            <p className="apply-form-list-p1">{e.Bcompanyname}</p>
+        </div>
+        )
+    }
+},
+  {
+    title: "发票类型",
+    dataIndex: 'invoicetype',
+    key: 'invoicetype',
+  }];
 
 export default class TableForm extends PureComponent {
   render() {
+    const {data} = this.props;
     const rowSelection = {
       type: 'radio',
       onChange: this.onChange,
