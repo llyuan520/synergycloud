@@ -1,9 +1,9 @@
-// Created by liuliyuan on 2018/6/30
+// Created by liuliyuan on 2018/7/5
 import React, { PureComponent } from 'react';
-import { Table, Button, message, Popconfirm, Divider } from 'antd';
-import { InputCell } from '../../../../components/EditableCell'
+import { Table, Input, Button, message, Popconfirm, Divider } from 'antd';
+import { InputCell } from 'components/EditableCell'
 
-export default class TableForm extends PureComponent {
+export default class TableForms extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -79,7 +79,7 @@ export default class TableForm extends PureComponent {
                 return;
             }
             const target = this.getRowByKey(key) || {};
-            if (!target.workId || !target.name || !target.department) {
+            if (!target.name) {
                 message.error('请填写完整成员信息。');
                 e.target.focus();
                 this.setState({
@@ -124,7 +124,7 @@ export default class TableForm extends PureComponent {
                 render: (text, record) => {
                     if (record.editable) {
                         return (
-                            <InputCell
+                            <Input
                                 value={text}
                                 autoFocus
                                 onChange={e => this.handleFieldChange(e, 'name', record.key)}

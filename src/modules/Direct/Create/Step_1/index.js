@@ -42,6 +42,7 @@ const tableData = [
      state={
          updateKey:Date.now(),
          loading: false,
+         tableData:tableData,
          changeTypeData:[],
          specialtyData:[],
      }
@@ -99,7 +100,7 @@ const tableData = [
      }
 
     render(){
-
+        const { tableData } = this.state;
         const { form } = this.props;
         const { getFieldDecorator, getFieldValue } = form;
 
@@ -294,7 +295,7 @@ const tableData = [
                             <Row gutter={24}>
                                 {getFieldDecorator('members', {
                                     initialValue: tableData,
-                                })(<TableForm form={this.props.form} />)}
+                                })(<TableForm form={this.props.form} onChange={this.onChange} />)}
                             </Row>
                         </Card>
                     </div>
