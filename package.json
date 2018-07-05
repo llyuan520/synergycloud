@@ -6,6 +6,7 @@
     "@antv/data-set": "^0.8.9",
     "antd": "^3.6.3",
     "axios": "^0.18.0",
+    "commitizen": "^2.10.1",
     "bignumber.js": "^7.2.1",
     "echarts": "^4.1.0",
     "echarts-for-react": "^2.0.13",
