@@ -103,6 +103,10 @@ export const getFields = (form,fieldsData=[],layout) =>{
             case 'fileUpload':
                 CusComponent = CusFormItem.FileUpload;
                 break;
+            case 'numeric':
+                CusComponent = CusFormItem.NumericInput;
+                break;
+
             default:
                 CusComponent = Input
         }

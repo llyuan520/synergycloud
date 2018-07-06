@@ -42,7 +42,7 @@ export default class FileUpload extends Component{
         return(
             <Upload {...props} {...props.componentProps} >
                 {
-                    !(fileList && fileList.length>=1) && <Icon type="upload" style={{ fontSize: 16, color: '#08c' }} />
+                    !(fileList && fileList.length>=1) && <Icon type="upload" style={{ fontSize: 16, color: '#08c',cursor: 'pointer' }} />
                 }
                {/* <Button size="small" disabled={fileList && fileList.length>=1}>
                     <Icon type="upload" />{props.componentProps.buttonText}

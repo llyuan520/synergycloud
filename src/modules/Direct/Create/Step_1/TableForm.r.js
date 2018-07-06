@@ -1,9 +1,9 @@
-// Created by liuliyuan on 2018/6/30
+// Created by liuliyuan on 2018/7/5
 import React, { PureComponent } from 'react';
-import { Table, Button, message, Popconfirm, Divider } from 'antd';
-import { InputCell } from '../../../../components/EditableCell'
+import { Table, Input, Button, message, Popconfirm, Divider } from 'antd';
+import { InputCell } from 'components/EditableCell'
 
-export default class TableForm extends PureComponent {
+export default class TableForms extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -46,7 +46,9 @@ export default class TableForm extends PureComponent {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
             key: `NEW_TEMP_ID_${this.index}`,
+            workId: '',
             name: '',
+            department: '',
             editable: true,
             isNew: true,
         });
@@ -77,7 +79,7 @@ export default class TableForm extends PureComponent {
                 return;
             }
             const target = this.getRowByKey(key) || {};
-            if (!target.workId || !target.name || !target.department || !target.annex) {
+            if (!target.name) {
                 message.error('请填写完整成员信息。');
                 e.target.focus();
                 this.setState({
@@ -87,8 +89,6 @@ export default class TableForm extends PureComponent {
             }
             delete target.isNew;
             this.toggleEditable(e, key);
-            console.log(this.state.data)
-            debugger
             this.props.onChange(this.state.data);
             this.setState({
                 loading: false,
@@ -109,7 +109,6 @@ export default class TableForm extends PureComponent {
         this.clickedCancel = false;
     }
     render() {
-        const { getFieldDecorator } = this.props.form;
         const columns = [
             {
                 title: '序号',
@@ -125,16 +124,12 @@ export default class TableForm extends PureComponent {
                 render: (text, record) => {
                     if (record.editable) {
                         return (
-                            <InputCell
-                                fieldName={`list[${record.key}].name`}
-                                initialValue={text}
-                                componentProps={{
-                                    autoFocus:"autofocus",
-                                    placeholder:"成员姓名",
-                                    onChange:e => this.handleFieldChange(e, 'name', record.key),
-                                    onKeyPress:e => this.handleKeyPress(e, record.key),
-                                }}
-                                getFieldDecorator={getFieldDecorator}
+                            <Input
+                                value={text}
+                                autoFocus
+                                onChange={e => this.handleFieldChange(e, 'name', record.key)}
+                                onKeyPress={e => this.handleKeyPress(e, record.key)}
+                                placeholder="成员姓名"
                             />
                         );
                     }
@@ -155,7 +150,7 @@ export default class TableForm extends PureComponent {
                                   <a onClick={e => this.saveRow(e, record.key)}>添加</a>
                                   <Divider type="vertical" />
                                   <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                    <a style={{ color: '#f5222d' }}>删除</a>
+                                    <a>删除</a>
                                   </Popconfirm>
                                 </span>
                             );
@@ -173,13 +168,14 @@ export default class TableForm extends PureComponent {
                               <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
                               <Divider type="vertical" />
                               <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                <a style={{ color: '#f5222d' }}>删除</a>
+                                <a>删除</a>
                               </Popconfirm>
                         </span>
                     );
                 },
             },
         ];
+
 
         return (
             <React.Fragment>
@@ -198,7 +194,7 @@ export default class TableForm extends PureComponent {
                     onClick={this.newMember}
                     icon="plus"
                 >
-                    添加
+                    新增
                 </Button>
             </React.Fragment>
         );
