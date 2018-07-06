@@ -48,30 +48,30 @@ const columns = [{
     }];
 
 export default class TableForm extends PureComponent {
-    render() {
-        const {value} = this.props;
-        const rowSelection = {
-            type: 'radio',
-            onChange: this.onChange,
-            onRowSelect: (selectedRowKeys, selectedRows) => {
-                this.setState({
-                    id: selectedRowKeys[0],
-                    selectedNodes: selectedRows[0],
-                    onlyAdd: false,
-                })
-            },
-            onSelect: (...e) => {
-                this.props.next();
-                console.log(e);
-            },
-            rowSelection: {
-                type: 'radio',
-            },
-        };
-        return (
-        <React.Fragment>
-            <Table rowKey={record => record.key} rowSelection={rowSelection} columns={columns} dataSource={value}/>
-        </React.Fragment>
-        );
-    }
+  render() {
+    const {value} = this.props;
+    const rowSelection = {
+      type: 'radio',
+      onChange: this.onChange,
+      onRowSelect: (selectedRowKeys, selectedRows) => {
+        this.setState({
+          id: selectedRowKeys[0],
+          selectedNodes: selectedRows[0],
+          onlyAdd: false,
+        })
+      },
+      onSelect: (...e) => {
+        this.props.next();
+        console.log(e);
+      },
+      rowSelection: {
+        type: 'radio',
+      },
+    };
+    return (
+    <React.Fragment>
+      <Table rowKey={record => record.id} rowSelection={rowSelection} columns={columns} dataSource={value}/>
+    </React.Fragment>
+    );
+  }
 }

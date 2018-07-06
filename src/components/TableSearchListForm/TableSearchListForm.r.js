@@ -40,7 +40,7 @@ export default class TableSearchListForm extends Component {
     };
 
     handleAdvancedSearch = node => {
-        this.h = node.scrollHeight;
+        this.h = node ? node.scrollHeight : 0;
     };
 
     toggleForm = () => {

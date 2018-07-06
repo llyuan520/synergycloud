@@ -125,7 +125,13 @@ const getSelectFormat = (data, t) => {
 
     return <Badge status={status} text={item && item.label}/>;
 }
-
+/**
+ * 判断是否为空
+ * @param val {string} 字符串
+ */
+const isEmpty = val=> {
+    return val === null || val === undefined || val.trim() === ''
+}
 export {
     request,
     composeMenus,
@@ -137,4 +143,5 @@ export {
     setSelectFormat,
     getSelectFormat,
     parseJsonToParams,
+    isEmpty
 }

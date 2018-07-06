@@ -148,7 +148,7 @@ class Output extends Component {
   getStatus=()=>{
     requestDict('com.moya.contract.enums.DirectiveStatusEnum',result=>{
       this.setState({
-        statusData:setSelectFormat(result)
+        statusData:setSelectFormat(result['DirectiveStatusEnum'])
       })
     })
   }

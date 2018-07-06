@@ -1,6 +1,6 @@
 // Created by liuliyuan on 2018/7/5
-import React, {PureComponent} from 'react';
-import {Table, Input, Button, message, Popconfirm, Divider} from 'antd';
+import React, { PureComponent } from 'react';
+import { Table, Input, Button, message, Popconfirm, Divider } from 'antd';
 
 export default class TableForms extends PureComponent {
     constructor(props) {

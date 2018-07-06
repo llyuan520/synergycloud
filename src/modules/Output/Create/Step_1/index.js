@@ -17,8 +17,8 @@ class Step1 extends Component {
         statusData: [],
         disabled: true,
         tableData: [],
-        conName: [],
-        conNum: []
+        conName:[],
+        conNum:[],
     }
 
     handleSubmit = (e) => {
@@ -32,7 +32,6 @@ class Step1 extends Component {
     //去数据字典里面的状态
     getStatus = () => {
         requestDict(`['com.moya.contract.enums.ContractStatusEnum']`, result => {
-            console.log(result);
             this.setState({
                 statusData: setSelectFormat(result.ContractStatusEnum)
             })
@@ -172,8 +171,7 @@ class Step1 extends Component {
                         <Row gutter={24}>
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
-                            })(<TableForm form={this.props.form}
-                                          next={() => this.setState({disabled: false})}/>)}
+                            })(<TableForm form={this.props.form} next={() => this.setState({disabled: false})}/>)}
                         </Row>
                     </Card>
                 </div>
