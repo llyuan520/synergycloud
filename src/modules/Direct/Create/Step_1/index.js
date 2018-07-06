@@ -42,6 +42,7 @@ const tableData = [
      state={
          updateKey:Date.now(),
          loading: false,
+         directLoading:true,
          tableData:tableData,
          changeTypeData:[],
          specialtyData:[],
@@ -93,14 +94,19 @@ const tableData = [
                          message.error(err.message)
              })
      }
-
+     toggleLoading = loading => this.setState({ loading })
      componentDidMount() {
          this.getChangeType();
-         this.getSpecialty()
+         this.getSpecialty();
+         setTimeout(()=>{
+             this.setState({
+                 directLoading:false
+             })
+         },1000)
      }
 
     render(){
-        const { tableData } = this.state;
+        const { tableData, directLoading } = this.state;
         const { form } = this.props;
         const { getFieldDecorator, getFieldValue } = form;
 
@@ -116,7 +122,7 @@ const tableData = [
             <React.Fragment>
                 <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
                     <div className="advancedForm">
-                        <Card>
+                        <Card loading={directLoading}>
                             <p>指令单基本信息</p>
 
                             <Row gutter={24}>
@@ -290,7 +296,7 @@ const tableData = [
                             </Row>
                         </Card>
 
-                        <Card>
+                        <Card loading={directLoading}>
                             <p>指令单变更项</p>
                             <Row gutter={24}>
                                 {getFieldDecorator('members', {

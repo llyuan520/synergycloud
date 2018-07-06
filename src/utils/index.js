@@ -6,7 +6,6 @@ import request from './request'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
 import {getFields} from './getFields'
-import {BigNumber} from 'bignumber.js'
 
 const fMoney = (s,n=2)=>{
     if(s === 0){
@@ -126,7 +125,13 @@ const getSelectFormat = (data, t) => {
 
     return <Badge status={status} text={item && item.label}/>;
 }
-
+/**
+ * 判断是否为空
+ * @param val {string} 字符串
+ */
+const isEmpty = val=> {
+    return val === null || val === undefined || val.trim() === ''
+}
 export {
     request,
     composeMenus,
@@ -138,4 +143,5 @@ export {
     setSelectFormat,
     getSelectFormat,
     parseJsonToParams,
+    isEmpty
 }

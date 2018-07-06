@@ -122,6 +122,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
             )
 
         }else if(type==='select'){
+            console.log(item.options);
             return (
                 <Col span={item['span'] || 8} key={i}>
                     <FormItem label={ item['hideLabel'] !== true && item['label'] }  {...formItemStyle}>
@@ -132,7 +133,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
                                 {
                                     item.options.map((option,i)=>{
                                         return (
-                                            <Option key={`option-${i}`} value={option.key}>{option.label}</Option>
+                                            <Option key={i} value={option.key}>{option.label}</Option>
                                         )
                                     })
                                 }

@@ -49,7 +49,7 @@ const columns = [{
 
 export default class TableForm extends PureComponent {
   render() {
-    const {data} = this.props;
+    const {value} = this.props;
     const rowSelection = {
       type: 'radio',
       onChange: this.onChange,
@@ -70,7 +70,7 @@ export default class TableForm extends PureComponent {
     };
     return (
     <React.Fragment>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data}/>
+      <Table rowKey={record => record.id} rowSelection={rowSelection} columns={columns} dataSource={value}/>
     </React.Fragment>
     );
   }
