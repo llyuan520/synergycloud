@@ -14,7 +14,9 @@ import Organization from './Project/TableFormStepTwo'
 import Output from './Output';
 import OutputCreate from './Output/Create'
 import Accept from "./Accept";
+import AcceptCreate from "./Accept/Create";
 import Contract from "./Contract";
+import ContractCreate from "./Contract/Create";
 
 const routes = [
     {
@@ -69,11 +71,22 @@ const routes = [
         icon: 'team',
         component: wrapPage('合同履约协同平台 – 竣工验收单', Accept),
         exact: true,
+    },
+    {
+        path: '/web/accept/create',
+        name: '新建竣工验收单',
+        component: wrapPage('合同履约协同平台 – 竣工验收单', AcceptCreate),
     }, {
         path: '/web/contract',
         name: '合同结算单',
         icon: 'api',
         component: wrapPage('合同履约协同平台 – 合同结算单', Contract),
+        exact: true,
+    },
+    {
+        path: '/web/contract/create',
+        name: '合同结算单',
+        component: wrapPage('合同履约协同平台 – 合同结算单', ContractCreate),
         exact: true,
     }, {
         path:'/web/project',

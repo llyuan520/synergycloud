@@ -32,28 +32,31 @@ class Step1 extends Component {
     //去数据字典里面的状态
     getStatus = () => {
         requestDict(`['com.moya.contract.enums.ContractStatusEnum']`, result => {
-
             this.setState({
                 statusData: setSelectFormat(result.ContractStatusEnum)
             })
         })
     }
 
-    getConName = () => {
-        request("/con/contract/getContractByName")
-        .then(res=>{
-            console.log(res);
+    getConName(contractname) {
+        request("/con/contract/getContractByName", {contractname})
+        .then(res => {
+            this.setState({
+                contractname: setSelectFormat(res.data)
+            })
         })
     }
 
-    getConNum = () => {
-        request("/con/contract/getContractByNumber")
-        .then(res=>{
-            console.log(res);
+    getConNum(contractnumber) {
+        request("/con/contract/getContractByNumber", {contractnumber})
+        .then(res => {
+            this.setState({
+                contractnumber: setSelectFormat(res.data)
+            })
         })
     }
 
-    getList = () => {
+    getList() {
         request('/con/contract/findListData')
         .then(res => {
             console.log(res.data);
@@ -73,7 +76,7 @@ class Step1 extends Component {
 
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
-        const {disabled, tableData, conName, conNum, statusData} = this.state;
+        const {disabled, tableData, conName=[], conNum=[], statusData} = this.state;
         console.log(tableData);
         return (
         <React.Fragment>
@@ -90,7 +93,13 @@ class Step1 extends Component {
                                     span: 8,
                                     options: [{label: '全部', key: ''}].concat(conName),
                                     componentProps: {
-                                        filterOption: (input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        showSearch: true,
+                                        onSearch: (e) => {
+                                            this.getConName(e);
+                                        },
+                                        onSelect: (e) => {
+                                            console.log(e);
+                                        }
                                     },
                                 }, {
                                     label: '合同编号：',
@@ -98,17 +107,14 @@ class Step1 extends Component {
                                     type: 'select',
                                     span: 8,
                                     options: [{label: '全部', key: ''}].concat(conNum),
-                                    fieldDecoratorOptions: {
-                                        initialValue: {label: '全部', key: ''},
-                                        /*rules:[
-                                            {
-                                                required:true,
-                                                message:'请选择变更类型'
-                                            }
-                                        ]*/
-                                    },
                                     componentProps: {
-                                        labelInValue: true,
+                                        showSearch: true,
+                                        onSearch: (e) => {
+                                            this.getConNum(e);
+                                        },
+                                        onSelect: (e) => {
+                                            console.log(e);
+                                        }
                                     },
                                 },
 
@@ -120,15 +126,12 @@ class Step1 extends Component {
                                         options: [{label: '全部', key: ''}].concat(statusData),
                                         fieldDecoratorOptions: {
                                             initialValue: {label: '全部', key: ''},
-                                            /*rules:[
-                                                {
-                                                    required:true,
-                                                    message:'请选择变更类型'
-                                                }
-                                            ]*/
                                         },
                                         componentProps: {
                                             labelInValue: true,
+                                            onSelect: (e) => {
+                                                console.log(e);
+                                            }
                                         },
                                     },
 
@@ -143,14 +146,6 @@ class Step1 extends Component {
                                     type: 'companyName',
                                     span: 8,
                                     formItemStyle: null,
-                                    /*fieldDecoratorOptions:{
-                                        rules:[
-                                            {
-                                                required:true,
-                                                message:'请选择企业'
-                                            }
-                                        ]
-                                    },*/
                                 }, {
                                     label: '选择项目',
                                     fieldName: 'project',
