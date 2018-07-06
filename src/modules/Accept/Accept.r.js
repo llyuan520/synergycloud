@@ -12,20 +12,30 @@ import {Button, Icon} from "antd";
 
 const getColumns = (context) => [
     {
-        title: '指令单编号',
+        title: '竣工验收单号',
         dataIndex: 'number',
         className: 'text-center',
     }, {
-        title: '所属项目',
+        title: (
+        <span className="apply-form-list-th">
+            <span className="apply-form-list-p1">合同名称</span>
+            <br/>
+            <span className="apply-form-list-p2">合同编号</span>
+        </span>
+        ),
         dataIndex: 'itemName',
         sorter: true
     }, {
-        title: '指令单类型',
+        title: '实际开工日期',
         dataIndex: 'bill_type',
         sorter: true
     }, {
-        title: '创建时间',
+        title: '实际竣工日期',
         dataIndex: 'create_time',
+        sorter: true
+    },
+    {
+        title: '经办人',
         sorter: true
     }, {
         title: '状态',

@@ -17,8 +17,8 @@ class Step1 extends Component {
         statusData: [],
         disabled: true,
         tableData: [],
-        conName:[],
-        conNum:[]
+        conName: [],
+        conNum: []
     }
 
     handleSubmit = (e) => {
@@ -38,16 +38,16 @@ class Step1 extends Component {
         })
     }
 
-    getConName = () => {
-        request("/con/contract/getContractByName")
-        .then(res=>{
+    getConName(contractname) {
+        request("/con/contract/getContractByName", {contractname})
+        .then(res => {
             console.log(res);
         })
     }
 
-    getConNum = () => {
-        request("/con/contract/getContractByNumber")
-        .then(res=>{
+    getConNum(contractnumber) {
+        request("/con/contract/getContractByNumber", {contractnumber})
+        .then(res => {
             console.log(res);
         })
     }
@@ -66,6 +66,8 @@ class Step1 extends Component {
     componentDidMount() {
         this.getList();
         this.getStatus();
+        this.getConNum();
+        this.getConName();
     }
 
     render() {
@@ -89,7 +91,13 @@ class Step1 extends Component {
                                     span: 8,
                                     options: [{label: '全部', key: ''}].concat(conName),
                                     componentProps: {
-                                        filterOption: (input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        showSearch: true,
+                                        onSearch: (e) => {
+                                            this.getConName(e);
+                                        },
+                                        onSelect: (e) => {
+                                            console.log(e);
+                                        }
                                     },
                                 }, {
                                     label: '合同编号：',
@@ -97,17 +105,14 @@ class Step1 extends Component {
                                     type: 'select',
                                     span: 8,
                                     options: [{label: '全部', key: ''}].concat(conNum),
-                                    fieldDecoratorOptions: {
-                                        initialValue: {label: '全部', key: ''},
-                                        /*rules:[
-                                            {
-                                                required:true,
-                                                message:'请选择变更类型'
-                                            }
-                                        ]*/
-                                    },
                                     componentProps: {
-                                        labelInValue: true,
+                                        showSearch: true,
+                                        onSearch: (e) => {
+                                            this.getConNum(e);
+                                        },
+                                        onSelect: (e) => {
+                                            console.log(e);
+                                        }
                                     },
                                 },
 
@@ -119,15 +124,12 @@ class Step1 extends Component {
                                         options: [{label: '全部', key: ''}].concat(statusData),
                                         fieldDecoratorOptions: {
                                             initialValue: {label: '全部', key: ''},
-                                            /*rules:[
-                                                {
-                                                    required:true,
-                                                    message:'请选择变更类型'
-                                                }
-                                            ]*/
                                         },
                                         componentProps: {
                                             labelInValue: true,
+                                            onSelect: (e) => {
+                                                console.log(e);
+                                            }
                                         },
                                     },
 
@@ -142,14 +144,6 @@ class Step1 extends Component {
                                     type: 'companyName',
                                     span: 8,
                                     formItemStyle: null,
-                                    /*fieldDecoratorOptions:{
-                                        rules:[
-                                            {
-                                                required:true,
-                                                message:'请选择企业'
-                                            }
-                                        ]
-                                    },*/
                                 }, {
                                     label: '选择项目',
                                     fieldName: 'project',
