@@ -79,17 +79,17 @@ const tableData = [
      }
      getSpecialty=()=>{
          request('/con/mdydirective/initData')
-             .then((res) => {
-                 if(res.state === 'ok'){
-                     this.setState({
-                         specialtyData:setSelectFormat(res.data)
+                     .then((res) => {
+                         if(res.state === 'ok'){
+                             this.setState({
+                                 specialtyData:setSelectFormat(res.data)
+                             })
+                         } else {
+                             return Promise.reject(res.message);
+                         }
                      })
-                 } else {
-                     return Promise.reject(res.message);
-                 }
-             })
-             .catch(err => {
-                 message.error(err.message)
+                     .catch(err => {
+                         message.error(err.message)
              })
      }
 

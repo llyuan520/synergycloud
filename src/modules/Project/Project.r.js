@@ -148,23 +148,19 @@ const fieldsData = (context) => [
 const getColumns = (context) => [
     {
         title: (
-            <span className="contract-name-and-code">
-                <p className="contract-name-p1">项目名称</p>
-                <p className="contract-code-p2">项目编码</p>
-            </span>
+            <div className="apply-form-list-th">
+                <p className="apply-form-list-p1">项目名称</p >
+                <p className="apply-form-list-p2">项目编码</p >
+            </div>
         ),
-        dataIndex: 'projectname',
-        className: 'contract-info',
-        sorter: true,
-        render:(text, record, index)=>{
-            return (
-                <React.Fragment>
-                    <div className="contract-name-p1">{record.projectname}</div>
-                    <div className="contract-code-p2">{record.projectcode}</div>
-                </React.Fragment>
-            )
-        }
-    }, {
+        dataIndex: "projectname",
+        render: (text, record) => (
+            <div>
+                <p className="apply-form-list-p1">{record.projectname}</p >
+                <p className="apply-form-list-p2">{record.projectcode}</p >
+            </div>
+        )
+    },{
         title: '项目简称',
         dataIndex: 'project_abbreviation',
         sorter: true,
@@ -210,6 +206,7 @@ class Output extends Component {
 
     render() {
         return (
+
             <div className = "output-table-style">
                 <SearchTable
                     searchOption={{

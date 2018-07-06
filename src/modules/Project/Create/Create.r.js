@@ -1,36 +1,21 @@
+// created by Lee in 2018/07/05
+
 import React, {Component} from 'react';
-import { Form, Row, Button  } from 'antd';
-import { getFields } from  'utils'
+import { Form, Row, Button,message   } from 'antd';
+import { compose } from 'redux';
+import {connect} from 'react-redux';
+import { getFields,request } from  'utils'
 import TableForm from '../TableForm/TableForm.r'
 import './styles.less'
 
 
 
-const tableData = [
-    {
-        periodization_code: '111211',
-        periodization_name: 'wwwwwkkkkk',
-        tax_methods: 'aaaaaa',
-        key: '1',
-    },
-    {
-        periodization_code: '111211',
-        periodization_name: 'wwwwwkkkkk',
-        tax_methods: 'aaaaaa',
-        key: '2',
-    },
-    {
-        periodization_code: '111211',
-        periodization_name: 'wwwwwkkkkk',
-        tax_methods: 'aaaaaa',
-         key: '3',
-    },
-];
+const tableData = [];
 
 class CreateProject extends Component{
 
 
-    constructor(){
+    constructor(props,context){
         super();
         this.state = {
             taxOptions: [
@@ -48,15 +33,50 @@ class CreateProject extends Component{
     }
 
     handleSubmit = (e)=>{
-        e = e || window.event;
-        e.preventDefault();
-        console.log('我来啦啦啦啦')
+        e && e.preventDefault();
+        this.props.form.validateFields((err, value) => {
+            if (err) {
+                return;
+            }
+            console.log(value)
+            this.props.history.push('/web/project/org')
+
+        })
+    }
+
+    componentWillMount(){
+        console.log('-------------------')
+
+
+        let url = '/biz/items/findEditData'
+        request(url, {
+            params:{
+                company_id: this.props.company_id,
+            }
+        }).then((data) => {
+            console.log('=================================')
+                console.log(data);
+            console.log('=================================')
+
+            // if(data===200){
+                    // this.toggleLoaded(true)
+                    // const result = data.data.records || data.data;
+                    // this.setState({
+                    //     dataSource:this.props.transformData(result)
+                    // })
+                // }
+            })
+            .catch(err => {
+                console.log(err)
+                message.error(err.message)
+            })
+
     }
 
     render(){
         const { form } = this.props;
         const { getFieldDecorator } = form;
-
+        console.log(this.props.company_id)
         return (
             <div className="ISA-fragment ISA-bgColor create-project">
                 <Form>
@@ -79,8 +99,8 @@ class CreateProject extends Component{
                                         span: 8
                                     },{
                                         label: '编号',
-                                        fieldName: 'project_code',
-                                        type: 'input', 
+                                        fieldName: 'item_number',
+                                        type: 'input',
                                         span: 8,
                                         componentProps: {
                                             disabled: true
@@ -94,20 +114,20 @@ class CreateProject extends Component{
                                 getFields(this.props.form, [
                                     {
                                         label: '计税方式',
-                                        fieldName: 'tax_methods',
+                                        fieldName: 'tax_type',
                                         type: 'select',
                                         span: 8,
                                         options: this.state.taxOptions,
                                     },{
                                         label: '状态',
-                                        fieldName: 'status',
+                                        fieldName: 'item_status',
                                         type: 'select',
                                         span: 8,
                                         options: this.state.statusOptions,
                                     },{
                                         label: '经纬度',
                                         fieldName: 'longitudeAndLatitude',
-                                        type: 'longitudeAndLatitude', 
+                                        type: 'longitudeAndLatitude',
                                         span: 8,
                                     }
                                 ])
@@ -116,7 +136,9 @@ class CreateProject extends Component{
                         <Row className="mt35">
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
-                            })(<TableForm form={this.props.form} />)}   
+                            })(
+                                <TableForm form={this.props.form} />
+                            )}
                         </Row>
                     </div>
                     <div className="steps-action">
@@ -129,4 +151,12 @@ class CreateProject extends Component{
     }
 }
 
-export default Form.create()(CreateProject)
+
+const enhance = compose(
+    connect(state=>({
+        company_id:state.user.getIn(['personal','company_id'])
+    })),
+    Form.create()
+)
+export default enhance(CreateProject);
+

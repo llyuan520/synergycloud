@@ -33,6 +33,7 @@ const initialState = fromJS({
         userId:null,
         phoneNumber:null,
         companyName: null,
+        company_id: '456104144248242176',
         ukeyType: null,
     },
     /**登录凭证*/

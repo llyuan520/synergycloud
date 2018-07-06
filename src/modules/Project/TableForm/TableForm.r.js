@@ -1,8 +1,7 @@
-// Created by liuliyuan on 2018/6/30
+// Created by Lee on 2018/7/4
 import React, { PureComponent } from 'react';
-import { Table, Button, message, Popconfirm, Divider } from 'antd';
-import { InputCell, SelectCell  } from 'components/EditableCell'
-
+import { Table, Button, message, Popconfirm, Divider,Select, Input } from 'antd';
+const Option = Select.Option;
 export default class TableForm extends PureComponent {
     constructor(props) {
         super(props);
@@ -10,6 +9,10 @@ export default class TableForm extends PureComponent {
         this.state = {
             data: props.value,
             loading: false,
+            options: [{
+                label:'111',
+                key:'1'
+            }]
         };
     }
     componentWillReceiveProps(nextProps) {
@@ -46,7 +49,7 @@ export default class TableForm extends PureComponent {
     newMember = () => {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
-            periodization_code: `CODE_${this.index}`,
+            periodization_code: '',
             periodization_name: '',
             tax_methods: '',
             key: newData.length+1,
@@ -65,16 +68,18 @@ export default class TableForm extends PureComponent {
         const newData = this.state.data.map(item => ({ ...item }));
         const target = this.getRowByKey(key, newData);
 
-        console.log(newData);
-        console.log(target);
-        console.log('22222222222222222222222')
-        
-        console.log(e);
-        console.log('=======================')
-        console.log(target);
-        console.log('-----------------------')
         if (target && target !== '') {
             target[fieldName] = e.target.value;
+            this.setState({ data: newData });
+        }
+    }
+    handleSelectChange(value,  fieldName, key) {
+        const newData = this.state.data.map(item => ({ ...item }));
+        const target = this.getRowByKey(key, newData);
+
+        if (target && target !== '') {
+            target[fieldName] = value.label;
+            target[`${fieldName}_key`] = value.key;
             this.setState({ data: newData });
         }
     }
@@ -89,7 +94,7 @@ export default class TableForm extends PureComponent {
                 return;
             }
             const target = this.getRowByKey(key) || {};
-            if (!target.workId || !target.name || !target.department || !target.annex) {
+            if (!target.periodization_code || !target.periodization_name || !target.tax_methods) {
                 message.error('请填写完整成员信息。');
                 e.target.focus();
                 this.setState({
@@ -99,8 +104,6 @@ export default class TableForm extends PureComponent {
             }
             delete target.isNew;
             this.toggleEditable(e, key);
-            console.log(this.state.data)
-            debugger
             this.props.onChange(this.state.data);
             this.setState({
                 loading: false,
@@ -121,13 +124,24 @@ export default class TableForm extends PureComponent {
         this.clickedCancel = false;
     }
     render() {
-        const { getFieldDecorator } = this.props.form;
         const columns = [
             {
                 title:'分期编号',
                 dataIndex: 'periodization_code',
                 key:'periodization_code',
                 width: '30%',
+                render: (text,record)=>{
+                    if(record.editable){
+                        return (
+                            <Input autoFocus="autofocus"
+                                   placeholder="分期编号"
+                                   onChange={e => this.handleFieldChange(e, 'periodization_code', record.key)}
+                                   onKeyPress={e => this.handleKeyPress(e, record.key)}
+                            />
+                        )
+                    }
+                    return text;
+                }
             },{
                 title:'分期名称',
                 dataIndex: 'periodization_name',
@@ -136,17 +150,11 @@ export default class TableForm extends PureComponent {
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <InputCell
-                                fieldName={`list[${record.key}].periodization_name`}
-                                initialValue={text}
-                                componentProps={{
-                                    autoFocus:"autofocus",
-                                    placeholder:"分期名称",
-                                    onChange:e => this.handleFieldChange(e, 'periodization_name', record.key),
-                                    onKeyPress:e => this.handleKeyPress(e, record.key),
-                                }}
-                                getFieldDecorator={getFieldDecorator}
-                            />
+                            <Input autoFocus="autofocus"
+                                   placeholder="分期名称"
+                                   onChange={e => this.handleFieldChange(e, 'periodization_name', record.key)}
+                                   onKeyPress={e => this.handleKeyPress(e, record.key)}
+                                />
                         )
                     }
                     return text;
@@ -159,25 +167,13 @@ export default class TableForm extends PureComponent {
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <SelectCell 
-                                fieldName={`list[${record.key}].tax_methods`}
-                                getFieldDecorator={getFieldDecorator}
-                                options= { [
-                                        {
-                                            label:'111',
-                                            key: '1',
-                                        },
-                                        {
-                                            label:'222',
-                                            key: '2',
-                                        },
-                                        {
-                                            label:'333',
-                                            key: '3',
-                                        }
-                                    ] 
+                            <Select labelInValue onChange= {(e) => this.handleSelectChange(e, 'tax_methods', record.key)} style={{width:'100%'}} >
+                                {
+                                    this.state.options.map((option,i)=>(
+                                        <Option key={i} value={option.key}>{option.label}</Option>
+                                    ))
                                 }
-                            />
+                            </Select>
                         )
                     }
                     return text;
@@ -193,7 +189,7 @@ export default class TableForm extends PureComponent {
                         if (record.isNew) {
                             return (
                                 <span>
-                                  <a onClick={e => this.saveRow(e, record.key)}>添加</a>
+                                  <a onClick={e => this.saveRow(e, record.key)}>保存</a>
                                   <Divider type="vertical" />
                                   <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
                                     <a style={{ color: '#f5222d' }}>删除</a>

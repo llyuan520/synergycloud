@@ -11,6 +11,7 @@ import ChangeSettleAccounts from './Direct/Change'
 // import CreateInstruct from './Instruct/Create'
 import Project from './Project'
 import CreateProject from './Project/Create'
+import Organization from './Project/TableFormStepTwo'
 
 const routes = [
     {
@@ -79,6 +80,11 @@ const routes = [
         path:'/web/project/create',
         component:wrapPage('合同履约协同平台 – 新建项目', CreateProject),
         name:'新建项目',
+        exact:true,
+    }, {
+        path:'/web/project/org',
+        component:wrapPage('合同履约协同平台 – 组织架构', Organization),
+        name:'组织架构',
         exact:true,
     }, {
         path:'/403',
