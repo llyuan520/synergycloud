@@ -19,7 +19,7 @@ export function accountLogin(options) {
                 dispatch(token.increment(res.data.token));
                 dispatch(userInfoStatus.increment(false));
                 //获取用户信息
-                dispatch(personal.increment({ username: options.number }));
+                dispatch(personal.increment({ username: options.number,company_id: '456104144248242176' }));
                 dispatch(loggedIn.login())
             } else {
                 return Promise.reject(res.message);

@@ -1,15 +1,18 @@
-// Created by liuliyuan on 2018/7/5
+// Created by Lee on 2018/7/4
 import React, { PureComponent } from 'react';
-import { Table, Input, Button, message, Popconfirm, Divider } from 'antd';
-import { InputCell } from 'components/EditableCell'
-
-export default class TableForms extends PureComponent {
+import { Table, Button, message, Popconfirm, Divider,Select, Input } from 'antd';
+const Option = Select.Option;
+export default class TableForm extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
             data: props.value,
             loading: false,
+            options: [{
+                label:'111',
+                key:'1'
+            }]
         };
     }
     componentWillReceiveProps(nextProps) {
@@ -22,6 +25,7 @@ export default class TableForms extends PureComponent {
     getRowByKey(key, newData) {
         return (newData || this.state.data).filter(item => item.key === key)[0];
     }
+
     index = 0;
     cacheOriginData = {};
     toggleEditable = (e, key) => {
@@ -45,10 +49,10 @@ export default class TableForms extends PureComponent {
     newMember = () => {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
-            key: `NEW_TEMP_ID_${this.index}`,
-            workId: '',
-            name: '',
-            department: '',
+            periodization_code: '',
+            periodization_name: '',
+            tax_methods: '',
+            key: newData.length+1,
             editable: true,
             isNew: true,
         });
@@ -63,8 +67,19 @@ export default class TableForms extends PureComponent {
     handleFieldChange(e, fieldName, key) {
         const newData = this.state.data.map(item => ({ ...item }));
         const target = this.getRowByKey(key, newData);
-        if (target) {
+
+        if (target && target !== '') {
             target[fieldName] = e.target.value;
+            this.setState({ data: newData });
+        }
+    }
+    handleSelectChange(value,  fieldName, key) {
+        const newData = this.state.data.map(item => ({ ...item }));
+        const target = this.getRowByKey(key, newData);
+
+        if (target && target !== '') {
+            target[fieldName] = value.label;
+            target[`${fieldName}_key`] = value.key;
             this.setState({ data: newData });
         }
     }
@@ -79,7 +94,7 @@ export default class TableForms extends PureComponent {
                 return;
             }
             const target = this.getRowByKey(key) || {};
-            if (!target.name) {
+            if (!target.periodization_code || !target.periodization_name || !target.tax_methods) {
                 message.error('请填写完整成员信息。');
                 e.target.focus();
                 this.setState({
@@ -111,32 +126,59 @@ export default class TableForms extends PureComponent {
     render() {
         const columns = [
             {
-                title: '序号',
-                dataIndex: 'key',
-                key: 'key',
-                width: '20%',
-            },
-            {
-                title: '变更项',
-                dataIndex: 'name',
-                key: 'name',
-                width: '60%',
-                render: (text, record) => {
-                    if (record.editable) {
+                title:'分期编号',
+                dataIndex: 'periodization_code',
+                key:'periodization_code',
+                width: '30%',
+                render: (text,record)=>{
+                    if(record.editable){
                         return (
-                            <Input
-                                value={text}
-                                autoFocus
-                                onChange={e => this.handleFieldChange(e, 'name', record.key)}
-                                onKeyPress={e => this.handleKeyPress(e, record.key)}
-                                placeholder="成员姓名"
+                            <Input autoFocus="autofocus"
+                                   placeholder="分期编号"
+                                   onChange={e => this.handleFieldChange(e, 'periodization_code', record.key)}
+                                   onKeyPress={e => this.handleKeyPress(e, record.key)}
                             />
-                        );
+                        )
                     }
                     return text;
-                },
-            },
-            {
+                }
+            },{
+                title:'分期名称',
+                dataIndex: 'periodization_name',
+                key:'periodization_name', 
+                width: '30%',
+                render: (text,record)=>{
+                    if(record.editable){
+                        return (
+                            <Input autoFocus="autofocus"
+                                   placeholder="分期名称"
+                                   onChange={e => this.handleFieldChange(e, 'periodization_name', record.key)}
+                                   onKeyPress={e => this.handleKeyPress(e, record.key)}
+                                />
+                        )
+                    }
+                    return text;
+                }
+            },{
+                title:'计税方式',
+                dataIndex: 'tax_methods',
+                key:'tax_methods',
+                width: '20%',
+                render: (text,record)=>{
+                    if(record.editable){
+                        return (
+                            <Select labelInValue onChange= {(e) => this.handleSelectChange(e, 'tax_methods', record.key)} style={{width:'100%'}} >
+                                {
+                                    this.state.options.map((option,i)=>(
+                                        <Option key={i} value={option.key}>{option.label}</Option>
+                                    ))
+                                }
+                            </Select>
+                        )
+                    }
+                    return text;
+                }
+            },{
                 title: '操作',
                 key: 'action',
                 render: (text, record) => {
@@ -147,10 +189,10 @@ export default class TableForms extends PureComponent {
                         if (record.isNew) {
                             return (
                                 <span>
-                                  <a onClick={e => this.saveRow(e, record.key)}>添加</a>
+                                  <a onClick={e => this.saveRow(e, record.key)}>保存</a>
                                   <Divider type="vertical" />
                                   <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                    <a>删除</a>
+                                    <a style={{ color: '#f5222d' }}>删除</a>
                                   </Popconfirm>
                                 </span>
                             );
@@ -168,19 +210,19 @@ export default class TableForms extends PureComponent {
                               <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
                               <Divider type="vertical" />
                               <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                                <a>删除</a>
+                                <a style={{ color: '#f5222d' }}>删除</a>
                               </Popconfirm>
                         </span>
                     );
                 },
-            },
+            }
         ];
-
 
         return (
             <React.Fragment>
                 <Table
                     loading={this.state.loading}
+                    rowKey={record => record.key}
                     columns={columns}
                     dataSource={this.state.data}
                     pagination={false}
@@ -194,7 +236,7 @@ export default class TableForms extends PureComponent {
                     onClick={this.newMember}
                     icon="plus"
                 >
-                    新增
+                    添加
                 </Button>
             </React.Fragment>
         );

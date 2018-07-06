@@ -42,6 +42,7 @@ const tableData = [
      state={
          updateKey:Date.now(),
          loading: false,
+         tableData:tableData,
          changeTypeData:[],
          specialtyData:[],
      }
@@ -79,17 +80,17 @@ const tableData = [
      }
      getSpecialty=()=>{
          request('/con/mdydirective/initData')
-             .then((res) => {
-                 if(res.state === 'ok'){
-                     this.setState({
-                         specialtyData:setSelectFormat(res.data)
+                     .then((res) => {
+                         if(res.state === 'ok'){
+                             this.setState({
+                                 specialtyData:setSelectFormat(res.data)
+                             })
+                         } else {
+                             return Promise.reject(res.message);
+                         }
                      })
-                 } else {
-                     return Promise.reject(res.message);
-                 }
-             })
-             .catch(err => {
-                 message.error(err.message)
+                     .catch(err => {
+                         message.error(err.message)
              })
      }
 
@@ -99,7 +100,7 @@ const tableData = [
      }
 
     render(){
-
+        const { tableData } = this.state;
         const { form } = this.props;
         const { getFieldDecorator, getFieldValue } = form;
 
@@ -294,7 +295,7 @@ const tableData = [
                             <Row gutter={24}>
                                 {getFieldDecorator('members', {
                                     initialValue: tableData,
-                                })(<TableForm form={this.props.form} />)}
+                                })(<TableForm form={this.props.form} onChange={this.onChange} />)}
                             </Row>
                         </Card>
                     </div>

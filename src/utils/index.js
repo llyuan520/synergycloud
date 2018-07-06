@@ -1,26 +1,26 @@
 // Created by liuliyuan on 2018/6/22
 import React from 'react'
-import {message, Badge} from 'antd';
+import { message,Badge } from 'antd';
+import {BigNumber} from 'bignumber.js'
 import request from './request'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
 import {getFields} from './getFields'
 import {BigNumber} from 'bignumber.js'
 
-
-const fMoney = (s, n = 2) => {
-    if (s === 0) {
+const fMoney = (s,n=2)=>{
+    if(s === 0){
         return '0.00';
-    } else if (s === "" || typeof (s) === 'undefined') {
+    }else if(s === "" || typeof (s) === 'undefined'){
         return '';
     }
     n = n > 0 && n <= 20 ? n : 2;
     /**添加一下代码 大数字用parseFloat不精确 */
     s = s.toString().replace(/[^\d\\.-]/g, "");
-    try {
+    try{
         return (new BigNumber(s)).toFormat(n);
-    } catch (e) {
-        console.warn('fMoney error：', e)
+    }catch(e){
+        console.warn('fMoney error：',e)
         return '';
     }
 }
@@ -31,26 +31,6 @@ const getQueryString = name => {
     if (r !== null) return decodeURI(r[2]);
     return null;
 }
-
-const changeChartArr = (arr) => {
-    let i = 0, sum = 0, allZreo = true;
-    for (i = 0; i < arr.length; i++) {
-        if (arr[i].percent !== 0 && arr[i].percent !== '')
-            allZreo = false;
-        if (typeof(arr[i].percent) === 'string')
-            arr[i].percent !== '' ? arr[i].percent = parseFloat(arr[i].percent) : arr[i].percent = 0;
-        sum += arr[i].percent;
-    }
-    for (i = 0; i < arr.length; i++) {
-        if (allZreo) {
-            arr[i].percent = 1;
-            continue;
-        }
-        arr[i].percent = arr[i].percent / sum;
-    }
-    return arr;
-}
-
 const getDict = type => {
     return new Promise(function (resolve, reject) {
         request('/enums', {
@@ -90,7 +70,15 @@ const setSelectFormat = data => {
     }
 
 }
-
+const parseJsonToParams = data=>{
+    let str = '';
+    for(let key in data){
+        if(typeof data[key] !== 'undefined' && data[key] !== ''){
+            str += `${key}=${data[key]}&`
+        }
+    }
+    return str;
+}
 //匹配select的值
 const getSelectFormat = (data, t) => {
 
@@ -143,11 +131,11 @@ export {
     request,
     composeMenus,
     fMoney,
-    changeChartArr,
     getQueryString,
     regRules,
     getFields,
     requestDict,
     setSelectFormat,
     getSelectFormat,
+    parseJsonToParams,
 }
