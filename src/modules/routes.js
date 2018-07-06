@@ -8,7 +8,9 @@ import SendDirect from './Direct/Send'
 import SignDirect from './Direct/Sign'
 import CompleteConfirm from './Direct/Complete'
 import ChangeSettleAccounts from './Direct/Change'
-
+import Project from './Project'
+import CreateProject from './Project/Create'
+import Organization from './Project/TableFormStepTwo'
 import Output from './Output';
 import OutputCreate from './Output/Create'
 import Accept from "./Accept";
@@ -74,10 +76,21 @@ const routes = [
         component: wrapPage('合同履约协同平台 – 合同结算单', Contract),
         exact: true,
     }, {
-        path: '/web/project',
-        name: '项目管理',
-        icon: 'api',
-        exact: true,
+        path:'/web/project',
+        component:wrapPage('合同履约协同平台 – 项目管理', Project),
+        name:'项目管理',
+        icon:'api',
+        exact:true,
+    }, {
+        path:'/web/project/create',
+        component:wrapPage('合同履约协同平台 – 新建项目', CreateProject),
+        name:'新建项目',
+        exact:true,
+    }, {
+        path:'/web/project/org',
+        component:wrapPage('合同履约协同平台 – 组织架构', Organization),
+        name:'组织架构',
+        exact:true,
     }, {
         path: '/403',
         component: wrapPage('403', () => import('./Exception/403')),

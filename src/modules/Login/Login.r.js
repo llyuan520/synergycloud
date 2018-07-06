@@ -175,7 +175,7 @@ class Login extends Component {
 
 const enhance = compose(
     connect(state=>({
-        loggedIn:state.user.get('loggedIn')
+        loggedIn:state.user.get('loggedIn'),
     }),dispatch=>({
         login:accountLogin,
     })),
