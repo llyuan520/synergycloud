@@ -61,8 +61,8 @@ export default class TableForm extends PureComponent {
         })
       },
       onSelect: (...e) => {
-        this.props.next();
-        console.log(e);
+        this.props.next(e);
+          console.log(e);
       },
       rowSelection: {
         type: 'radio',

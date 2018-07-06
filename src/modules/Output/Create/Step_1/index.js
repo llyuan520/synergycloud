@@ -7,7 +7,8 @@ import {withRouter} from 'react-router-dom'
 import {Row, Col, Form, Card, Button} from 'antd';
 import {getFields} from 'utils'
 import {requestDict, request, setSelectFormat} from 'utils'
-import TableForm from './TableForm.r'
+import TableForm from './TableForm.r';
+import _ from "lodash"
 
 
 class Step1 extends Component {
@@ -17,15 +18,21 @@ class Step1 extends Component {
         statusData: [],
         disabled: true,
         tableData: [],
-        conName:[],
-        conNum:[],
+        conName: [],
+        conNum: [],
+        query: {
+            outputnumber: '',
+            status: '',
+            itemsname: ''
+        }
     }
 
     handleSubmit = (e) => {
         e && e.preventDefault();
         this.props.form.validateFields((err) => {
+            console.log(this.state.id);
             if (err) return;
-            this.props.history.push('/web/output/create/fill')
+            this.props.history.push({pathname: '/web/output/create/fill', search: `?id=${this.state.id}`})
         });
     }
 
@@ -39,27 +46,32 @@ class Step1 extends Component {
     }
 
     getConName(contractname) {
-        request("/con/contract/getContractByName", {contractname})
+        request("/con/contract/getContractByName", {params: {contractname}})
         .then(res => {
             this.setState({
-                contractname: setSelectFormat(res.data)
+                contractname: setSelectFormat(res.data.contract)
             })
         })
     }
 
     getConNum(contractnumber) {
-        request("/con/contract/getContractByNumber", {contractnumber})
+        request("/con/contract/getContractByNumber", {params: {contractnumber}})
         .then(res => {
             this.setState({
-                contractnumber: setSelectFormat(res.data)
+                contractnumber: setSelectFormat(res.data.contract)
             })
         })
     }
 
     getList() {
-        request('/con/contract/findListData')
+        let params = this.state.query;
+        for (let i in params) {
+            if (!params[i]) {
+                delete params[i]
+            }
+        }
+        request('/con/contract/findListData', {params})
         .then(res => {
-            console.log(res.data);
             this.setState({
                 tableData: res.data,
                 count: res.count
@@ -77,7 +89,6 @@ class Step1 extends Component {
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
         const {disabled, tableData, conName, conNum, statusData} = this.state;
-        console.log(tableData);
         return (
         <React.Fragment>
             <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
@@ -102,7 +113,9 @@ class Step1 extends Component {
                                             this.getConName(e);
                                         },
                                         onSelect: (e) => {
-                                            console.log(e);
+                                            this.setState({
+                                                query: _.extend(this.state.query, {itemsname: e})
+                                            })
                                         }
                                     },
                                 }, {
@@ -121,7 +134,9 @@ class Step1 extends Component {
                                             this.getConNum(e);
                                         },
                                         onSelect: (e) => {
-                                            console.log(e);
+                                            this.setState({
+                                                query: _.extend(this.state.query, {outputnumber: e})
+                                            })
                                         }
                                     },
                                 },
@@ -138,7 +153,9 @@ class Step1 extends Component {
                                         componentProps: {
                                             labelInValue: true,
                                             onSelect: (e) => {
-                                                console.log(e);
+                                                this.setState({
+                                                    query: _.extend(this.state.query, {status: e})
+                                                })
                                             }
                                         },
                                     },
@@ -173,13 +190,14 @@ class Step1 extends Component {
                                 ], 'vertical')
                             }
                             <Col className="gutter-row pb21" span={8}>
-                                <Button type="primary">搜索</Button>
+                                <Button type="primary" onClick={() => this.getList()}>搜索</Button>
                             </Col>
                         </Row>
                         <Row gutter={24}>
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
-                            })(<TableForm form={this.props.form} next={() => this.setState({disabled: false})}/>)}
+                            })(<TableForm form={this.props.form}
+                                          next={(e) => this.setState({disabled: false, id: e[0].id})}/>)}
                         </Row>
                     </Card>
                 </div>
