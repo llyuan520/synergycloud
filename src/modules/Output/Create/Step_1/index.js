@@ -16,7 +16,9 @@ class Step1 extends Component {
         loading: false,
         statusData: [],
         disabled: true,
-        tableData: []
+        tableData: [],
+        conName:[],
+        conNum:[]
     }
 
     handleSubmit = (e) => {
