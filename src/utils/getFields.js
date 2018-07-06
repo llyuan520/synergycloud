@@ -132,7 +132,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
                                 {
                                     item.options.map((option,i)=>{
                                         return (
-                                            <Option key={`option-${i}`} value={option.key}>{option.label}</Option>
+                                            <Option key={i} value={option.key}>{option.label}</Option>
                                         )
                                     })
                                 }
