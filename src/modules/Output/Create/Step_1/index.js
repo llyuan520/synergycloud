@@ -76,7 +76,7 @@ class Step1 extends Component {
 
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
-        const {disabled, tableData, conName=[], conNum=[], statusData} = this.state;
+        const {disabled, tableData, conName, conNum, statusData} = this.state;
         console.log(tableData);
         return (
         <React.Fragment>
@@ -92,7 +92,11 @@ class Step1 extends Component {
                                     type: 'select',
                                     span: 8,
                                     options: [{label: '全部', key: ''}].concat(conName),
+                                    fieldDecoratorOptions: {
+                                        initialValue: {label: '全部', key: ''},
+                                    },
                                     componentProps: {
+                                        labelInValue: true,
                                         showSearch: true,
                                         onSearch: (e) => {
                                             this.getConName(e);
@@ -107,7 +111,11 @@ class Step1 extends Component {
                                     type: 'select',
                                     span: 8,
                                     options: [{label: '全部', key: ''}].concat(conNum),
+                                    fieldDecoratorOptions: {
+                                        initialValue: {label: '全部', key: ''},
+                                    },
                                     componentProps: {
+                                        labelInValue: true,
                                         showSearch: true,
                                         onSearch: (e) => {
                                             this.getConNum(e);
