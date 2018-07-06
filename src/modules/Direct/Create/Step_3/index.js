@@ -6,6 +6,7 @@ import CustomizeTabs from '../../../../components/Tabs/index'
 import TabPane1 from '../Step_1/tab1'
 import TabPane2 from '../Step_2/tab2'
 import TabPane3 from './tab3'
+import { getQueryString } from  'utils'
 
 class Step3 extends Component {
     state={
@@ -33,6 +34,12 @@ class Step3 extends Component {
         });
     }
 
+    componentDidMount() {
+        //判断是修改还是新增
+        const directId = getQueryString('directId');
+        directId && this.getFindDirectiveData(getQueryString('directId'))
+    }
+
     render(){
 
         return(
@@ -58,7 +65,7 @@ class Step3 extends Component {
                             <div className="steps-action">
                                 <Button type="primary" onClick={this.handleSubmit} > 提交 </Button>
                                 <Button style={{ marginLeft: 8 }} onClick={this.handleSave} > 保存 </Button>
-                                <Button style={{ marginLeft: 8 }} href="/web/direct/create/assign"> 上一步 </Button>
+                                <Button style={{ marginLeft: 8 }} href={`/web/direct/create/assign`} > 上一步 </Button>
                             </div>
                         }
                     />
