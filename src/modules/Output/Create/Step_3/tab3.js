@@ -161,17 +161,17 @@ class TabPane3 extends React.Component {
             dataSource: [],
             dataList: [],
         };
-        _.map(columnsDetails, item => {
+        _.map(columnsDetails, (item, index) => {
             if (item.editable && !props.disabled) {
                 this.columns.push({
                     title: item.title,
-                    key: item.key,
+                    key: index,
                     dataIndex: item.dataIndex,
                     render: (text, record) => (
                     <EditableCell
                     type={item.type}
                     value={item.type === "price" ? fMoney(text) : text}
-                    onChange={this.onCellChange(record, item.dataIndex)}
+                    onChange={this.onCellChange(index, item.dataIndex)}
                     />
                     ),
                 })
@@ -197,7 +197,6 @@ class TabPane3 extends React.Component {
     onCellChange = (key, dataIndex) => {
         return (value) => {
             const dataSource = [...this.state.dataSource];
-            debugger
             const target = dataSource.find(item => item.key === key);
             if (target) {
                 target[dataIndex] = value;
@@ -261,6 +260,7 @@ class TabPane3 extends React.Component {
         this.setState({
             dataSource: [...dataSource, newData],
         }, () => {
+            console.log(this.state.dataSource);
             this.props.setOutput(this.state.dataSource)
         });
     }
