@@ -6,7 +6,6 @@ import request from './request'
 import composeMenus from './composeMenus'
 import regRules from './regRules'
 import {getFields} from './getFields'
-import {BigNumber} from 'bignumber.js'
 
 const fMoney = (s,n=2)=>{
     if(s === 0){
