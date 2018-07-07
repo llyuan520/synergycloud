@@ -15,6 +15,7 @@ class Step1 extends Component {
         //初始值
         model:{},
         itemList:[],
+        directId:getQueryString('directId')
     }
 
     handleSubmit = (e) => {
@@ -24,9 +25,8 @@ class Step1 extends Component {
             if (!err) {
                 this.toggleSubmitLoading(true);
                 //判断是修改还是新增
-                const directId = getQueryString('directId');
-                if(directId){
-                    values['directId'] = directId;
+                if(this.state.directId){
+                    values['directId'] = this.state.directId;
                 }
                 request('/con/mdydirective/save', {
                     method: 'POST',
@@ -122,8 +122,8 @@ class Step1 extends Component {
         this.getSpecialty();
 
         //判断是修改还是新增
-        const directId = getQueryString('directId');
-        directId && this.getFindDirectiveData(getQueryString('directId'))
+        const directId = this.state.directId;
+        directId && this.getFindDirectiveData(directId)
     }
 
     render(){
@@ -217,9 +217,6 @@ class Step1 extends Component {
                                                         message:'请选择变更类型'
                                                     }
                                                 ]
-                                            },
-                                            componentProps: {
-                                                //labelInValue:true,
                                             },
                                         },{
                                             label:'专业',
