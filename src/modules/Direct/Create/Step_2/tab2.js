@@ -1,17 +1,107 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
-import {  Row, Col, Card, Button } from 'antd';
+import { Card,Row,Alert,Button } from 'antd';
+import TableForm from './TableForm.r'
 import PopModal from './PopModal'
 
-export default class TabPane2 extends Component {
+
+class TabPane2 extends Component {
+
     state={
         updateKey:Date.now(),
         visible:false,
         modalConfig:{
             type:''
         },
+        item:{
+            supplier_id:{},
+            dataList:[
+                {
+                    accountability_reason
+                        :
+                        "asdf",
+                    hide_des
+                        :
+                        "阿斯蒂芬萨达发是的",
+                    id
+                        :
+                        "465153599844909056",
+                    is_accountability
+                        :
+                        "1",
+                    is_hide
+                        :
+                        "1",
+                    is_rework
+                        :
+                        "1",
+                    item
+                        :
+                        "变更1",
+                    planDateEnd
+                        :
+                        "2018-07-07",
+                    planDateStart
+                        :
+                        "2018-07-06",
+                    rework_des
+                        :
+                        "阿萨德法师的方法",
+                    seq
+                        :
+                        1
+                },
+                {
+                    accountability_reason
+                        :
+                        "asdf",
+                    hide_des
+                        :
+                        "阿斯蒂芬萨达发",
+                    id
+                        :
+                        "465153599844909057",
+                    is_accountability
+                        :
+                        "1",
+                    is_hide
+                        :
+                        "1",
+                    is_rework
+                        :
+                        "0",
+                    item
+                        :
+                        "变更2",
+                    planDateEnd
+                        :
+                        "2018-08-21",
+                    planDateStart
+                        :
+                        "2018-07-11",
+                    rework_des
+                        :
+                        "",
+                    seq
+                        :
+                        2
+                }
+
+            ],
+        },
+
     }
 
+    setDataList = dataList =>{
+        this.mounted && this.setState({
+            item:{
+                supplier_id:dataList.supplier_id,
+                dataList:dataList.newData,
+            }
+        },()=>{
+            console.log(this.state.item, this.state.item.dataList)
+        })
+    }
     toggleModalVisible=visible=>{
         this.setState({
             visible
@@ -23,206 +113,72 @@ export default class TabPane2 extends Component {
         this.setState({
             modalConfig:{
                 type,
-                id:this.state.selectedRowKeys
+                id:this.state.selectedRowKeys,
             }
         })
     }
-
+    mounted=true
+    componentWillUnmount(){
+        this.mounted=null
+    }
     render(){
 
-        const { visible,modalConfig } = this.state;
-        const { display } = this.props;
+        const { visible,modalConfig,item } = this.state;
+        const { form,display,model,data } = this.props;
+        const { getFieldDecorator, getFieldError } = form;
+        const dataListError = getFieldError('dataList');
         return(
             <React.Fragment>
 
-                <Card
-                    bordered={false}
-                    bodyStyle={{
-                        paddingTop:0
-                    }}
-                >
                     <Card
-                        style={{ border:'none',marginTop:'24px' }}
+                        bordered={false}
                         bodyStyle={{
-                            padding:0
+                            paddingTop:0
                         }}
                     >
-                        <p
-                            style={{
-                                fontSize: 14,
-                                color: 'rgba(0, 0, 0, 0.85)',
-                                marginBottom: 16,
-                                fontWeight: 500,
-                            }}
-                        >
-                            <a style={{ display: 'inline-block'  }}>供应商A</a>
-                            <span style={{ float:'right',color: 'rgba(153, 153, 153, 0.847058823529412)' }}>合同名称：青岛万科未来城项目底商幕墙工程合同</span>
-                        </p>
-                        <Card
-                            type="inner"
-                            title={
-                                <React.Fragment>
-                                    <span style={{ fontWeight: 'bold' }}>变更项1</span>
-                                    <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，三房一厅的方案修改布线</span>
-                                </React.Fragment>
+
+                        <Row gutter={24} style={{margin:'14px 12px 0'}}>
+                            {getFieldDecorator('dataList', {
+                                initialValue: item.dataList,
+                                rules:[
+                                    {
+                                        required:true,
+                                        message:'请选择供应商'
+                                    }
+                                ]
+                            })(<TableForm form={form} />)}
+                            {
+                                dataListError ? <Alert key='errorMsg' message={dataListError.join(',')} type="error" /> : null
                             }
-                            extra={
-                                !display &&<React.Fragment>
-                                    <a href="#/" style={{ marginRight:10 }}>编辑</a>
-                                    <a href="#/" style={{ color: '#F07060' }}>删除</a>
-                                </React.Fragment>
-                            }
-                        >
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <p>
-                                        <label>隐蔽工程及附件：</label>
-                                        <span>有，xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-                                    </p>
-                                </Col>
-                                <Col span={12}>
-                                    <p>
-                                        <label>返工及附件：</label>
-                                        <span>变更编号变更编号变更编号变更编号变更编号变更编号变更编号</span>
-                                    </p>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <label>担责及说明：</label>
-                                    <span>是，xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-                                </Col>
-                                <Col span={12}>
-                                    <label>预计工作时间：</label>
-                                    <span>2015-10-02    ～    2015-10-10</span>
-                                </Col>
-                            </Row>
-                        </Card>
-                        <Card
-                            style={{ marginTop: 16 }}
-                            type="inner"
-                            title={
-                                <React.Fragment>
-                                    <span style={{ fontWeight: 'bold' }}>变更项1</span>
-                                    <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，三房一厅的方案修改布线</span>
-                                </React.Fragment>
-                            }
-                            extra={
-                                !display && <React.Fragment>
-                                    <a href="#/" style={{ marginRight:10 }}>编辑</a>
-                                    <a href="#/" style={{ color: '#F07060' }}>删除</a>
-                                </React.Fragment>
-                            }
-                        >
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <p>
-                                        <label>隐蔽工程及附件：</label>
-                                        <span>有，xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-                                    </p>
-                                </Col>
-                                <Col span={12}>
-                                    <p>
-                                        <label>返工及附件：</label>
-                                        <span>变更编号变更编号变更编号变更编号变更编号变更编号变更编号</span>
-                                    </p>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <label>担责及说明：</label>
-                                    <span>是，xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-                                </Col>
-                                <Col span={12}>
-                                    <label>预计工作时间：</label>
-                                    <span>2015-10-02    ～    2015-10-10</span>
-                                </Col>
-                            </Row>
-                        </Card>
+
+                        </Row>
+
+
+                        {
+                            !display && <Button
+                                style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
+                                type="dashed"
+                                onClick={()=>this.showModal('add')}
+                                icon="plus"
+                            >
+                                指定供应商
+                            </Button>
+                        }
+
                     </Card>
-
-                    <Card
-                        style={{border:'none', marginTop:'24px' }}
-                        bodyStyle={{
-                            padding:0
-                        }}
-                    >
-                        <p
-                            style={{
-                                fontSize: 14,
-                                color: 'rgba(0, 0, 0, 0.85)',
-                                marginBottom: 16,
-                                fontWeight: 500,
-                            }}
-                        >
-                            <a style={{ display: 'inline-block'  }}>供应商B</a>
-                            <span style={{ float:'right',color: 'rgba(153, 153, 153, 0.847058823529412)' }}>合同名称：青岛万科未来城项目底商幕墙工程合同</span>
-                        </p>
-                        <Card
-                            type="inner"
-                            title={
-                                <React.Fragment>
-                                    <span style={{ fontWeight: 'bold' }}>变更项1</span>
-                                    <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，三房一厅的方案修改布线</span>
-                                </React.Fragment>
-                            }
-                            extra={
-                                !display && <React.Fragment>
-                                    <a href="#/" style={{ marginRight:10 }}>编辑</a>
-                                    <a href="#/" style={{ color: '#F07060' }}>删除</a>
-                                </React.Fragment>
-                            }
-                        >
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <p>
-                                        <label>隐蔽工程及附件：</label>
-                                        <span>有，xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-                                    </p>
-                                </Col>
-                                <Col span={12}>
-                                    <p>
-                                        <label>返工及附件：</label>
-                                        <span>变更编号变更编号变更编号变更编号变更编号变更编号变更编号</span>
-                                    </p>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <label>担责及说明：</label>
-                                    <span>是，xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-                                </Col>
-                                <Col span={12}>
-                                    <label>预计工作时间：</label>
-                                    <span>2015-10-02    ～    2015-10-10</span>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Card>
-
-                    {
-                        !display && <Button
-                                        style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
-                                        type="dashed"
-                                        onClick={()=>this.showModal('add')}
-                                        icon="plus"
-                                    >
-                                        指定供应商
-                                    </Button>
-                    }
-
-
-                </Card>
-
 
                 <PopModal
                     visible={visible}
                     modalConfig={modalConfig}
                     toggleModalVisible={this.toggleModalVisible}
-                    setData={this.props.setData}
+                    model={model}
+                    data={data}
+                    setDataList={this.setDataList.bind(this)}
                 />
             </React.Fragment>
         )
     }
 
 }
+
+export default TabPane2

@@ -1,6 +1,8 @@
 // Created by liuliyuan on 2018/7/5
 import React, { PureComponent } from 'react';
-import { Row,Col,Table, Input, Button, message, Popconfirm, Divider,Checkbox,Upload,Icon } from 'antd';
+import { Row,Col,Table, Input, message, Popconfirm, Divider,Checkbox,DatePicker } from 'antd';
+import moment from 'moment';
+const { RangePicker } = DatePicker;
 
 export default class TableForms extends PureComponent {
     constructor(props) {
@@ -45,22 +47,6 @@ export default class TableForms extends PureComponent {
         this.setState({data: newData});
         this.props.onChange(newData);
     }
-
-    newMember = () => {
-        const newData = this.state.data.map(item => ({...item}));
-        newData.push({
-            seq:  `new_${this.index}`,
-            item: '',
-            is_hide:'0',
-            hide_des:'',
-            is_rework:'0',
-            rework_des:'',
-            editable: true,
-            isNew: true,
-        });
-        this.index += 1;
-        this.setState({data: newData});
-    };
 
     handleKeyPress(e, seq) {
         if (e.id === 'Enter') {
@@ -133,131 +119,63 @@ export default class TableForms extends PureComponent {
     }
 
     render() {
-
-        const propsFile = {
-            name:'file',
-            action:'/',
-            //multiple:true,
-            onRemove: () => {
-
-            },
-            beforeUpload: file => {
-                //TODO:文件大小限制
-                /*if(fileSize){
-                 const isLtSize = file.size / 1024 / 1024 < fileSize;
-                 if (!isLtSize) {
-                 message.error(`文件大小不能超过${fileSize}mb`);
-                 setFieldsValue(undefined)
-                 }
-                 }
-                 */
-                return false;
-            },
-        };
-
+        const dateFormat = 'YYYY/MM/DD';
         const columns = [
-            {
-                title: '序号',
-                dataIndex: 'seq',
-                key: 'seq',
-                //width: '200px',
-            },
             {
                 title: '变更项',
                 dataIndex: 'item',
                 key: 'item',
                 //width: '200px',
-                render: (text, record) => {
-                    if (record.editable) {
-                        return (
-                            <Input
-                                value={text}
-                                autoFocus
-                                onChange={e => this.handleFieldChange(e, 'item', record.seq)}
-                                onKeyPress={e => this.handleKeyPress(e, record.seq)}
-                                placeholder="成员姓名"
-                            />
-                        );
-                    }
-                    return text;
-                },
             },
             {
-                title: '隐蔽工程',
-                dataIndex: 'hide_des',
-                key: 'hide_des',
-               //width: '300px',
-                render: (text, record) => {
-                    if (record.editable) {
-                        return (
-                            <Row gutter={24}>
-                                <Col span={4}>
-                                    <Checkbox defaultChecked={record.is_hide==='1'} onChange={e => this.handleCheckBoxChange(e, 'is_hide', 'hide_des', record.seq)}/>
-                                </Col>
-                                {
-                                    record.is_hide==='1' && <Col span={10}>
-                                        <Input
-                                            value={text}
-                                            autoFocus
-                                            onChange={e => this.handleFieldChange(e, 'hide_des', record.seq)}
-                                            onKeyPress={e => this.handleKeyPress(e, record.seq)}
-                                            placeholder="隐蔽工程描述"
-                                        />
-                                    </Col>
-                                }
-                                <Col span={10}>
-                                    <Upload {...propsFile}>
-                                        <Icon type="upload" />
-                                    </Upload>
-                                </Col>
-                            </Row>
-                        );
-                    }
-                    return (
-                        <div>
-                            <span>{record.is_hide==='1' ? '有，' : '无'}</span>
-                            <span>{text}</span>
-                        </div>
-                    );
-                },
-            },
-            {
-                title: '返工',
-                dataIndex: 'rework_des',
-                key: 'rework_des',
+                title: '但责单位',
+                dataIndex: 'accountability_reason',
+                key: 'accountability_reason',
                 //width: '300px',
                 render: (text, record) => {
                     if (record.editable) {
                         return (
                             <Row gutter={24}>
                                 <Col span={4}>
-                                    <Checkbox defaultChecked={record.is_rework==='1'} onChange={e => this.handleCheckBoxChange(e, 'is_rework', 'rework_des', record.seq)} />
+                                    <Checkbox defaultChecked={record.is_accountability==='1'} onChange={e => this.handleCheckBoxChange(e, 'is_accountability', 'accountability_reason', record.seq)}/>
                                 </Col>
                                 {
-                                    record.is_rework==='1' && <Col span={10}>
+                                    record.is_accountability==='1' && <Col span={20}>
                                         <Input
                                             value={text}
                                             autoFocus
-                                            onChange={e => this.handleFieldChange(e, 'rework_des', record.seq)}
-                                            onKeyPress={e => this.handleKeyPress(e, record.seq)}
-                                            placeholder="隐蔽工程描述"
+                                            onChange={e => this.handleFieldChange(e, 'accountability_reason', record.seq)}
+                                            placeholder="但责单位描述"
                                         />
                                     </Col>
                                 }
-                                <Col span={10}>
-                                    <Upload {...propsFile}>
-                                        <Icon type="upload" />
-                                    </Upload>
-                                </Col>
                             </Row>
                         );
                     }
                     return (
                         <div>
-                            <span>{record.is_rework==='1' ? '有，' : '无'}</span>
+                            <span>{record.is_accountability==='1' ? '有，' : '无'}</span>
                             <span>{text}</span>
                         </div>
                     );
+                }
+            },
+            {
+                title: '预计时间',
+                dataIndex: 'planDate',
+                key: 'planDate',
+                //width: '300px',
+                render: (text, record) => {
+                    if (record.editable) {
+                        return (
+                            <RangePicker defaultValue={[moment(record.planDateStart, dateFormat), moment(record.planDateEnd, dateFormat)]} onChange={(date, dateString)=>this.handleRangePickerChange(date, dateString, 'planDate',record.seq)} />
+                        );
+                    }
+                    return (
+                        <span>
+                            {`${record.planDateStart} ~ ${record.planDateEnd}`}
+                        </span>
+                    )
                 },
             },
             {
@@ -314,14 +232,6 @@ export default class TableForms extends PureComponent {
                         return record.editable ? 'editable' : '';
                     }}
                 />
-                <Button
-                    style={{width: '100%', marginTop: 16, marginBottom: 8}}
-                    type="dashed"
-                    onClick={this.newMember}
-                    icon="plus"
-                >
-                    新增
-                </Button>
             </React.Fragment>
         );
     }
