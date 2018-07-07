@@ -30,6 +30,7 @@ class TabPane1 extends React.Component {
     render() {
         const {data} = this.props;
         const {outputName} = this.state;
+        console.log(data);
         return (
         <div className="container">
             <div className="editContent">
@@ -68,7 +69,7 @@ class TabPane1 extends React.Component {
                         <span className="span">发票类型：</span>
                         {/*{data.model.invoicetype}*/}
                         <Select style={{width: 100}} defaultValue={data.model.invoice_type}
-                                disabled={data.model.invoicetype === "专票"}
+                                disabled={data.model.invoice_type === "0"}
                                 onSelect={e => {
                                     this.props.setData(e);
                                 }}>

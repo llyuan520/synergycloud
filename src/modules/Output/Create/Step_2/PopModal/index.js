@@ -3,14 +3,17 @@
  * Created by fanzhe on 2018/7/5
  */
 import React, {Component} from 'react';
-import {Button, Modal, Form, Row, Col, Divider,} from 'antd';
+import {Button, Modal, Form, Row, Col, Divider, message} from 'antd';
 import './styles.less'
-import {fMoney, getFields, setSelectFormat} from "../../../../../utils";
+import {fMoney, getFields} from "../../../../../utils";
 import FormItems from "../../../../../components/FormItems";
 import request from "../../../../../utils/request";
+import {withRouter} from "react-router-dom";
 
 const {AsyncSelect} = FormItems.AsyncSelect;
 
+
+let User = [];
 
 class PopModal extends Component {
     static defaultProps = {
@@ -21,28 +24,48 @@ class PopModal extends Component {
         initData: {},
         userId: "",
         data: this.props && this.props.data || [],
-        conName: []
-    }
-
-    callback = (key, name) => {
-        const {setFieldsValue} = this.props.form;
-        setFieldsValue({
-            [name]: key.length > 0 && true
-        })
-        console.log(key, name);
+        conName: [],
+        invite_userid: []
     }
 
     handleSubmit = (e) => {
         e && e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
-                this.props.setData(values)
-                this.props.toggleModalVisible(false);
-            }
-        });
+        if (this.state.invite_userid.length) {
+            this.save();
+            this.props.form.validateFieldsAndScroll((err, values) => {
+                if (!err) {
+                    this.props.setData(values);
+                    this.props.toggleModalVisible(false);
+                }
+            });
+        } else {
+            message.warning('请输入邀请人！');
+        }
+
+    }
+
+    save() {
+        const {invite_userid, data} = this.state;
+        const params = {
+            invite_userid,
+            model: data
+        };
+        console.log(params);
+        request("/con/output/saveOutputAndImage", {body: params, method: "POST"})
+        .then(res => {
+            console.log(res);
+            this.props.history.push({
+                pathname: '/web/output/create/present',
+                search: this.props.location.search,
+                state: {outputId: res.data.res}
+            })
+        })
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            data: this.props.data
+        })
         if (!nextProps.visible) {
             /**
              * 关闭的时候清空表单
@@ -67,27 +90,31 @@ class PopModal extends Component {
         this.mounted = null
     }
 
-    componentWillReceiveProps() {
-        this.setState({
-            data: this.props.data
-        })
-    }
-
     getConName(contractname) {
         request("/con/output/getUserByNumber", {params: {usernumber: contractname}})
         .then(res => {
-            console.log(res.data.user);
             this.setState({
-                conName: setSelectFormat(res.data.user)
+                conName: res.data.user.map(item => {
+                    return {
+                        key: item.id,
+                        label: item.name
+                    }
+                })
             })
         })
+    }
+
+    chooseUser(e) {
+        User.push(e);
+        this.setState({
+            invite_userid: User
+        });
     }
 
     render() {
         const props = this.props;
         const {form} = props;
         const {data, conName} = this.state;
-        console.log(conName);
         return (
         <Modal
         maskClosable={false}
@@ -156,22 +183,18 @@ class PopModal extends Component {
                             type: 'select',
                             span: 8,
                             options: [{label: '全部', key: ''}].concat(conName),
-                            fieldDecoratorOptions: {
-                                initialValue: {label: '全部', key: ''},
-                            },
                             componentProps: {
+                                mode: "tags",
                                 labelInValue: true,
                                 showSearch: true,
+                                tokenSeparators: [','],
                                 onSearch: (e) => {
                                     this.getConName(e);
                                 },
                                 onSelect: (e) => {
-                                    console.log(e);
+                                    this.chooseUser(e)
                                 }
                             },
-                            selectOptions: {
-                                style: {width: "200px"}
-                            }
                         }])
                         }
                     </Row>
@@ -182,4 +205,4 @@ class PopModal extends Component {
     }
 }
 
-export default Form.create()(PopModal)
+export default Form.create()(withRouter(PopModal));

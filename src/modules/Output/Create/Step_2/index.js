@@ -16,7 +16,8 @@ class Step2 extends Component {
         updateKey: Date.now(),
         visible: false,
         data: [],
-        model: []
+        model: [],
+        outputId: ""
     }
 
     setData = data => {
@@ -26,12 +27,19 @@ class Step2 extends Component {
     }
 
     handleSubmit = (e) => {
+        console.log(this.save);
         e && e.preventDefault();
-        this.save();
-        this.props.history.push({
-            pathname: '/web/output/create/present',
-            search: `?id=${this.props.location.search.split("=")[1]}`
-        })
+        const changeRouter = () => {
+            const {outputId} = this.state;
+            this.props.history.push({
+                pathname: '/web/output/create/present',
+                search: `?id=${this.props.location.search.split("=")[1]}`,
+                state: {
+                    outputId
+                }
+            })
+        }
+        this.save(changeRouter)
     }
 
     mounted = true;
@@ -61,13 +69,23 @@ class Step2 extends Component {
         })
     }
 
-    save() {
+    save = (changeRouter) => {
         const params = {
             outputimage: this.state.data,
             model: this.state.modelM
         };
         console.log(params);
         request("/con/output/saveOutputAndImage", {body: params, method: "POST"})
+        .then(res => {
+            console.log(res.data.res);
+            this.setState({
+                outputId: res.data.res
+            }, () => {
+                if (changeRouter) {
+                    changeRouter()
+                }
+            })
+        })
     }
 
     render() {
@@ -84,7 +102,7 @@ class Step2 extends Component {
                     },
                     {
                         title: '形象进展',
-                        component: <TabPane2 data={this.state.model}  setData={this.setData.bind(this)}/>
+                        component: <TabPane2 data={this.state.model} setData={this.setData.bind(this)}/>
                     }
                 ]
             }
