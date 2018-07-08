@@ -104,6 +104,8 @@ export default function request(url, options) {
             return response.json();
         })
         .catch(e => {
+            console.log(e)
+
             const status = e.name;
             if (status === 401) {
                 logout();

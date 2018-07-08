@@ -103,6 +103,10 @@ export const getFields = (form,fieldsData=[],layout) =>{
             case 'fileUpload':
                 CusComponent = CusFormItem.FileUpload;
                 break;
+            case 'numeric':
+                CusComponent = CusFormItem.NumericInput;
+                break;
+
             default:
                 CusComponent = Input
         }
@@ -128,7 +132,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
                                 {
                                     item.options.map((option,i)=>{
                                         return (
-                                            <Option key={`option-${i}`} value={option.key}>{option.label}</Option>
+                                            <Option key={i} value={option.key}>{option.label}</Option>
                                         )
                                     })
                                 }
