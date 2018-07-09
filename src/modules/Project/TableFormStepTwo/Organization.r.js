@@ -103,7 +103,9 @@ class Organization extends PureComponent {
                             role_id: value.key
                         }
                     }).then((data) => {
-
+                        console.log('=============================')
+                        console.log(data);
+                        console.log('=============================')
                         if(data.state === 'ok'){
                             target['role_type'] = data.data.role_type;
 
@@ -202,7 +204,6 @@ class Organization extends PureComponent {
                         tax_type: stages[i].tax_type
                     })
                 }
-
                 this.setState({
                     name_options:rolenameOptions,
                     stages_options: stages_options
@@ -259,7 +260,7 @@ class Organization extends PureComponent {
                 render: (text, record) => {
                     if (record.editable) {
                         return (
-                            <Select labelInValue mode="tags" tokenSeparators={[',']} optionFilterProp="children"
+                            <Select labelInValue mode="multiple" tokenSeparators={[',']} optionFilterProp="children"
                                     filterOption={(input, option) => option.props.children && option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                     onChange= {(e) => this.handleSelectChange(e, 'username', record.key)}
                                     style={{width:'100%'}}

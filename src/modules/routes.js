@@ -17,6 +17,7 @@ import Accept from "./Accept";
 import AcceptCreate from "./Accept/Create";
 import Contract from "./Contract";
 import ContractCreate from "./Contract/Create";
+import ProjectDetail from "./Project/ProjectDetail"
 
 const routes = [
     {
@@ -103,6 +104,11 @@ const routes = [
         path:'/web/project/org',
         component:wrapPage('合同履约协同平台 – 组织架构', Organization),
         name:'组织架构',
+        exact:true,
+    }, {
+        path:'/web/project/projectDetail',
+        component:wrapPage('合同履约协同平台 – 项目详情', ProjectDetail),
+        name:'项目详情',
         exact:true,
     }, {
         path: '/403',
