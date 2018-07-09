@@ -64,11 +64,11 @@ class TabPane1 extends React.Component {
                 <Row>
                     <Col span={12}>
                         <span className="span">甲方：</span>
-                        <span className="item-text">{data.companyA}</span>
+                        <span className="item-text">{data.companyA&&data.companyA.companyname}</span>
                     </Col>
                     <Col span={12}>
                         <span className="span">乙方：</span>
-                        <span className="item-text">{data.companyA}</span>
+                        <span className="item-text">{data.companyB&&data.companyB.companyname}</span>
                     </Col>
                 </Row>
                 <Row>

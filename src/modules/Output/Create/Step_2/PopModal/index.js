@@ -39,12 +39,23 @@ class PopModal extends Component {
             message.warning('请输入邀请人！');
         }
 
+    };
+
+    getModel() {
+        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
+        .then(res => {
+            console.log(res);
+            this.setState({
+                data: res.data,
+            })
+        })
     }
 
     save() {
         const {invite_userid, data} = this.state;
         const params = {
             invite_userid,
+            contract_id: this.props.location.search.split("=")[1],
             model: data
         };
         console.log(params);
@@ -59,27 +70,6 @@ class PopModal extends Component {
         })
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            data: this.props.data
-        })
-        if (!nextProps.visible) {
-            /**
-             * 关闭的时候清空表单
-             * */
-            nextProps.form.resetFields();
-            this.setState({
-                defaultData: {}
-            })
-        }
-        if (this.props.visible !== nextProps.visible && !this.props.visible && nextProps.modalConfig.type !== 'add') {
-            /**
-             * 弹出的时候如果类型不为新增，则异步请求数据
-             * */
-
-
-        }
-    }
 
     mounted = true
 
@@ -88,7 +78,7 @@ class PopModal extends Component {
     }
 
     getConName(contractname) {
-        request("/con/output/getUserByNumber", {params: {usernumber: contractname}})
+        setTimeout(request("/con/output/getUserByNumber", {params: {username: contractname}})
         .then(res => {
             this.setState({
                 conName: res.data.user.map(item => {
@@ -98,7 +88,7 @@ class PopModal extends Component {
                     }
                 })
             })
-        })
+        }),1000)
     }
 
     chooseUser(e) {
@@ -108,10 +98,15 @@ class PopModal extends Component {
         });
     }
 
+    componentDidMount() {
+        this.getModel();
+    }
+
     render() {
         const props = this.props;
         const {form} = props;
         const {data, conName} = this.state;
+        console.log(data);
         return (
         <Modal
         maskClosable={false}
@@ -144,11 +139,11 @@ class PopModal extends Component {
                     <Row>
                         <Col span={12}>
                             <span className="span">甲方：</span>
-                            <span className="item-text">{data.companyA}</span>
+                            <span className="item-text">{data.companyA && data.companyA.companyname}</span>
                         </Col>
                         <Col span={12}>
                             <span className="span">乙方：</span>
-                            <span className="item-text">{data.companyA}</span>
+                            <span className="item-text">{data.companyB && data.companyB.companyname}</span>
                         </Col>
                     </Row>
                     <Row>
