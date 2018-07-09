@@ -55,23 +55,35 @@ class Step2 extends Component {
         })
     }
 
+    getModel() {
+        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
+        .then(res => {
+            this.setState({
+                modelM: res.data.model,
+            })
+        })
+    }
+
     save = (changeRouter) => {
         const params = {
             outputimage: this.state.data,
             model: this.state.modelM
         };
-        console.log(params);
         request("/con/output/saveOutputAndImage", {body: params, method: "POST"})
         .then(res => {
             console.log(res);
             this.setState({
-                // outputId: res.data.res
+                outputId: res.data.res
             }, () => {
                 if (changeRouter) {
                     changeRouter()
                 }
             })
         })
+    }
+
+    componentDidMount() {
+        this.getModel();
     }
 
     render() {

@@ -46,8 +46,8 @@ class TabPane1 extends React.Component {
 
 
     render() {
-        const {data,outputName} = this.state;
-        console.log(data,outputName);
+        const {data, outputName} = this.state;
+        console.log(data, outputName);
         return (
         <div className="container">
             <div className="editContent">
