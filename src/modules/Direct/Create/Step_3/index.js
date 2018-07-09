@@ -12,7 +12,6 @@ class Step3 extends React.Component {
     state={
         updateKey:Date.now(),
         visible:false,
-        directId:getQueryString('directId'),
         data:{},
     }
 
@@ -39,14 +38,7 @@ class Step3 extends React.Component {
         });
     }
 
-    componentDidMount() {
-        //判断是修改还是新增
-        const directId = getQueryString('directId');
-        directId && this.getFindDirectiveData(getQueryString('directId'))
-    }
-
     render(){
-        const { directId } = this.state
         return(
             <React.Fragment>
                 <Form>
@@ -70,7 +62,7 @@ class Step3 extends React.Component {
                             <div className="steps-action">
                                 <Button type="primary" onClick={this.handleSubmit} > 提交 </Button>
                                 <Button style={{ marginLeft: 8 }} onClick={this.handleSave} > 保存 </Button>
-                                <Button style={{ marginLeft: 8 }} href={`/web/direct/create/assign?directId=${directId}`} > 上一步 </Button>
+                                <Button style={{ marginLeft: 8 }} href={`/web/direct/create/assign?directId=${getQueryString('directId')}`} > 上一步 </Button>
                             </div>
                         }
                     />
