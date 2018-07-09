@@ -1,11 +1,14 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
-import { Table,Popconfirm, Button } from 'antd';
+import { Table,Popconfirm, Button,Select,Input } from 'antd';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import { SelectCell } from 'components/EditableCell'
 import './styles.less'
+
+
+const Option = Select.Option;
+
 
 function dragDirection(
     dragIndex,
@@ -112,54 +115,67 @@ const DragableBodyRow = DropTarget('row', rowTarget, (connect, monitor) => ({
 
 const columns = (context,getFieldDecorator) => [{
     title: '序号',
-    dataIndex: 'key',
-    key: 'key',
+    dataIndex: 'seq',
+    key: 'seq',
     width:60,
 }, {
     title: '审批节点名称',
-    dataIndex: 'name',
-    key: 'name',
-    width:200,
-}, {
-    title: '项目角色',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'nodeName',
+    key: 'nodeName',
     width:200,
     render: (text, record) => {
-        return (
-            <SelectCell
-                fieldName={`list[${record.key}].age`}
-                options={[
-                    {
-                        label:'否',
-                        key:'0',
-                    },{
-                        label:'是',
-                        key:'1',
-                    }
-                ]}
-                getFieldDecorator={getFieldDecorator}
-            />
-        )
+        if (record.editable) {
+            return (
+                <Input
+                    value={text}
+                    autoFocus
+                    onChange={e => context.handleNodeNameChange(e, 'nodeName', record.seq)}
+                    //onKeyPress={e => context.handleKeyPress(e, record.seq)}
+                    placeholder="但责单位描述"
+                />
+            )
+        }
+        return text;
+    }
+}, {
+    title: '项目角色',
+    dataIndex: 'roleName',
+    key: 'roleName',
+    width:200,
+    render: (text, record) => {
+        if (record.editable) {
+            return (
+                <Select
+                    placeholder="请选择项目角色"
+                    defaultValue="0"
+                    style={{ width: '100%' }}
+                    //onChange={e => this.handleRoleNameChange(e, 'roleName', record.seq)}
+                >
+                    <Option value="0">否</Option>
+                    <Option value="1">是</Option>
+                </Select>
+            );
+        }
+        return text;
     }
 }, {
     title: '审批人',
-    dataIndex: 'address',
-    key: 'address',
+    dataIndex: 'userId',
+    key: 'userId',
     width:300,
     render: (text, record) => {
-        return (
-            <SelectCell
-                fieldName={`list[${record.key}].address`}
-                options={[]}
-                //initialValue={record.address.toString()}
-                getFieldDecorator={getFieldDecorator}
-                componentProps={{
-                    mode:'tags',
-                    //onChange:(value)=>context.handleConfirmChange(value,record)
-                }}
-            />
-        )
+        if (record.editable) {
+            return (
+                <Select
+                    mode="tags"
+                    style={{width: '100%'}}
+                    placeholder="请输入审批人"
+                    //onChange={e => this.handleUserIdChange(e, 'roleName', record.seq)}
+                >
+                </Select>
+            )
+        }
+        return text;
     }
 }, {
     title: '操作',
@@ -167,7 +183,7 @@ const columns = (context,getFieldDecorator) => [{
     width:60,
     render: (text, record) => {
         return (
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
+            <Popconfirm title="是否要删除此行？" onConfirm={() => context.remove(record.seq)}>
                 <a style={{ color: '#f5222d' }}>删除</a>
             </Popconfirm>
         )
@@ -176,30 +192,43 @@ const columns = (context,getFieldDecorator) => [{
 
 class DragSortingTable extends Component {
 
-    state = {
-        updateKey:Date.now(),
-        data: [{
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        }, {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        }, {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        }],
+    constructor(props){
+        super(props)
+        this.state = {
+            updateKey:Date.now(),
+            data:props.dataSource,
+        }
     }
 
     components = {
         body: {
             row: DragableBodyRow,
         },
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if ('dataSource' in nextProps) {
+            this.setState({
+                data: nextProps.dataSource,
+            });
+        }
+    }
+
+    getRowByKey(seq, newData) {
+        return (newData || this.state.data).filter(item => item.seq === seq)[0];
+    }
+
+    handleNodeNameChange(e, fieldName, seq) {
+        const newData = this.state.data.map(item => ({...item}));
+        const target = this.getRowByKey(seq, newData);
+        if (target) {
+            target[fieldName] = e.target.value;
+            this.setState({data: newData});
+        }
+    }
+    remove(seq) {
+        const newData = this.state.data.filter(item => item.seq !== seq);
+        this.setState({data: newData});
     }
 
     moveRow = (dragIndex, hoverIndex) => {
@@ -217,19 +246,22 @@ class DragSortingTable extends Component {
     newMember = () => {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
-            key: `${newData.length+1}`,
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
+            seq: `new_${newData.length+1}`,
+            nodeName: '',
+            roleName: '',
+            userId: '',
+            editable: true,
         });
         this.index += 1;
         this.setState({ data: newData });
     };
+
     render(){
         const { getFieldDecorator } = this.props.form;
         return(
             <React.Fragment>
                 <Table
+                    rowKey={record => record.seq}
                     columns={columns(this,getFieldDecorator)}
                     dataSource={this.state.data}
                     pagination={false}
@@ -245,7 +277,7 @@ class DragSortingTable extends Component {
                     onClick={this.newMember}
                     icon="plus"
                 >
-                    添加
+                    新增审批节点
                 </Button>
             </React.Fragment>
 

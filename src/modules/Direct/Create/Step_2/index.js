@@ -10,11 +10,11 @@ import { request,getQueryString } from  'utils'
 class Step2 extends Component {
     state={
         updateKey:Date.now(),
+        submitLoading: false,
         data:{},
 
         //初始值
-        tabPane1Loading:true,
-        model:{},
+        itemsId:'',
         itemList:[],
         directId:getQueryString('directId')
     }
@@ -29,45 +29,45 @@ class Step2 extends Component {
         e && e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log(values)
-            }
-        });
-        //this.props.history.push(`/web/direct/create/site?directId=${this.state.directId}`)
-    }
 
-    toggleTabPane1Loading = (tabPane1Loading) => {
-        this.setState({
-            tabPane1Loading
-        });
-    }
-    getFindDirectiveData=(directId)=>{
-        this.toggleTabPane1Loading(true);
-        request(`/con/mdydirective/findDirectiveData`,{
-            params:{
-                directId:directId
-            }
-        })
-            .then(res => {
-                this.toggleTabPane1Loading(false);
-                if(res.state === 'ok'){
-                    this.setState({
-                        model:res.data.model,
-                        itemList:res.data.itemList,
-                    })
-                } else {
-                    return Promise.reject(res.message);
+                //判断是修改还是新增
+                if(this.state.directId){
+                    values['directId'] = this.state.directId;
                 }
-            })
-            .catch(err => {
-                this.toggleTabPane1Loading(false);
-                message.error(`${err.message}`)
-            })
-    }
+                if(this.state.data.contract_id){
+                    values['contract_id'] = this.state.data.contract_id;
+                }
+                if(this.state.data.supplier_id){
+                    values['supplier_id'] = this.state.data.supplier_id;
+                }
+                this.toggleSubmitLoading(true);
+                request('/con/supplieritem/save', {
+                    method: 'POST',
+                    body: values
+                })
+                    .then(res => {
+                        this.toggleSubmitLoading(false);
+                        if ( res.state === 'ok' ) {
+                            message.success('提交成功!', 3);
+                            this.props.history.push(`/web/direct/create/site?directId=${this.state.directId}&biztypeId=${res.data.biztypeId}&items_id=${res.data.items_id}`)
+                            return ;
+                        } else {
+                            return Promise.reject(res.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
 
-    componentDidMount() {
-        //判断是修改还是新增
-        const directId = this.state.directId;
-        directId && this.getFindDirectiveData(directId)
+                        this.toggleSubmitLoading(false);
+                        message.error(`${err.message}`);
+                    });
+            }
+        });
+    }
+    toggleSubmitLoading = (submitLoading) => {
+        this.setState({
+            submitLoading
+        });
     }
 
     mounted = true;
@@ -76,7 +76,7 @@ class Step2 extends Component {
     }
 
     render(){
-        const { tabPane1Loading, model, itemList, directId } = this.state;
+        const { directId, submitLoading } = this.state;
         return(
             <Form>
                 <CustomizeTabs
@@ -85,17 +85,17 @@ class Step2 extends Component {
                         [
                             {
                                 title:'指令单信息',
-                                component:<TabPane1 data={model} loading={tabPane1Loading} />
+                                component:<TabPane1 />
                             }, {
                                 title:'指定供应商',
-                                component:<TabPane2 form={this.props.form} setData={this.setData.bind(this)} data={itemList} directId={directId} />
+                                component:<TabPane2 form={this.props.form} setData={this.setData.bind(this)} />
                             }
                         ]
                     }
                     stepsAction={
                         <div className="steps-action">
-                            <Button type="primary" onClick={this.handleSubmit} > 下一步，设置审批流 </Button>
-                            <Button style={{ marginLeft: 8 }} href={`/web/direct/create/write?directId=${getQueryString('directId')}`}> 上一步 </Button>
+                            <Button type="primary" disabled={submitLoading} onClick={this.handleSubmit} > 下一步，设置审批流 </Button>
+                            <Button style={{ marginLeft: 8 }} href={`/web/direct/create/write?directId=${directId}`}> 上一步 </Button>
                         </div>
                     }
                 />
