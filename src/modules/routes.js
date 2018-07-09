@@ -17,6 +17,7 @@ import Accept from "./Accept";
 import AcceptCreate from "./Accept/Create";
 import Contract from "./Contract";
 import ContractCreate from "./Contract/Create";
+import TemList from "./Template"
 import ProjectDetail from "./Project/ProjectDetail"
 
 const routes = [
@@ -90,21 +91,26 @@ const routes = [
         component: wrapPage('合同履约协同平台 – 合同结算单', ContractCreate),
         exact: true,
     }, {
-        path:'/web/project',
-        component:wrapPage('合同履约协同平台 – 项目管理', Project),
-        name:'项目管理',
-        icon:'api',
-        exact:true,
+        path: '/web/project',
+        component: wrapPage('合同履约协同平台 – 项目管理', Project),
+        name: '项目管理',
+        icon: 'api',
+        exact: true,
     }, {
-        path:'/web/project/create',
-        component:wrapPage('合同履约协同平台 – 新建项目', CreateProject),
-        name:'新建项目',
-        exact:true,
+        path: '/web/project/create',
+        component: wrapPage('合同履约协同平台 – 新建项目', CreateProject),
+        name: '新建项目',
+        exact: true,
     }, {
-        path:'/web/project/org',
-        component:wrapPage('合同履约协同平台 – 组织架构', Organization),
-        name:'组织架构',
-        exact:true,
+        path: '/web/project/org',
+        component: wrapPage('合同履约协同平台 – 组织架构', Organization),
+        name: '组织架构',
+        exact: true,
+    }, {
+        path: '/web/template',
+        component: wrapPage('合同履约协同平台 – 审批模板', TemList),
+        name: '审批模板',
+        exact: true,
     }, {
         path:'/web/project/projectDetail',
         component:wrapPage('合同履约协同平台 – 项目详情', ProjectDetail),
