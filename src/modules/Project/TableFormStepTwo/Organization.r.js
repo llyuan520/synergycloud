@@ -106,6 +106,7 @@ class Organization extends PureComponent {
                         console.log('=============================')
                         console.log(data);
                         console.log('=============================')
+
                         if(data.state === 'ok'){
                             target['role_type'] = data.data.role_type;
 

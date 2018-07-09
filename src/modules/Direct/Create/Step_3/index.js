@@ -39,6 +39,12 @@ class Step3 extends React.Component {
         });
     }
 
+    componentDidMount() {
+        //判断是修改还是新增
+        const directId = getQueryString('directId');
+        directId && this.getFindDirectiveData(getQueryString('directId'))
+    }
+
     render(){
         const { directId } = this.state
         return(

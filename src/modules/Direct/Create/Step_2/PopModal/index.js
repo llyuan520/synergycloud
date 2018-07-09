@@ -16,7 +16,6 @@ class PopModal extends Component{
         loading: true,
         selectedRowKeys:[],
         supplierData:[],
-
         contract_id:'',
     };
 

@@ -7,7 +7,6 @@ import { request,getQueryString } from  'utils'
 
 
 class TabPane2 extends Component {
-
     state={
         updateKey:Date.now(),
         visible:false,
@@ -55,7 +54,6 @@ class TabPane2 extends Component {
             }
         })
     }
-
     //给弹出框用的
     getFindDirectiveData=(directId)=>{
         this.toggleLoading(true);
@@ -122,12 +120,10 @@ class TabPane2 extends Component {
             this.getFindDirectiveInitData(directId)
         }
     }
-
     mounted=true
     componentWillUnmount(){
         this.mounted=null
     }
-
     render(){
         const { updateKey,visible,loading,modalConfig,itemsId,itemList,initData } = this.state;
         const { form,display } = this.props;
