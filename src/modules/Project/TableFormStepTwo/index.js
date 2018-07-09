@@ -6,7 +6,8 @@ import { request, getQueryString} from 'utils'
 import TabPane1 from '../TableForm/tab1'
 import CustomizeStaticTabs from 'components/CustomizeStaticTabs'
 import Organization from './Organization.r'
-
+import { compose } from 'redux';
+import {connect} from 'react-redux';
 
 class TableFormStepTwo extends Component{
 
@@ -41,19 +42,21 @@ class TableFormStepTwo extends Component{
                 }
 
             }
+            console.log(lastMembers)
             let url = '/biz/itemsorganzation/save';
             request(url,{
                 method:'POST',
                 body:{
                     model:{
+                        company_id: this.props.company_id,
                         items_id: id,
                         itemsstages_id: (value.model && value.model.stages.key) || '',
-                        members: lastMembers
-                    }
+                    },
+                    members: lastMembers
                 }
             }).then((data)=>{
                 if(data.state === 'ok'){
-
+                    console.log('创建成功');
                 }
             })
                 .catch(err => {
@@ -150,4 +153,14 @@ class TableFormStepTwo extends Component{
     }
 }
 
-export default Form.create()(TableFormStepTwo)
+const enhance = compose(
+    connect(state=>({
+        company_id:state.user.getIn(['personal','company_id'])
+    })),
+    Form.create()
+)
+export default enhance(Form.create()(TableFormStepTwo));
+
+
+
+// export default Form.create()(TableFormStepTwo)

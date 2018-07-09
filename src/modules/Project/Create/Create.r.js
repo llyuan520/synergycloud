@@ -21,7 +21,7 @@ class CreateProject extends Component{
         this.state = {
             taxOptions: [],
             statusOptions: [],
-            item_number: '',
+            //item_number: '',
         }
     }
 
@@ -66,7 +66,7 @@ class CreateProject extends Component{
                 return
             }
             if(model.model.number === ''){
-                message.warn('项目编号获取失败，请刷新页面');
+                message.warn('企业项目编码不能为空');
                 return
             }
             if(model.model.tax_type === undefined){
@@ -132,7 +132,7 @@ class CreateProject extends Component{
                     this.setState({
                         taxOptions : taxOptions,
                         statusOptions: statusOptions,
-                        item_number: data.data.item_number,
+                        //item_number: data.data.item_number,
                     })
 
 
@@ -175,16 +175,16 @@ class CreateProject extends Component{
                                         type: 'input',
                                         span: 8
                                     },{
-                                        label: '项目编号',
+                                        label: '企业项目编码',
                                         fieldName: 'model.number',
                                         type: 'input',
-                                        fieldDecoratorOptions:{
-                                            initialValue: this.state.item_number
-                                        },
+                                        // fieldDecoratorOptions:{
+                                        //     initialValue: this.state.item_number
+                                        // },
                                         span: 8,
-                                        componentProps: {
-                                            disabled: true
-                                        },
+                                        // componentProps: {
+                                        //     disabled: true
+                                        // },
                                     }
                                 ])
                             }
