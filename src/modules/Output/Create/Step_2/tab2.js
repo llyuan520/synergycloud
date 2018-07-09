@@ -7,6 +7,8 @@ import React from "react";
 import PopModal from './PopModal'
 import './styles.less'
 import FormItems from "../../../../components/FormItems";
+import request from "../../../../utils/request";
+import {withRouter} from "react-router-dom";
 
 const {FileUpload} = FormItems;
 
@@ -66,12 +68,9 @@ class EditableCell extends React.Component {
     }
 }
 
-export default class TabPane2 extends React.Component {
+class TabPane2 extends React.Component {
     constructor(props) {
         super(props);
-        props.data.map((item, index) => {
-            return item.key = index+1
-        });
         this.state = {
             editingKey: '',
             data: props.data || data,
@@ -173,6 +172,21 @@ export default class TabPane2 extends React.Component {
         });
     };
 
+    getOutput() {
+        if (this.props.location.state) {
+            console.log(this.props.location.state.outputId);
+            request("/con/output/getEntry0", {params: {output_id: this.props.location.state.outputId}})
+            .then(res => {
+                console.log(res);
+                this.setState({
+                    data: res.data.datas.map((item, index) => {
+                        return item.key = index + 1
+                    })
+                })
+            })
+        }
+    }
+
     showModal = type => {
         this.toggleModalVisible(true)
         this.setState({
@@ -225,6 +239,10 @@ export default class TabPane2 extends React.Component {
         this.setState({editingKey: ''});
     };
 
+    componentDidMount() {
+        this.getOutput();
+    }
+
     render() {
         const components = {
             body: {
@@ -232,9 +250,6 @@ export default class TabPane2 extends React.Component {
                 cell: EditableCell,
             },
         };
-
-        const {props} = this;
-        console.log(props);
 
         const columns = this.columns.map((col) => {
             if (!col.editable) {
@@ -268,7 +283,7 @@ export default class TabPane2 extends React.Component {
             />
             <PopModal
             visible={visible}
-            data={this.props.data}
+            data={data}
             modalConfig={modalConfig}
             toggleModalVisible={this.toggleModalVisible}
             setData={this.props.setData}
@@ -277,3 +292,5 @@ export default class TabPane2 extends React.Component {
         );
     }
 }
+
+export default (withRouter(TabPane2))

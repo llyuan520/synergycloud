@@ -49,31 +49,6 @@ class Step2 extends Component {
         this.mounted = null;
     }
 
-    getModel() {
-        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
-        .then(res => {
-            console.log(res);
-            this.setState({
-                model: res.data,
-                modelM: res.data.model
-            })
-        })
-    }
-
-    // 获取产值形象进度
-    getOutput() {
-        console.log(this.props.location.state.outputId);
-        request("/con/output/getEntry0", {params: {output_id: this.props.location.state.outputId}})
-        .then(res => {
-            this.setState({output: res.data.datas})
-        })
-    }
-
-    componentDidMount() {
-        this.getModel();
-        this.props.location.state && this.props.location.state.outputId && this.getOutput();
-    }
-
     setModel(data) {
         this.setState({
             modelM: _.extend(this.state.modelM, {invoice_type: data})
@@ -88,9 +63,9 @@ class Step2 extends Component {
         console.log(params);
         request("/con/output/saveOutputAndImage", {body: params, method: "POST"})
         .then(res => {
-            console.log(res.data.res);
+            console.log(res);
             this.setState({
-                outputId: res.data.res
+                // outputId: res.data.res
             }, () => {
                 if (changeRouter) {
                     changeRouter()
@@ -100,9 +75,6 @@ class Step2 extends Component {
     }
 
     render() {
-        console.log(this.state.model);
-        const {output, model} = this.state;
-        console.log(this.state.output);
         return (
         <React.Fragment>
             <CustomizeTabs
@@ -111,11 +83,11 @@ class Step2 extends Component {
                 [
                     {
                         title: '产值单基本信息',
-                        component: <TabPane1 data={model} setData={this.setModel.bind(this)}/>
+                        component: <TabPane1 setData={this.setModel.bind(this)}/>
                     },
                     {
                         title: '形象进展',
-                        component: <TabPane2 data={output} setData={this.setData.bind(this)}/>
+                        component: <TabPane2 setData={this.setData.bind(this)}/>
                     }
                 ]
             }

@@ -6,6 +6,8 @@ import React from 'react'
 import {Row, Col, Select} from 'antd';
 import "./styles.less"
 import {fMoney, requestDict, setSelectFormat} from "../../../../utils";
+import request from "../../../../utils/request";
+import {withRouter} from "react-router-dom";
 
 const Option = Select.Option;
 
@@ -14,11 +16,26 @@ class TabPane1 extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            outputName: ""
+            outputName: [],
+            data: {
+                contract: {},
+                model: {}
+            }
         }
     }
 
+    getModel() {
+        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
+        .then(res => {
+            console.log(res);
+            this.setState({
+                data: res.data,
+            })
+        })
+    }
+
     componentDidMount() {
+        this.getModel();
         requestDict(`['com.moya.contract.enums.InvoiceTypeEnum']`, result => {
             console.log(setSelectFormat(result.InvoiceTypeEnum));
             this.setState({
@@ -27,10 +44,10 @@ class TabPane1 extends React.Component {
         })
     }
 
+
     render() {
-        const {data} = this.props;
-        const {outputName} = this.state;
-        console.log(data);
+        const {data,outputName} = this.state;
+        console.log(data,outputName);
         return (
         <div className="container">
             <div className="editContent">
@@ -68,13 +85,13 @@ class TabPane1 extends React.Component {
                     <Col span={12}>
                         <span className="span">发票类型：</span>
                         {/*{data.model.invoicetype}*/}
-                        <Select style={{width: 100}} defaultValue={data.model.invoice_type}
+                        <Select style={{width: 100}} value={data.model.invoice_type}
                                 disabled={data.model.invoice_type === "0"}
                                 onSelect={e => {
                                     this.props.setData(e);
                                 }}>
                             {
-                                outputName && outputName.map((item, i) => (
+                                outputName.map((item, i) => (
                                 <Option key={i} value={item["key"]}>{item["label"]}</Option>
                                 ))
                             }
@@ -87,4 +104,4 @@ class TabPane1 extends React.Component {
     }
 }
 
-export default TabPane1
+export default (withRouter(TabPane1))

@@ -1,6 +1,11 @@
 /**
  *
  * Created by fanzhe on 2018/7/5
+ * 前期开发过程中是把form表单写成了一个单独的组件，然后在该页面中有两个表单进行显示。
+ * 由于数据过多，数据流较为复杂，所以就将这部分进行拆分组件层次，减少了一层组件套用。
+ * 导致的问题是，该js文件中有大量代码冗余。很多地方可以进行对状态判断而封装不同功能的函数，
+ * 目前赶进度，后期需要将该js进行重构。
+ * 要注意的一点：要将所有的tab组件数据改变成从路由获取参数，自get接口数据。父组件传回调传值回流。
  */
 import React from 'react'
 import {Divider, Form} from 'antd';
@@ -170,12 +175,14 @@ class TabPane3 extends React.Component {
             countList: 0
         };
         _.map(columnsDetails, (item) => {
-            if (item.editable && !props.disabled) {
+            if (item.editable) {
                 this.columns.push({
                     title: item.title,
                     dataIndex: item.dataIndex,
                     render: (text, record) => (
-                    <EditableCell
+                    props.disabled
+                    ? <span>{text}</span>
+                    : <EditableCell
                     type={item.type}
                     value={item.type === "price" ? fMoney(text) : text}
                     onChange={this.onCellChange(record.key, item.dataIndex)}
@@ -185,12 +192,14 @@ class TabPane3 extends React.Component {
             }
         });
         _.map(columnsList, item => {
-            if (item.editable && !props.disabled) {
+            if (item.editable) {
                 this.columnsList.push({
                     title: item.title,
                     dataIndex: item.dataIndex,
                     render: (text, record) => (
-                    <EditableCell
+                    props.disabled
+                    ? <span>{text}</span>
+                    : <EditableCell
                     type={item.type}
                     value={item.type === "price" ? fMoney(text) : text}
                     onChange={this.onCellChangeList(record.key, item.dataIndex)}
@@ -201,16 +210,9 @@ class TabPane3 extends React.Component {
         })
     }
 
-    // 获取产值发票明细列表
-    getInvoiceList() {
-        request("/con/invoice/getEntry")
-        .then(res => {
-            console.log(res);
-        })
-    }
 
+    // 自获取数据
     getList() {
-        console.log(this.props.location.search.split("=")[1]);
         const outputId = this.props.location.search.split("=")[1];
         request("/con/output/contractToOutput", {params: {contract_id: outputId}})
         .then((res => {
@@ -224,8 +226,27 @@ class TabPane3 extends React.Component {
             this.setState({
                 dataSource: data.datas,
                 dataSourceCount: data.counts
-            })
+            });
+            this.props.setOutput && this.props.setOutput(data.datas, data.counts)
         }))
+    }
+
+
+    getOutputInvoice() {
+        console.log(this.props.location.state);
+        request("/con/output/getOutputInvoice", {
+            params: {output_id: this.props.location.state.outputId}
+        }).then(res => {
+            console.log(res);
+            let dataListCount = 0;
+            _.map(res.data.datas, item => {
+                dataListCount = dataListCount + item.tax_amounts
+            });
+            this.setState({
+                dataList: res.data.datas,
+                dataListCount
+            })
+        })
     }
 
     onCellChange = (key, dataIndex) => {
@@ -239,6 +260,7 @@ class TabPane3 extends React.Component {
                     dataSourceCount = dataSourceCount + item.tax_amounts * 1
                 });
                 this.setState({dataSource, dataSourceCount});
+                this.props.setOutput && this.props.setOutput(dataSource, dataSourceCount)
             }
         };
     };
@@ -254,13 +276,19 @@ class TabPane3 extends React.Component {
                     dataListCount = dataListCount + item.tax_amounts * 1
                 });
                 this.setState({dataList, dataListCount});
-
+                this.props.setInvoice(dataList, dataListCount)
             }
         };
     };
 
     componentDidMount() {
         this.getList();
+        this.getOutputInvoice();
+        if (this.props.setInvoice && this.props.setOutput) {
+            const {dataList, dataListCount, dataSource, dataSourceCount} = this.state;
+            this.props.setInvoice(dataList, dataListCount);
+            this.props.setOutput(dataSource, dataSourceCount)
+        }
     }
 
     onDelete(key) {
@@ -274,7 +302,7 @@ class TabPane3 extends React.Component {
             dataSourceCount = dataSourceCount + item.tax_amounts * 1
         });
         this.setState({dataSource, dataSourceCount});
-        this.props.setOutput(dataSource)
+        this.props.setOutput && this.props.setOutput(dataSource, dataSourceCount)
     }
 
     onDeleteList(key) {
@@ -288,7 +316,7 @@ class TabPane3 extends React.Component {
             dataListCount = dataListCount + item.tax_amounts * 1
         });
         this.setState({dataList, dataListCount});
-        this.props.setInvoice(dataList)
+        this.props.setInvoice && this.props.setInvoice(dataList, dataListCount)
     }
 
     handleAdd = () => {
@@ -313,7 +341,7 @@ class TabPane3 extends React.Component {
             dataSourceCount
         }, () => {
             console.log(this.state.dataSource);
-            this.props.setOutput(this.state.dataSource)
+            this.props.setOutput && this.props.setOutput(dataSource, dataSourceCount)
         });
     }
 
@@ -337,7 +365,7 @@ class TabPane3 extends React.Component {
             dataList: [...dataList, newData],
             countList: countList + 1
         }, () => {
-            this.props.setInvoice(this.state.dataList)
+            this.props.setInvoice && this.props.setInvoice(dataList, countList)
         });
     }
 
@@ -356,13 +384,11 @@ class TabPane3 extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
         this.setState({selectedRowKeys});
     }
 
     onSelectChangeList = (selectedRowKeysList) => {
         console.log(selectedRowKeysList);
-        console.log('selectedRowKeys changed: ', selectedRowKeysList);
         this.setState({selectedRowKeysList});
     }
 
@@ -385,6 +411,7 @@ class TabPane3 extends React.Component {
         };
         const hasSelected = selectedRowKeys.length > 0;
         const hasSelectedList = selectedRowKeysList.length > 0;
+        console.log(dataSource, dataList);
         return (
         <div>
             <div className="m10">
@@ -402,7 +429,7 @@ class TabPane3 extends React.Component {
                         {hasSelected ? `选择了 ${selectedRowKeys.length} 列` : ''}
                      </span>
                 </div>
-                <Table rowKey={record => record.ticket_name} dataSource={dataSource || []} pagination={false}
+                <Table rowKey={record => record.ticket_name} dataSource={dataSource} pagination={false}
                        columns={columns}
                        rowSelection={rowSelection}/>
                 {

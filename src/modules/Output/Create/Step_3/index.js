@@ -25,33 +25,6 @@ class Step3 extends React.Component {
         }
     }
 
-    getList() {
-        console.log(this.props.location.search.split("=")[1]);
-        const outputId = this.props.location.search.split("=")[1];
-        request("/con/output/contractToOutput", {params: {contract_id: outputId}})
-        .then((res => {
-            console.log(res);
-            let data = res.data;
-            data && data.datas.map((item, index) => {
-                return item.key = index;
-            });
-            data.key = 1;
-            this.setState({
-                tableData: data,
-            })
-        }))
-    }
-
-    getModel() {
-        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
-        .then(res => {
-            console.log(res);
-            this.setState({
-                model: res.data,
-                modelM: res.data.model
-            })
-        })
-    }
 
     setModel(data) {
         this.setState({
@@ -59,42 +32,48 @@ class Step3 extends React.Component {
         })
     }
 
-    // 获取产值形象进度
-    getOutput() {
-        console.log(this.props.location.state.outputId);
-        request("/con/output/getEntry0", {params: {output_id: this.props.location.state.outputId}})
-        .then(res => {
-            console.log(res);
-            this.setState({output: res.data.datas})
+
+
+    setOutput(data, count) {
+        console.log(count);
+        this.setState({
+            outputproject: data,
+            outputprojectCount: count
         })
     }
 
-
-    setOutput(data) {
+    setInvoice(data, count) {
+        console.log(count);
         this.setState({
-            outputproject: data
-        })
-    }
-
-    setInvoice(data) {
-        this.setState({
-            invoice: data
+            invoice: data,
+            invoiceCount: count,
         })
     }
 
     save() {
-        const model = this.state.model.model;
-        console.log(model);
-        const params = {
-            model: _.extend(model, {id: this.props.location.state.outputId}),
-            outputproject: this.state.outputproject.length ? this.state.outputproject : this.state.tableData.datas,
-            invoice: this.state.invoice
-        };
-        console.log(params);
-        request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
-        .then(res => {
-            if (res.state === "ok") {
-                message.success("保存成功！");
+        return new Promise((resolve, reject) => {
+            const model = this.state.model.model;
+            const {outputprojectCount, invoiceCount} = this.state;
+            if (outputprojectCount * 1 === invoiceCount * 1) {
+                const params = {
+                    model: _.extend(model, {id: this.props.location.state.outputId, tax_amounts: outputprojectCount}),
+                    outputproject: this.state.outputproject.length ? this.state.outputproject : this.state.tableData.datas,
+                    invoice: this.state.invoice
+                };
+                console.log(params);
+                request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
+                .then(res => {
+                    if (res.state === "ok") {
+                        message.success("保存成功！");
+                        resolve()
+                    } else {
+                        message.error(res.message);
+                        reject('失败')
+                    }
+                })
+            } else {
+                message.error("发票金额和明细金额汇总不一致！");
+                reject('失败')
             }
         })
     }
@@ -103,24 +82,22 @@ class Step3 extends React.Component {
         const routerChange = () => {
             this.props.history.push({
                 pathname: '/web/output/create/site',
-                search: `?id=${this.props.location.search.split("=")[1]}`
+                search: `?id=${this.props.location.search.split("=")[1]}`,
+                state: this.props.location.state
             })
         };
-        Promise.all([this.save(), routerChange])
+        Promise.all([this.save()])
+        .then(() => routerChange())
         .catch(err => {
             console.log(err);
         });
     }
 
     componentDidMount() {
-        this.getList();
-        this.getModel();
-        this.getOutput();
 
     }
 
     render() {
-        const {model, tableData, output} = this.state;
         return (
         <React.Fragment>
 
@@ -130,16 +107,16 @@ class Step3 extends React.Component {
                 [
                     {
                         title: '产值单基本信息',
-                        component: <TabPane1 data={model} setData={this.setModel.bind(this)}/>
+                        component: <TabPane1 setData={this.setModel.bind(this)}/>
                     },
                     {
                         title: '形象进展',
-                        component: <TabPane2 disabled={true} data={output}/>
+                        component: <TabPane2 disabled={true} />
                     },
                     {
                         title: '产值明细和发票',
                         component: <TabPane3 setOutput={this.setOutput.bind(this)}
-                                             setInvoice={this.setInvoice.bind(this)} data={tableData}/>
+                                             setInvoice={this.setInvoice.bind(this)} />
                     }
                 ]
             }

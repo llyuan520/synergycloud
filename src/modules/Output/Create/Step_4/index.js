@@ -9,11 +9,24 @@ import TabPane2 from '../Step_2/tab2'
 import TabPane3 from '../Step_3/tab3'
 import TabPane4 from './tab4'
 import TabPane1 from "../Step_1/tab1";
+import {withRouter} from "react-router-dom";
+import request from "../../../../utils/request";
 
-export default class Step3 extends Component {
+class Step3 extends Component {
     state = {
         updateKey: Date.now(),
         visible: false,
+    };
+
+    getTem() {
+        request("/con/output/getTemplateNode")
+        .then(res => {
+            console.log(res);
+        })
+    }
+
+    componentDidMount() {
+        this.getTem()
     }
 
     render() {
@@ -50,7 +63,8 @@ export default class Step3 extends Component {
                     <Button style={{marginLeft: 8}}
                             onClick={() => this.props.history.push({
                                 pathname: '/web/output/create/present',
-                                search: `?id=${this.props.location.search.split("=")[1]}`
+                                search: `?id=${this.props.location.search.split("=")[1]}`,
+                                state: this.props.location.state
                             })}> 上一步 </Button>
                 </div>
             }
@@ -60,3 +74,5 @@ export default class Step3 extends Component {
         )
     }
 }
+
+export default (withRouter(Step3))
