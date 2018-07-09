@@ -6,6 +6,7 @@
 import React from "react";
 import {Button, Layout, Table} from "antd";
 import TemModal from "./PopModal";
+import request from "../../utils/request";
 
 const columns = [{
     title: "审批模板"
@@ -35,13 +36,25 @@ export default class Template extends React.Component {
         })
     };
 
+    detlete() {
+        request("/adt/template/delete")
+    }
+
+    updateTem() {
+        request("/adt/template/update")
+    }
+
+    save() {
+        request("/adt/template/save")
+    }
+
     render() {
         const {data, visible, modalConfig} = this.state;
         return (
         <Layout style={{background: '#fff'}}>
             <h2>审批模板</h2>
             <div>
-                <Button type="primary" onClick={()=>this.toggleModalVisible(true)}>新建审批模板</Button>
+                <Button type="primary" onClick={() => this.toggleModalVisible(true)}>新建审批模板</Button>
                 <Button className="ml10">删除</Button>
             </div>
             <Table columns={columns}/>
