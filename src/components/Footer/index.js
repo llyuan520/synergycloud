@@ -8,7 +8,7 @@ class Footer extends Component {
                 justifyContent:'flex-end'
             }}>
                 <footer style={{ textAlign: 'center',padding:'50px 0' }}>
-                    ©Copyright 喜盈佳企业云服务有限公司 版权所有 粤ICP备44030502000290号号
+                    ©Copyright 喜盈佳企业云服务有限公司 版权所有 粤ICP备44030502000290号
                 </footer>
             </Layout>
         );

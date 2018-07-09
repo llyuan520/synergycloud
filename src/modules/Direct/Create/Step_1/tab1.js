@@ -1,33 +1,57 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
-import {  Card, Row, Col } from 'antd';
+import {  Card, Row, Col,message } from 'antd';
+import { request,getQueryString } from  'utils'
 
 export default class TabPane1 extends Component{
 
+    state={
+        updateKey:Date.now(),
+        loading: false,
+        directId:getQueryString('directId'),
+        data:{},
+    }
+
+    getFindDirectiveData=(directId)=>{
+        this.toggleLoading(true);
+        request(`/con/mdydirective/findDirectiveData`,{
+            params:{
+                directId:directId
+            }
+        })
+            .then(res => {
+                this.toggleLoading(false);
+                if(res.state === 'ok'){
+                    this.setState({
+                        data:res.data.model,
+                    })
+                } else {
+                    return Promise.reject(res.message);
+                }
+            })
+            .catch(err => {
+                this.toggleLoading(false);
+                message.error(`${err.message}`)
+            })
+    }
+    toggleLoading = (loading) => {
+        this.setState({
+            loading
+        });
+    }
+    componentDidMount() {
+        //判断是修改还是新增
+        const directId = this.state.directId;
+        directId && this.getFindDirectiveData(directId)
+    }
 
     render () {
 
-        const { style, loading, data } = this.props;
+        const { updateKey,data,loading } = this.state;
+        const { style } = this.props;
 
         return (
-            <Card loading={loading} style={{ padding: 0, border: 0 , ...style }}>
-                {/*<Row gutter={24}>
-             {
-             data.map((item, index) => {
-             return (
-             <Col span={item.colSpan || 12} key={index}>
-             {
-             item.label && <p>{item.label}</p>
-             }
-             {
-             item.field && <p className="cGray">{item.field}</p>
-             }
-             </Col>
-             )
-             } )
-             }
-             </Row>*/}
-
+            <Card key={updateKey} loading={loading} style={{ padding: 0, border: 0 , ...style }}>
                 <Row gutter={24}>
                     <Col span={8}>
                         <p>项目名称</p>
