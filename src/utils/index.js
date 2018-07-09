@@ -30,6 +30,7 @@ const getQueryString = name => {
     if (r !== null) return decodeURI(r[2]);
     return null;
 }
+
 const getDict = type => {
     return new Promise(function (resolve, reject) {
         request('/enums', {
@@ -55,15 +56,15 @@ const requestDict = async (type, callback) => {
 }
 
 //设置select值名不同
-const setSelectFormat = data => {
+const setSelectFormat = (data,name='value',value='name') => {
     if (data === undefined) {
         return []
     } else {
         return data.map(item => {
             return {
                 //...item,
-                key: item.value,
-                label: item.name
+                key: item[name],
+                label: item[value]
             }
         })
     }

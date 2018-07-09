@@ -1,8 +1,8 @@
 // Created by Lee on 2018/7/2
 import React, { Component } from 'react';
 import { Button, Icon } from 'antd';
+import {Link} from 'react-router-dom'
 import { SearchTable } from '../../components'
-import { getSelectFormat } from '../../utils'
 import './styles.less'
 
 const fieldsData = (context) => [
@@ -153,20 +153,24 @@ const getColumns = (context) => [
                 <p className="apply-form-list-p2">项目编码</p >
             </div>
         ),
-        dataIndex: "projectname",
+        dataIndex: "name",
         render: (text, record) => (
             <div>
-                <p className="apply-form-list-p1">{record.projectname}</p >
-                <p className="apply-form-list-p2">{record.projectcode}</p >
+                <p className="apply-form-list-p1">
+                    <Link to={ `/web/project/projectDetail?id=${record.id}`  }>
+                        {record.name}
+                    </Link>
+                </p >
+                <p className="apply-form-list-p2">{record.number}</p >
             </div>
         )
     },{
         title: '项目简称',
-        dataIndex: 'project_abbreviation',
+        dataIndex: 'simple_name',
         sorter: true,
     }, {
         title: '企业名称',
-        dataIndex: 'company_name',
+        dataIndex: 'companyName',
         sorter: true,
     },{
         title: '合同数量',
@@ -174,15 +178,15 @@ const getColumns = (context) => [
         sorter: true,
     },{
         title: '创建时间',
-        dataIndex: 'create_date',
+        dataIndex: 'create_time',
         sorter: true,
     }, {
         title: '状态',
         dataIndex: 'status',
         sorter: true,
-        render: (value, row, index) => {
-            return getSelectFormat(context.state.statusData, value)
-        }
+        // render: (value, row, index) => {
+        //     return getSelectFormat(context.state.statusData, value)
+        // }
     }
 ];
 
@@ -214,22 +218,22 @@ class Output extends Component {
                         fieldsData: fieldsData(this)
                     }}
                     tableOption={{
-                        key: this.state.updateKey,
-                        pageSize: 10,
-                        columns: getColumns(this),
-                        //url:'/con/output/findListData',
-                        url:'',
-                        //scroll:{ x:1300 },
-                        cardProps: {
-                            title: <div>
-                                <Button type='primary' href={'/web/project/create'} style={{ marginRight: 5 }} >
-                                    <Icon type="plus" />
-                                    新建项目
+                    key: this.state.updateKey,
+                    pageSize: 10,
+                    columns: getColumns(this),
+                    //url:'/con/output/findListData',
+                    url:'/biz/items/findListData',
+                    //scroll:{ x:1300 },
+                    cardProps: {
+                        title: <div>
+                            <Button type='primary' href={'/web/project/create'} style={{ marginRight: 5 }} >
+                                <Icon type="plus" />
+                                新建项目
                             </Button>
-                            </div>
-                        },
+                        </div>
+                    },
 
-                    }}
+                }}
                 />
             </div>
         )

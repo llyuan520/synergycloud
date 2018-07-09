@@ -9,12 +9,10 @@ export default class TableForm extends PureComponent {
         this.state = {
             data: props.value,
             loading: false,
-            options: [{
-                label:'111',
-                key:'1'
-            }]
+            options: this.props.taxOptions
         };
     }
+
     componentWillReceiveProps(nextProps) {
         if ('value' in nextProps) {
             this.setState({
@@ -57,6 +55,7 @@ export default class TableForm extends PureComponent {
             isNew: true,
         });
         this.index += 1;
+        this.setState({ options:this.props.taxOptions})
         this.setState({ data: newData });
     };
     handleKeyPress(e, key) {
@@ -123,7 +122,9 @@ export default class TableForm extends PureComponent {
         this.setState({ data: newData });
         this.clickedCancel = false;
     }
+
     render() {
+
         const columns = [
             {
                 title:'分期编号',

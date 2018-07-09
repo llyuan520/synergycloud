@@ -1,16 +1,19 @@
 // Created by liuliyuan on 2018/6/30
-import React,{Component} from 'react'
+import React from 'react'
 import {withRouter} from 'react-router-dom'
 import { Form,Button } from 'antd';
 import CustomizeTabs from '../../../../components/Tabs/index'
 import TabPane1 from '../Step_1/tab1'
 import TabPane2 from '../Step_2/tab2'
 import TabPane3 from './tab3'
+import {getQueryString } from  'utils'
 
-class Step3 extends Component {
+class Step3 extends React.Component {
     state={
         updateKey:Date.now(),
         visible:false,
+        directId:getQueryString('directId'),
+        data:{},
     }
 
     handleSubmit = (e) => {
@@ -18,6 +21,8 @@ class Step3 extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log(values);
+                ///adt/instance/save
+                debugger
 
             }
         });
@@ -28,13 +33,14 @@ class Step3 extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log(values);
+                debugger
 
             }
         });
     }
 
     render(){
-
+        const { directId } = this.state
         return(
             <React.Fragment>
                 <Form>
@@ -47,7 +53,7 @@ class Step3 extends Component {
                                     component:<TabPane1 />
                                 }, {
                                     title:'指定供应商',
-                                    component:<TabPane2 display={true} />
+                                    component:<TabPane2 form={this.props.form} display={true} />
                                 }, {
                                     title:'设置审批流',
                                     component:<TabPane3 form={this.props.form}  />
@@ -58,7 +64,7 @@ class Step3 extends Component {
                             <div className="steps-action">
                                 <Button type="primary" onClick={this.handleSubmit} > 提交 </Button>
                                 <Button style={{ marginLeft: 8 }} onClick={this.handleSave} > 保存 </Button>
-                                <Button style={{ marginLeft: 8 }} href="/web/direct/create/assign"> 上一步 </Button>
+                                <Button style={{ marginLeft: 8 }} href={`/web/direct/create/assign?directId=${directId}`} > 上一步 </Button>
                             </div>
                         }
                     />
