@@ -8,6 +8,8 @@ import {fMoney} from "../../../../utils";
 import {Table, Input, Icon, Button} from 'antd';
 import './style.less';
 import _ from 'lodash'
+import request from "../../../../utils/request";
+import {withRouter} from "react-router-dom";
 
 const columnsDetails = [{
     title: '大类名称',
@@ -104,10 +106,12 @@ class EditableCell extends React.Component {
     }
 
     check = () => {
-        this.setState({editable: false});
-        if (this.props.onChange) {
-            this.props.onChange(this.state.value);
-        }
+        this.setState({editable: false}, () => {
+            if (this.props.onChange) {
+                this.props.onChange(this.state.value);
+            }
+        });
+
     }
 
     edit = () => {
@@ -134,7 +138,7 @@ class EditableCell extends React.Component {
                 />
                 ) : (
                 <div style={{paddingRight: 24}}>
-                    {this.props.type === 'price' && fMoney(value) || value}
+                    {(this.props.type === 'price' && fMoney(value)) || value}
                     <Icon
                     type="edit"
                     className="editable-cell-icon"
@@ -159,19 +163,22 @@ class TabPane3 extends React.Component {
             selectedRowKeys: [],
             selectedRowKeysList: [],
             dataSource: [],
+            dataSourceCount: 0,
             dataList: [],
+            dataListCount: 0,
+            count: 0,
+            countList: 0
         };
-        _.map(columnsDetails, (item, index) => {
+        _.map(columnsDetails, (item) => {
             if (item.editable && !props.disabled) {
                 this.columns.push({
                     title: item.title,
-                    key: index,
                     dataIndex: item.dataIndex,
                     render: (text, record) => (
                     <EditableCell
                     type={item.type}
                     value={item.type === "price" ? fMoney(text) : text}
-                    onChange={this.onCellChange(index, item.dataIndex)}
+                    onChange={this.onCellChange(record.key, item.dataIndex)}
                     />
                     ),
                 })
@@ -181,17 +188,44 @@ class TabPane3 extends React.Component {
             if (item.editable && !props.disabled) {
                 this.columnsList.push({
                     title: item.title,
-                    key: item.key,
                     dataIndex: item.dataIndex,
                     render: (text, record) => (
                     <EditableCell
+                    type={item.type}
                     value={item.type === "price" ? fMoney(text) : text}
-                    onChange={this.onCellChangeList(record, item.dataIndex)}
+                    onChange={this.onCellChangeList(record.key, item.dataIndex)}
                     />
                     ),
                 })
             }
         })
+    }
+
+    // 获取产值发票明细列表
+    getInvoiceList() {
+        request("/con/invoice/getEntry")
+        .then(res => {
+            console.log(res);
+        })
+    }
+
+    getList() {
+        console.log(this.props.location.search.split("=")[1]);
+        const outputId = this.props.location.search.split("=")[1];
+        request("/con/output/contractToOutput", {params: {contract_id: outputId}})
+        .then((res => {
+            console.log(res);
+            let data = res.data;
+            data && data.datas.map((item, index) => {
+                return item.key = index;
+            });
+            data.key = 1;
+            console.log(data);
+            this.setState({
+                dataSource: data.datas,
+                dataSourceCount: data.counts
+            })
+        }))
     }
 
     onCellChange = (key, dataIndex) => {
@@ -200,7 +234,11 @@ class TabPane3 extends React.Component {
             const target = dataSource.find(item => item.key === key);
             if (target) {
                 target[dataIndex] = value;
-                this.setState({dataSource});
+                let dataSourceCount = 0;
+                dataSource.forEach(item => {
+                    dataSourceCount = dataSourceCount + item.tax_amounts * 1
+                });
+                this.setState({dataSource, dataSourceCount});
             }
         };
     };
@@ -211,19 +249,18 @@ class TabPane3 extends React.Component {
             const target = dataList.find(item => item.key === key);
             if (target) {
                 target[dataIndex] = value;
-                this.setState({dataList});
+                let dataListCount = 0;
+                dataList.forEach(item => {
+                    dataListCount = dataListCount + item.tax_amounts * 1
+                });
+                this.setState({dataList, dataListCount});
+
             }
         };
     };
 
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.data && nextProps.data !== {}) {
-            const {datas} = nextProps.data;
-            this.setState({
-                dataSource: datas,
-            })
-        }
+    componentDidMount() {
+        this.getList();
     }
 
     onDelete(key) {
@@ -232,7 +269,11 @@ class TabPane3 extends React.Component {
         _.map(this.state.dataSource, item => {
             item.key = key && dataSource.pop(item)
         });
-        this.setState({dataSource});
+        let dataSourceCount = 0;
+        dataSource.forEach(item => {
+            dataSourceCount = dataSourceCount + item.tax_amounts * 1
+        });
+        this.setState({dataSource, dataSourceCount});
         this.props.setOutput(dataSource)
     }
 
@@ -242,23 +283,34 @@ class TabPane3 extends React.Component {
         _.map(this.state.dataList, item => {
             item.key = key && dataList.pop(item)
         });
-        this.setState({dataList});
+        let dataListCount = 0;
+        dataList.forEach(item => {
+            dataListCount = dataListCount + item.tax_amounts * 1
+        });
+        this.setState({dataList, dataListCount});
         this.props.setInvoice(dataList)
     }
 
     handleAdd = () => {
+        const {count} = this.state;
         const dataSource = this.state.dataSource || [];
         const newData = {
-            ticket_name: "大类名称",
+            ticket_name: "大类名称" + count,
             countrygoodsname: '商品名称',
             amounts: '数量/单位',
             price: '0',
-            rate: '税率',
+            rate: '0.1',
             notax_amounts: '0',
             tax_amounts: '0',
         };
+        let dataSourceCount = 0;
+        dataSource.forEach(item => {
+            dataSourceCount = dataSourceCount + item.tax_amounts * 1
+        });
         this.setState({
             dataSource: [...dataSource, newData],
+            count: count + 1,
+            dataSourceCount
         }, () => {
             console.log(this.state.dataSource);
             this.props.setOutput(this.state.dataSource)
@@ -266,19 +318,24 @@ class TabPane3 extends React.Component {
     }
 
     handleAddList = () => {
-        const {dataList} = this.state;
+        const {dataList, countList} = this.state;
         const newData = {
-            invoice_code: "发票代码",
-            invoice_number: '发票号码',
-            make_invoicedate: '开票日期',
-            rate: '税率',
+            invoice_code: "发票代码" + countList,
+            invoice_number: '发票号码' + countList,
+            make_invoicedate: '2018-7-10',
+            rate: '0.1',
             notax_amounts: '0',
             tax: '0',
             tax_amounts: '0',
             invoice_status: '0',
         };
+        let dataListCount = 0;
+        dataList.forEach(item => {
+            dataListCount = dataListCount + item.tax_amounts * 1
+        });
         this.setState({
             dataList: [...dataList, newData],
+            countList: countList + 1
         }, () => {
             this.props.setInvoice(this.state.dataList)
         });
@@ -294,7 +351,6 @@ class TabPane3 extends React.Component {
     handleDeleteList = () => {
         const {selectedRowKeysList} = this.state;
         selectedRowKeysList.sort().reverse().forEach(item => {
-            console.log(item);
             this.onDeleteList(item);
         })
     }
@@ -305,6 +361,7 @@ class TabPane3 extends React.Component {
     }
 
     onSelectChangeList = (selectedRowKeysList) => {
+        console.log(selectedRowKeysList);
         console.log('selectedRowKeys changed: ', selectedRowKeysList);
         this.setState({selectedRowKeysList});
     }
@@ -314,7 +371,10 @@ class TabPane3 extends React.Component {
         const {props} = this;
         const columns = this.columns;
         const columnsList = this.columnsList;
-        const {selectedRowKeys, selectedRowKeysList, dataSource, dataList} = this.state;
+        const {
+            selectedRowKeys, selectedRowKeysList,
+            dataSource, dataList, dataSourceCount, dataListCount
+        } = this.state;
         const rowSelection = !props.disabled && {
             selectedRowKeys,
             onChange: this.onSelectChange,
@@ -324,7 +384,7 @@ class TabPane3 extends React.Component {
             onChange: this.onSelectChangeList,
         };
         const hasSelected = selectedRowKeys.length > 0;
-        console.log(dataSource, dataList);
+        const hasSelectedList = selectedRowKeysList.length > 0;
         return (
         <div>
             <div className="m10">
@@ -348,7 +408,7 @@ class TabPane3 extends React.Component {
                 {
                     <span className="r footer-text">
                     <span>明细金额汇总:</span>
-                    <span className="red">{fMoney(props.data && props.data.counts || "0")}</span>
+                    <span className="red">{fMoney((dataSourceCount) || "0")}</span>
                 </span>
                 }
             </div>
@@ -360,12 +420,12 @@ class TabPane3 extends React.Component {
                             style={{marginBottom: 16}}>
                         添加发票
                     </Button>
-                    <Button disabled={!hasSelected || props.disabled} onClick={this.handleDeleteList}
+                    <Button disabled={!hasSelectedList || props.disabled} onClick={this.handleDeleteList}
                             style={{marginBottom: 16, marginLeft: 10}}>
                         删除
                     </Button>
                     <span style={{marginLeft: 8}} className="red">
-                        {hasSelected ? `选择了 ${selectedRowKeys.length} 列` : ''}
+                        {hasSelectedList ? `选择了 ${selectedRowKeysList.length} 列` : ''}
                     </span>
                     <span className="r headerText">发票类型：增值税专票</span>
                 </div>
@@ -375,7 +435,7 @@ class TabPane3 extends React.Component {
                 {
                     <span className="r footer-text">
                     <span>发票金额汇总:</span>
-                    <span className="red">{fMoney(props.data && props.data.counts || "0")}</span>
+                    <span className="red">{fMoney((dataListCount) || "0")}</span>
                 </span>
                 }
             </div>
@@ -385,4 +445,4 @@ class TabPane3 extends React.Component {
 
 }
 
-export default Form.create()(TabPane3)
+export default Form.create()(withRouter(TabPane3))

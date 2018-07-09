@@ -69,9 +69,12 @@ class EditableCell extends React.Component {
 export default class TabPane2 extends React.Component {
     constructor(props) {
         super(props);
+        props.data.map((item, index) => {
+            return item.key = index+1
+        });
         this.state = {
             editingKey: '',
-            data: props.value || data,
+            data: props.data || data,
             loading: false,
             visible: false,
             modalConfig: {
@@ -230,6 +233,9 @@ export default class TabPane2 extends React.Component {
             },
         };
 
+        const {props} = this;
+        console.log(props);
+
         const columns = this.columns.map((col) => {
             if (!col.editable) {
                 return col;
@@ -247,7 +253,6 @@ export default class TabPane2 extends React.Component {
         });
         const {disabled} = this.props;
         const {visible, modalConfig, data} = this.state;
-        console.log(this.props.data);
         return (
         <div>
             <div className="table-operations">

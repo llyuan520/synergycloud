@@ -6,11 +6,8 @@ import React, {Component} from 'react';
 import {Button, Modal, Form, Row, Col, Divider, message} from 'antd';
 import './styles.less'
 import {fMoney, getFields} from "../../../../../utils";
-import FormItems from "../../../../../components/FormItems";
 import request from "../../../../../utils/request";
 import {withRouter} from "react-router-dom";
-
-const {AsyncSelect} = FormItems.AsyncSelect;
 
 
 let User = [];
@@ -23,7 +20,7 @@ class PopModal extends Component {
     state = {
         initData: {},
         userId: "",
-        data: this.props && this.props.data || [],
+        data: (this.props && this.props.data) || [],
         conName: [],
         invite_userid: []
     }

@@ -17,6 +17,7 @@ class Step2 extends Component {
         visible: false,
         data: [],
         model: [],
+        output: [],
         outputId: ""
     }
 
@@ -59,8 +60,18 @@ class Step2 extends Component {
         })
     }
 
+    // 获取产值形象进度
+    getOutput() {
+        console.log(this.props.location.state.outputId);
+        request("/con/output/getEntry0", {params: {output_id: this.props.location.state.outputId}})
+        .then(res => {
+            this.setState({output: res.data.datas})
+        })
+    }
+
     componentDidMount() {
-        this.getModel()
+        this.getModel();
+        this.props.location.state && this.props.location.state.outputId && this.getOutput();
     }
 
     setModel(data) {
@@ -90,6 +101,8 @@ class Step2 extends Component {
 
     render() {
         console.log(this.state.model);
+        const {output, model} = this.state;
+        console.log(this.state.output);
         return (
         <React.Fragment>
             <CustomizeTabs
@@ -98,11 +111,11 @@ class Step2 extends Component {
                 [
                     {
                         title: '产值单基本信息',
-                        component: <TabPane1 data={this.state.model} setData={this.setModel.bind(this)}/>
+                        component: <TabPane1 data={model} setData={this.setModel.bind(this)}/>
                     },
                     {
                         title: '形象进展',
-                        component: <TabPane2 data={this.state.model} setData={this.setData.bind(this)}/>
+                        component: <TabPane2 data={output} setData={this.setData.bind(this)}/>
                     }
                 ]
             }

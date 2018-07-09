@@ -6,7 +6,7 @@ import React from 'react'
 import CustomizeTabs from '../../../../components/Tabs/index'
 import TabPane2 from "../Step_2/tab2";
 import TabPane3 from "./tab3";
-import {Button} from "antd";
+import {Button, message} from "antd";
 import TabPane1 from "../Step_1/tab1";
 import {withRouter} from "react-router-dom";
 import request from "../../../../utils/request";
@@ -20,6 +20,7 @@ class Step3 extends React.Component {
             model: [],
             tableData: {},
             invoice: [],
+            output: [],
             outputproject: []
         }
     }
@@ -30,8 +31,13 @@ class Step3 extends React.Component {
         request("/con/output/contractToOutput", {params: {contract_id: outputId}})
         .then((res => {
             console.log(res);
+            let data = res.data;
+            data && data.datas.map((item, index) => {
+                return item.key = index;
+            });
+            data.key = 1;
             this.setState({
-                tableData: res.data,
+                tableData: data,
             })
         }))
     }
@@ -52,6 +58,17 @@ class Step3 extends React.Component {
             modelM: _.extend(this.state.modelM, {invoice_type: data})
         })
     }
+
+    // 获取产值形象进度
+    getOutput() {
+        console.log(this.props.location.state.outputId);
+        request("/con/output/getEntry0", {params: {output_id: this.props.location.state.outputId}})
+        .then(res => {
+            console.log(res);
+            this.setState({output: res.data.datas})
+        })
+    }
+
 
     setOutput(data) {
         this.setState({
@@ -75,6 +92,11 @@ class Step3 extends React.Component {
         };
         console.log(params);
         request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
+        .then(res => {
+            if (res.state === "ok") {
+                message.success("保存成功！");
+            }
+        })
     }
 
     handleSave() {
@@ -92,10 +114,13 @@ class Step3 extends React.Component {
 
     componentDidMount() {
         this.getList();
-        this.getModel()
+        this.getModel();
+        this.getOutput();
+
     }
 
     render() {
+        const {model, tableData, output} = this.state;
         return (
         <React.Fragment>
 
@@ -105,16 +130,16 @@ class Step3 extends React.Component {
                 [
                     {
                         title: '产值单基本信息',
-                        component: <TabPane1 data={this.state.model} setData={this.setModel.bind(this)}/>
+                        component: <TabPane1 data={model} setData={this.setModel.bind(this)}/>
                     },
                     {
                         title: '形象进展',
-                        component: <TabPane2 disabled={true}/>
+                        component: <TabPane2 disabled={true} data={output}/>
                     },
                     {
                         title: '产值明细和发票',
                         component: <TabPane3 setOutput={this.setOutput.bind(this)}
-                                             setInvoice={this.setInvoice.bind(this)} data={this.state.tableData}/>
+                                             setInvoice={this.setInvoice.bind(this)} data={tableData}/>
                     }
                 ]
             }
