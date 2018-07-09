@@ -52,6 +52,7 @@ export default class Accept extends React.Component {
         super(props);
         this.state = {
             updateKey: Date.now(),
+            statusData: []
         }
     }
 
