@@ -18,6 +18,7 @@ import AcceptCreate from "./Accept/Create";
 import Contract from "./Contract";
 import ContractCreate from "./Contract/Create";
 import TemList from "./Template"
+import ProjectDetail from "./Project/ProjectDetail"
 
 const routes = [
     {
@@ -110,6 +111,11 @@ const routes = [
         component: wrapPage('合同履约协同平台 – 审批模板', TemList),
         name: '审批模板',
         exact: true,
+    }, {
+        path:'/web/project/projectDetail',
+        component:wrapPage('合同履约协同平台 – 项目详情', ProjectDetail),
+        name:'项目详情',
+        exact:true,
     }, {
         path: '/403',
         component: wrapPage('403', () => import('./Exception/403')),

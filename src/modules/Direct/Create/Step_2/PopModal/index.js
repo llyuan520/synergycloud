@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/7/2
 import React,{ Component } from 'react';
 import { Modal,Row, Col,Alert, Form,Button,Spin,message } from 'antd';
-import { request,getFields,isEmpty } from 'utils'
+import { request,getFields } from 'utils'
 import TableForm from './TableForm.r'
 import './styles.less'
 
@@ -16,6 +16,7 @@ class PopModal extends Component{
         loading: true,
         selectedRowKeys:[],
         supplierData:[],
+        contract_id:'',
     };
 
     getRowByKey(seq, newData) {
@@ -39,6 +40,7 @@ class PopModal extends Component{
 
                 const item = {
                     supplier_id:values.supplier_id,
+                    contract_id:this.state.contract_id,
                     newData:newData
                 }
                 //console.log(item);
@@ -52,11 +54,12 @@ class PopModal extends Component{
             loading
         });
     }
-    getFindCompanyByItemId=(items_id)=>{
+    getFindCompanyByItemId=(itemsId)=>{
         this.toggleLoading(true);
         request(`/con/supplieritem/findCompanyByItemId`,{
             params:{
-                items_id:items_id
+                items_id : '58696124807512064',
+                //items_id:itemsId
             }
         })
             .then(res => {
@@ -67,8 +70,8 @@ class PopModal extends Component{
                     result.forEach((r) => {
                         newData.push({
                             ...r,
-                            key: `${r.value}`,
-                            label: r.name,
+                            key: `${r.items_id}`,
+                            label: r.contractName,
                         });
                     });
                     this.setState({
@@ -103,8 +106,8 @@ class PopModal extends Component{
             this.setState({
                 data:nextProps.data
             },()=>{
-                if(nextProps.model && isEmpty(nextProps.model.items_id)){
-                    this.getFindCompanyByItemId(nextProps.model.items_id)
+                if(nextProps && nextProps.itemsId !== ''){
+                    this.getFindCompanyByItemId(nextProps.itemsId)
                 }
             })
 
@@ -151,7 +154,7 @@ class PopModal extends Component{
                     </Row>
                 }
                 title={`${title} - 指定供应商，让其负责对应的变更项`}>
-                <Spin spinning={!loading}>
+                <Spin spinning={loading}>
                     <Form onSubmit={this.handleSubmit}>
                         <Row>
                             {
@@ -161,9 +164,9 @@ class PopModal extends Component{
                                         fieldName: 'supplier_id',
                                         type: 'select',
                                         span: 12,
-                                        options: [{label: '全部', key: ''}].concat(supplierData),
+                                        options: supplierData,
                                         fieldDecoratorOptions: {
-                                            initialValue: {label: '全部', key: ''},
+                                            //initialValue: {label: '全部', key: ''},
                                             rules: [
                                                 {
                                                     required: true,
@@ -172,7 +175,15 @@ class PopModal extends Component{
                                             ]
                                         },
                                         componentProps: {
-                                            labelInValue: true,
+                                            //labelInValue: true,
+                                            onChange:(value)=>{
+                                                const data = supplierData.filter(item => item.key === value)[0];
+                                                console.log(data);
+                                                this.setState({
+                                                    contract_id:data.contract_id
+                                                })
+                                            }
+
                                         },
                                     }
 

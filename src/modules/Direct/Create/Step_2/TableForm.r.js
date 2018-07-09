@@ -120,6 +120,46 @@ export default class TableForms extends PureComponent {
 
     render() {
         const dateFormat = 'YYYY/MM/DD';
+        const action = {
+                    title: '操作',
+                        key: 'action',
+                        //width: '100px',
+                        render: (text, record) => {
+                        if (!!record.editable && this.state.loading) {
+                            return null;
+                        }
+                        if (record.editable) {
+                            if (record.isNew) {
+                                return (
+                                    <span>
+                                            <a onClick={e => this.saveRow(e, record.seq)}>添加</a>
+                                            <Divider type="vertical" />
+                                            <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.seq)}>
+                                                <a>删除</a>
+                                            </Popconfirm>
+                                        </span>
+                                );
+                            }
+                            return (
+                                <span>
+                                        <a onClick={e => this.saveRow(e, record.seq)}>保存</a>
+                                        <Divider type="vertical"/>
+                                        <a onClick={e => this.cancel(e, record.seq)}>取消</a>
+                                    </span>
+                            );
+                        }
+                        return (
+                            <span>
+                                      <a onClick={e => this.toggleEditable(e, record.seq)}>编辑</a>
+                                      <Divider type="vertical"/>
+                                      <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.seq)}>
+                                          <a  style={{ color: '#f5222d' }}>删除</a>
+                                      </Popconfirm>
+                                </span>
+                        );
+                    },
+                };
+
         const columns = [
             {
                 title: '变更项',
@@ -178,54 +218,14 @@ export default class TableForms extends PureComponent {
                     )
                 },
             },
-            {
-                title: '操作',
-                key: 'action',
-                //width: '100px',
-                render: (text, record) => {
-                    if (!!record.editable && this.state.loading) {
-                        return null;
-                    }
-                    if (record.editable) {
-                        if (record.isNew) {
-                            return (
-                                <span>
-                                    <a onClick={e => this.saveRow(e, record.seq)}>添加</a>
-                                    <Divider type="vertical" />
-                                    <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.seq)}>
-                                        <a>删除</a>
-                                    </Popconfirm>
-                                </span>
-                            );
-                        }
-                        return (
-                            <span>
-                                <a onClick={e => this.saveRow(e, record.seq)}>保存</a>
-                                <Divider type="vertical"/>
-                                <a onClick={e => this.cancel(e, record.seq)}>取消</a>
-                            </span>
-                        );
-                    }
-                    return (
-                        <span>
-                              <a onClick={e => this.toggleEditable(e, record.seq)}>编辑</a>
-                              <Divider type="vertical"/>
-                              <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.seq)}>
-                                  <a  style={{ color: '#f5222d' }}>删除</a>
-                              </Popconfirm>
-                        </span>
-                    );
-                },
-            },
         ];
-
 
         return (
             <React.Fragment>
                 <Table
                     loading={this.state.loading}
                     rowKey={record => record.seq}
-                    columns={columns}
+                    columns={ this.props && this.props.display===true ? columns : columns.concat(action)  }
                     dataSource={this.state.data}
                     pagination={false}
                     rowClassName={record => {

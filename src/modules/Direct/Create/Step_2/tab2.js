@@ -1,105 +1,42 @@
 // Created by liuliyuan on 2018/7/2
 import React,{Component} from 'react'
-import { Card,Row,Alert,Button } from 'antd';
+import { Card,Row,Alert,Button,message } from 'antd';
 import TableForm from './TableForm.r'
 import PopModal from './PopModal'
+import { request,getQueryString } from  'utils'
 
 
 class TabPane2 extends Component {
-
     state={
         updateKey:Date.now(),
         visible:false,
+        loading: false,
+        directId:getQueryString('directId'),
         modalConfig:{
             type:''
         },
-        item:{
-            supplier_id:{},
-            dataList:[
-                {
-                    accountability_reason
-                        :
-                        "asdf",
-                    hide_des
-                        :
-                        "阿斯蒂芬萨达发是的",
-                    id
-                        :
-                        "465153599844909056",
-                    is_accountability
-                        :
-                        "1",
-                    is_hide
-                        :
-                        "1",
-                    is_rework
-                        :
-                        "1",
-                    item
-                        :
-                        "变更1",
-                    planDateEnd
-                        :
-                        "2018-07-07",
-                    planDateStart
-                        :
-                        "2018-07-06",
-                    rework_des
-                        :
-                        "阿萨德法师的方法",
-                    seq
-                        :
-                        1
-                },
-                {
-                    accountability_reason
-                        :
-                        "asdf",
-                    hide_des
-                        :
-                        "阿斯蒂芬萨达发",
-                    id
-                        :
-                        "465153599844909057",
-                    is_accountability
-                        :
-                        "1",
-                    is_hide
-                        :
-                        "1",
-                    is_rework
-                        :
-                        "0",
-                    item
-                        :
-                        "变更2",
-                    planDateEnd
-                        :
-                        "2018-08-21",
-                    planDateStart
-                        :
-                        "2018-07-11",
-                    rework_des
-                        :
-                        "",
-                    seq
-                        :
-                        2
-                }
 
-            ],
+        //弹出框的初始数据
+        itemsId:'',
+        itemList:[],
+
+        //给列表的初始数据
+        initData:{
+            supplier_id:'',
+            contract_id:'',
+            dataList:[],
         },
 
     }
 
     setDataList = dataList =>{
+        this.props.setData && this.props.setData(dataList);
         this.mounted && this.setState({
-            item:{
+            initData:{
                 supplier_id:dataList.supplier_id,
+                contract_id:dataList.contract_id,
                 dataList:dataList.newData,
             }
-        },()=>{
-            console.log(this.state.item, this.state.item.dataList)
         })
     }
     toggleModalVisible=visible=>{
@@ -117,20 +54,87 @@ class TabPane2 extends Component {
             }
         })
     }
+    //给弹出框用的
+    getFindDirectiveData=(directId)=>{
+        this.toggleLoading(true);
+        request(`/con/mdydirective/findDirectiveData`,{
+            params:{
+                directId:directId
+            }
+        })
+            .then(res => {
+                this.toggleLoading(false);
+                if(res.state === 'ok'){
+                    const result = res.data;
+                    this.setState({
+                        itemsId:result.model.items_id,
+                        itemList:result.itemList,
+                    })
+                } else {
+                    return Promise.reject(res.message);
+                }
+            })
+            .catch(err => {
+                this.toggleLoading(false);
+                message.error(`${err.message}`)
+            })
+    }
+
+    //指定供应商的初始数据
+    getFindDirectiveInitData=(directId)=>{
+        request(`/con/supplieritem/initData`,{
+            params:{
+                directId:directId
+            }
+        })
+            .then(res => {
+                console.log(res.data)
+                if(res.state === 'ok'){
+                    this.setState({
+                        initData:{
+                            supplier_id:res.data.supplier_id,
+                            contract_id:res.data.contract_id,
+                            dataList:res.data.dataList,
+                        }
+                    })
+                } else {
+                    return Promise.reject(res.message);
+                }
+            })
+            .catch(err => {
+                message.error(`${err.message}`)
+            })
+    }
+
+    toggleLoading = (loading) => {
+        this.setState({
+            loading
+        });
+    }
+
+    componentDidMount() {
+        //判断是修改还是新增
+        const directId = this.state.directId;
+        if(directId){
+            this.getFindDirectiveData(directId)
+            this.getFindDirectiveInitData(directId)
+        }
+    }
     mounted=true
     componentWillUnmount(){
         this.mounted=null
     }
     render(){
-
-        const { visible,modalConfig,item } = this.state;
-        const { form,display,model,data } = this.props;
+        const { updateKey,visible,loading,modalConfig,itemsId,itemList,initData } = this.state;
+        const { form,display } = this.props;
         const { getFieldDecorator, getFieldError } = form;
         const dataListError = getFieldError('dataList');
         return(
             <React.Fragment>
 
                     <Card
+                        key={updateKey}
+                        loading={loading}
                         bordered={false}
                         bodyStyle={{
                             paddingTop:0
@@ -139,14 +143,14 @@ class TabPane2 extends Component {
 
                         <Row gutter={24} style={{margin:'14px 12px 0'}}>
                             {getFieldDecorator('dataList', {
-                                initialValue: item.dataList,
+                                initialValue: initData.dataList,
                                 rules:[
                                     {
                                         required:true,
                                         message:'请选择供应商'
                                     }
                                 ]
-                            })(<TableForm form={form} />)}
+                            })(<TableForm form={form} display={display} />)}
                             {
                                 dataListError ? <Alert key='errorMsg' message={dataListError.join(',')} type="error" /> : null
                             }
@@ -171,8 +175,8 @@ class TabPane2 extends Component {
                     visible={visible}
                     modalConfig={modalConfig}
                     toggleModalVisible={this.toggleModalVisible}
-                    model={model}
-                    data={data}
+                    itemsId={itemsId}
+                    data={itemList}
                     setDataList={this.setDataList.bind(this)}
                 />
             </React.Fragment>
