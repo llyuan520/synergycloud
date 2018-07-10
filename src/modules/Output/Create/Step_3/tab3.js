@@ -473,14 +473,14 @@ class TabPane3 extends React.Component {
                        rowSelection={rowSelection}/>
                 {
                     <span className="r footer-text">
-                    <span>明细金额汇总:</span>
+                    <span>含税汇总:</span>
                     <span className="red">{fMoney((dataSourceCount) || "0")}</span>
                 </span>
                 }
             </div>
             <Divider/>
             {
-                getRouter(this).is_synergy === "0" &&
+                getRouter(this).is_synergy !== "1" &&
                 <div className="m10">
                     <p className="tab-title">发票列表</p>
                     <div>
@@ -502,7 +502,7 @@ class TabPane3 extends React.Component {
                            rowSelection={rowSelectionList}/>
                     {
                         <span className="r footer-text">
-                    <span>发票金额汇总:</span>
+                    <span>含税汇总:</span>
                     <span className="red">{fMoney((dataListCount) || "0")}</span>
                 </span>
                     }
