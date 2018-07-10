@@ -1,7 +1,9 @@
 // Created by liuliyuan on 2018/6/23
 import React, {Component} from 'react';
-import {Row, Col, Select, Tabs, List, Avatar, Card, Button, Divider} from 'antd';
+import {Row, Col, Select, Tabs, List, Avatar, Card, Button, Divider, message, Badge } from 'antd';
+import {Link} from 'react-router-dom'
 import {PieReact} from 'components/ECharts';
+import { request } from  'utils'
 
 import './styles.less';
 import {withRouter} from "react-router-dom";
@@ -11,7 +13,7 @@ const TabPane = Tabs.TabPane;
 
 const tabList = [{
     key: 'tab1',
-    tab: '变更管理'
+    tab: '变更管理',
 }, {
     key: 'tab2',
     tab: '产值管理',
@@ -20,44 +22,34 @@ const tabList = [{
     tab: '合同结算',
 }];
 
-const data = [
-    {
-        title: 'Ant Design Title 1',
-    },
-    {
-        title: 'Ant Design Title 2',
-    },
-    {
-        title: 'Ant Design Title 3',
-    },
-    {
-        title: 'Ant Design Title 4',
-    },
-];
-
-const Tab = () => {
+const Tab = (props) => {
     return (
-    <List
-    itemLayout="horizontal"
-    dataSource={data}
-    renderItem={item => (
-    <List.Item actions={[<Button type="primary" ghost>查看详情</Button>]}>
-        <List.Item.Meta
-        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-        title={<a href="https://ant.design">{item.title}</a>}
-        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+        <List
+        itemLayout="horizontal"
+        dataSource={props.data}
+        renderItem={item => (
+            <List.Item actions={[<Button type="primary" ghost>查看详情</Button>]}>
+                <List.Item.Meta
+                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                title={
+                    <React.Fragment>
+                        <Link to="#/">{item.name}</Link>
+                        <Badge count={item.count || 11} style={{ backgroundColor: '#52c41a',marginLeft:20 }} />
+                    </React.Fragment>
+                }
+                description={item.description}
+                />
+            </List.Item>
+        )}
         />
-    </List.Item>
-    )}
-    />
     )
 }
 
-const getContent = (key, updateKey) => {
+const getContent = (key, data, updateKey) => {
     const contentList = {
-        tab1: <Tab updateKey={updateKey}/>,
-        tab2: <Tab updateKey={updateKey}/>,
-        tab3: <Tab updateKey={updateKey}/>,
+        tab1: <Tab data={data} updateKey={updateKey}/>,
+        tab2: <Tab data={data} updateKey={updateKey}/>,
+        tab3: <Tab data={data} updateKey={updateKey}/>,
     };
     return contentList[key]
 }
@@ -146,12 +138,51 @@ class Home extends Component {
 
     state = {
         loading: false,
-        key: 'tab1',
+        activeKey: 'tab1',
         updateKey: Date.now(),
+        data:[],
+    }
+
+    componentDidMount() {
+        //判断是修改还是新增
+        this.getFindDirectiveNumber()
+    }
+
+    onChange = (activeKey) => {
+        this.setState({
+            activeKey
+        },()=>{
+            this.getFindDirectiveNumber()
+        });
+    }
+
+    getFindDirectiveNumber=()=>{
+        this.toggleLoading(true);
+        request(`/con/mdydirective/findDirectiveNumber`)
+            .then(res => {
+                this.toggleLoading(false);
+                if(res.state === 'ok'){
+                    console.log(res);
+                    this.setState({
+                        data:res.data,
+                    })
+                } else {
+                    return Promise.reject(res.message);
+                }
+            })
+            .catch(err => {
+                this.toggleLoading(false);
+                message.error(`${err.message}`)
+            })
+    }
+
+    toggleLoading = (loading) => {
+        this.setState({
+            loading
+        });
     }
 
     render() {
-
 
         return (
         <React.Fragment>
@@ -205,15 +236,15 @@ class Home extends Component {
                             padding: 20
                         }}
                         >
-                            <Tabs tabPosition={this.state.tabPosition} size="small">
+                            <Tabs tabPosition={this.state.tabPosition} activeKey={this.state.activeKey} size="small" onChange={this.onChange}>
                                 {
                                     tabList.map(ele => (
-                                    <TabPane tab={ele.tab} key={ele.key} forceRender={false}
-                                             style={{marginRight: "0px"}}>
-                                        {
-                                            getContent(ele.key, this.state.updateKey)
-                                        }
-                                    </TabPane>
+                                        <TabPane tab={ele.tab} key={ele.key} forceRender={false}
+                                                 style={{marginRight: "0px"}}>
+                                            {
+                                                getContent(ele.key, this.state.data, this.state.updateKey)
+                                            }
+                                        </TabPane>
                                     ))
                                 }
                             </Tabs>
