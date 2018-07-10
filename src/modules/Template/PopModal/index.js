@@ -3,9 +3,10 @@
  * Created by fanzhe on 2018/7/9
  */
 import React from "react"
-import {Button, Col, Modal, Row, Table} from "antd";
+import {Button, Checkbox, Col, Modal, Row, Table} from "antd";
 import {Form} from "antd/lib/index";
 import {getFields} from "../../../utils"
+
 const columns = [
     {title: "审批节点"},
     {title: "项目角色"},
@@ -17,8 +18,26 @@ const columns = [
 ]
 
 class TemModal extends React.Component {
+
+    state = {
+        data: []
+    }
+    newMember = () => {
+        const newData = this.state.data.map(item => ({...item}));
+        newData.push({
+            key: `${newData.length + 1}`,
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sidney No. 1 Lake Park',
+        });
+        this.index += 1;
+        this.setState({data: newData});
+    };
+
+
     render() {
         const {props} = this;
+        const {data} = this.state;
         return (
         <Modal
         maskClosable={false}
@@ -55,7 +74,33 @@ class TemModal extends React.Component {
                             },
                         },
                         {
-                            label: ' 模板名称',
+                            label: ' 选择项目',
+                            fieldName: 'costCalculation',
+                            type: 'input',
+                            span: 8,
+                            fieldDecoratorOptions: {
+                                initialValue: '',
+                            },
+                        },
+                        {
+                            label: ' 分期名称',
+                            fieldName: 'costCalculation',
+                            type: 'input',
+                            span: 8,
+                            fieldDecoratorOptions: {
+                                initialValue: '',
+                            },
+                        }
+
+                    ])
+                }
+            </Row>
+
+            <Row gutter={24}>
+                {
+                    getFields(this.props.form, [
+                        {
+                            label: ' 单据类型',
                             fieldName: 'costCalculation',
                             type: 'input',
                             span: 8,
@@ -70,18 +115,21 @@ class TemModal extends React.Component {
                             },
                         },
                         {
-                            label: ' 模板名称',
+                            label: ' 生效日期',
                             fieldName: 'costCalculation',
-                            type: 'input',
+                            type: 'datePicker',
                             span: 8,
                             fieldDecoratorOptions: {
                                 initialValue: '',
-                                rules: [
-                                    {
-                                        required: true,
-                                        message: '请输入模板名称'
-                                    }
-                                ]
+                            },
+                        },
+                        {
+                            label: ' 失效日期',
+                            fieldName: 'costCalculation',
+                            type: 'datePicker',
+                            span: 8,
+                            fieldDecoratorOptions: {
+                                initialValue: '',
                             },
                         }
 
@@ -89,14 +137,25 @@ class TemModal extends React.Component {
                 }
             </Row>
 
-            <Table columns={columns}/>
+            <Row gutter={24}>
+                <Col span={8}>
+                    <Checkbox>允许子公司引用模板</Checkbox>
+                </Col>
+                <Col span={8}>
+                    <Checkbox>允许子公司引用模板</Checkbox>
+                </Col>
+            </Row>
+
+
+            <Table columns={columns} dataSource={data}
+                   pagination={false}/>
             <Button
             style={{width: '100%', marginTop: 16, marginBottom: 8}}
             type="dashed"
             onClick={this.newMember}
             icon="plus"
             >
-                新增
+                新增审批节点
             </Button>
         </Modal>
         )

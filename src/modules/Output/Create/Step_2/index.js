@@ -10,6 +10,7 @@ import CustomizeTabs from '../../../../components/Tabs/index'
 import TabPane1 from "../Step_1/tab1";
 import request from "../../../../utils/request";
 import _ from 'lodash'
+import {objToStrRouter, strToObjRouter} from "../../../../utils";
 
 class Step2 extends Component {
     state = {
@@ -34,10 +35,7 @@ class Step2 extends Component {
             const {outputId} = this.state;
             this.props.history.push({
                 pathname: '/web/output/create/present',
-                search: `?id=${this.props.location.search.split("=")[1]}`,
-                state: {
-                    outputId
-                }
+                search: objToStrRouter(_.extend(strToObjRouter(this.props.location.search), {outputId})),
             })
         }
         this.save(changeRouter)
@@ -56,7 +54,7 @@ class Step2 extends Component {
     }
 
     getModel() {
-        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
+        request("/con/output/findEditData", {params: {contractid: strToObjRouter(this.props.location.search).id}})
         .then(res => {
             this.setState({
                 modelM: res.data.model,
@@ -111,7 +109,7 @@ class Step2 extends Component {
                     }}> 保存 </Button>
                     <Button style={{marginLeft: 8}} onClick={() => this.props.history.push({
                         pathname: '/web/output/create/write',
-                        search: `?id=${this.props.location.search.split("=")[1]}`
+                        // search: this.props.location.search
                     })
                     }> 上一步 </Button>
                 </div>

@@ -1,9 +1,11 @@
 // Created by Lee on 2018/7/2
-import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
-import { SearchTable } from '../../components'
-import { getSelectFormat } from '../../utils'
+import React, {Component} from 'react';
+import {Button, Icon} from 'antd';
+import {SearchTable} from '../../components'
+import {getSelectFormat} from '../../utils'
 import './styles.less'
+import {Form} from "antd/lib/index";
+import {Link} from "react-router-dom";
 
 const fieldsData = (context) => [
     {
@@ -16,15 +18,9 @@ const fieldsData = (context) => [
         fieldName: 'status',
         type: 'select',
         span: 6,
-        options: [{ label: '全部', key: '' }].concat(context.state.statusData),
+        options: [{label: '全部', key: ''}].concat(context.state.statusData),
         fieldDecoratorOptions: {
-            initialValue: { label: '全部', key: '' },
-            /*rules:[
-                {
-                    required:true,
-                    message:'请输入项目代码'
-                }
-            ]*/
+            initialValue: {label: '全部', key: ''},
         },
         componentProps: {
             labelInValue: true,
@@ -148,8 +144,10 @@ const fieldsData = (context) => [
 const getColumns = (context) => [
     {
         title: '产值单号',
-        dataIndex: 'number',
         className: 'text-center',
+        render: (e) => (
+        <Link to={{pathname: "/web/output/create/write", state: {outputId: e.id}}}>{e.number}</Link>
+        )
     }, {
         title: (
         <span className="contract-name-and-code">
@@ -160,7 +158,7 @@ const getColumns = (context) => [
         dataIndex: 'contractname',
         className: 'contract-info',
         sorter: true,
-        render:(text, record, index)=>{
+        render: (text, record, index) => {
             return (
             <React.Fragment>
                 <div className="contract-name-p1">{record.contractname}</div>
@@ -174,9 +172,9 @@ const getColumns = (context) => [
         sorter: true,
     }, {
         title: '发票状态',
-        dataIndex: 'invoice_status',
+        dataIndex: 'invoicetype',
         sorter: true,
-    },{
+    }, {
         title: '影像状态',
         dataIndex: 'image_status',
         sorter: true,
@@ -194,23 +192,24 @@ const getColumns = (context) => [
 class Output extends Component {
 
 
-
     constructor() {
         super();
         this.state = {
             updateKey: Date.now(),
             statusData: [
-                { label: '未进行', key: '0' },
-                { label: '进行中', key: '1' },
-                { label: '已完成', key: '2' }
+                {label: '未进行', key: '0'},
+                {label: '进行中', key: '1'},
+                {label: '已完成', key: '2'}
             ],
             value: null,
+            data: []
         }
     }
 
+
     render() {
         return (
-        <div className = "output-table-style">
+        <div className="output-table-style">
             <SearchTable
             searchOption={{
                 title: '产值单',
@@ -220,13 +219,13 @@ class Output extends Component {
                 key: this.state.updateKey,
                 pageSize: 10,
                 columns: getColumns(this),
-                //url:'/con/output/findListData',
-                url:'',
+                url: '/con/output/findListData',
+                // url: '',
                 //scroll:{ x:1300 },
                 cardProps: {
                     title: <div>
-                        <Button type='primary' href={'/web/Output/create'} style={{ marginRight: 5 }} >
-                            <Icon type="plus" />
+                        <Button type='primary' href={'/web/Output/create'} style={{marginRight: 5}}>
+                            <Icon type="plus"/>
                             产值提报
                         </Button>
                     </div>
@@ -241,5 +240,4 @@ class Output extends Component {
 }
 
 
-
-export default Output;
+export default Form.create()(Output);

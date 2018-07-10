@@ -40,7 +40,7 @@ class Step3 extends Component {
                 [
                     {
                         title: '产值单基本信息',
-                        component: <TabPane1/>
+                        component: <TabPane1 disabled={true}/>
                     },
                     {
                         title: '形象进展',
@@ -63,8 +63,7 @@ class Step3 extends Component {
                     <Button style={{marginLeft: 8}}
                             onClick={() => this.props.history.push({
                                 pathname: '/web/output/create/present',
-                                search: `?id=${this.props.location.search.split("=")[1]}`,
-                                state: this.props.location.state
+                                search: this.props.location.search,
                             })}> 上一步 </Button>
                 </div>
             }

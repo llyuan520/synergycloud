@@ -9,6 +9,7 @@ import {getFields} from 'utils'
 import {requestDict, request, setSelectFormat} from 'utils'
 import TableForm from './TableForm.r';
 import _ from "lodash"
+import {objToStrRouter} from "../../../../utils";
 
 
 class Step1 extends Component {
@@ -30,9 +31,13 @@ class Step1 extends Component {
     handleSubmit = (e) => {
         e && e.preventDefault();
         this.props.form.validateFields((err) => {
-            console.log(this.state.id);
+            const {is_submission, id} = this.state;
+            // 这里将是否为收货记录用一个is_submission字段保存在路由中，可以在页面去调用
             if (err) return;
-            this.props.history.push({pathname: '/web/output/create/fill', search: `?id=${this.state.id}`})
+            this.props.history.push({
+                pathname: '/web/output/create/fill',
+                search: objToStrRouter({id, is_submission})
+            })
         });
     }
 
@@ -72,6 +77,7 @@ class Step1 extends Component {
         }
         request('/con/contract/findListData', {params})
         .then(res => {
+            console.log(res);
             this.setState({
                 tableData: res.data,
                 count: res.count
@@ -197,7 +203,11 @@ class Step1 extends Component {
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
                             })(<TableForm form={this.props.form}
-                                          next={(e) => this.setState({disabled: false, id: e[0].id})}/>)}
+                                          next={(e) => this.setState({
+                                              disabled: false,
+                                              id: e[0].id,
+                                              is_submission: e[0].is_submission
+                                          })}/>)}
                         </Row>
                     </Card>
                 </div>
