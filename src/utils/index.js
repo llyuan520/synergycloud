@@ -171,6 +171,10 @@ const objToStrRouter = (obj) => {
     return str
 };
 
+const getRouter = (_this) => {
+    return strToObjRouter(_this.props.location.search)
+}
+
 
 export {
     request,
@@ -185,5 +189,6 @@ export {
     parseJsonToParams,
     isEmpty,
     strToObjRouter,
-    objToStrRouter
+    objToStrRouter,
+    getRouter
 }

@@ -32,10 +32,14 @@ class Step2 extends Component {
         console.log(this.save);
         e && e.preventDefault();
         const changeRouter = () => {
-            const {outputId} = this.state;
+            const {outputId, modelM} = this.state;
+            // is_synergy中0表示不是协同
             this.props.history.push({
                 pathname: '/web/output/create/present',
-                search: objToStrRouter(_.extend(strToObjRouter(this.props.location.search), {outputId})),
+                search: objToStrRouter(_.extend(strToObjRouter(this.props.location.search), {
+                    outputId,
+                    is_synergy: modelM.is_synergy
+                })),
             })
         }
         this.save(changeRouter)
@@ -56,6 +60,7 @@ class Step2 extends Component {
     getModel() {
         request("/con/output/findEditData", {params: {contractid: strToObjRouter(this.props.location.search).id}})
         .then(res => {
+            console.log(res);
             this.setState({
                 modelM: res.data.model,
             })

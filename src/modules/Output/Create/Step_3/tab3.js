@@ -9,7 +9,7 @@
  */
 import React from 'react'
 import {DatePicker, Divider, Form} from 'antd';
-import {fMoney, strToObjRouter} from "../../../../utils";
+import {fMoney, getRouter, strToObjRouter} from "../../../../utils";
 import {Table, Input, Icon, Button} from 'antd';
 import './style.less';
 import moment from 'moment';
@@ -479,32 +479,35 @@ class TabPane3 extends React.Component {
                 }
             </div>
             <Divider/>
-            <div className="m10">
-                <p className="tab-title">发票列表</p>
-                <div>
-                    <Button disabled={props.disabled} onClick={this.handleAddList} type="primary"
-                            style={{marginBottom: 16}}>
-                        添加发票
-                    </Button>
-                    <Button disabled={!hasSelectedList || props.disabled} onClick={this.handleDeleteList}
-                            style={{marginBottom: 16, marginLeft: 10}}>
-                        删除
-                    </Button>
-                    <span style={{marginLeft: 8}} className="red">
+            {
+                getRouter(this).is_synergy === "0" &&
+                <div className="m10">
+                    <p className="tab-title">发票列表</p>
+                    <div>
+                        <Button disabled={props.disabled} onClick={this.handleAddList} type="primary"
+                                style={{marginBottom: 16}}>
+                            添加发票
+                        </Button>
+                        <Button disabled={!hasSelectedList || props.disabled} onClick={this.handleDeleteList}
+                                style={{marginBottom: 16, marginLeft: 10}}>
+                            删除
+                        </Button>
+                        <span style={{marginLeft: 8}} className="red">
                         {hasSelectedList ? `选择了 ${selectedRowKeysList.length} 列` : ''}
                     </span>
-                    <span className="r headerText">发票类型：增值税专票</span>
-                </div>
-                <Table rowKey={record => record.invoice_code} dataSource={dataList} pagination={false}
-                       columns={columnsList}
-                       rowSelection={rowSelectionList}/>
-                {
-                    <span className="r footer-text">
+                        <span className="r headerText">发票类型：增值税专票</span>
+                    </div>
+                    <Table rowKey={record => record.invoice_code} dataSource={dataList} pagination={false}
+                           columns={columnsList}
+                           rowSelection={rowSelectionList}/>
+                    {
+                        <span className="r footer-text">
                     <span>发票金额汇总:</span>
                     <span className="red">{fMoney((dataListCount) || "0")}</span>
                 </span>
-                }
-            </div>
+                    }
+                </div>
+            }
         </div>
         );
     }

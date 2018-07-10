@@ -53,29 +53,32 @@ class Step3 extends React.Component {
     save() {
         return new Promise((resolve, reject) => {
             const model = this.state.model.model;
-            const {outputprojectCount, invoiceCount} = this.state;
-            console.log(outputprojectCount, invoiceCount);
-            if (outputprojectCount * 1 === invoiceCount * 1) {
-                const params = {
-                    model: _.extend(model, {id: strToObjRouter(this.props.location.search).outputId, tax_amounts: outputprojectCount}),
-                    outputproject: this.state.outputproject.length ? this.state.outputproject : this.state.tableData.datas,
-                    invoice: this.state.invoice
-                };
-                console.log(params);
-                request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
-                .then(res => {
-                    if (res.state === "ok") {
-                        message.success("保存成功！");
-                        resolve()
-                    } else {
-                        message.error(res.message);
-                        reject('失败')
-                    }
-                })
-            } else {
-                message.error("发票金额和明细金额汇总不一致！");
-                reject('失败')
-            }
+            const {outputprojectCount} = this.state;
+            //  console.log(outputprojectCount, invoiceCount);
+            // if (outputprojectCount * 1 === invoiceCount * 1) {
+            const params = {
+                model: _.extend(model, {
+                    id: strToObjRouter(this.props.location.search).outputId,
+                    tax_amounts: outputprojectCount
+                }),
+                outputproject: this.state.outputproject.length ? this.state.outputproject : this.state.tableData.datas,
+                invoice: this.state.invoice
+            };
+            console.log(params);
+            request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
+            .then(res => {
+                if (res.state === "ok") {
+                    message.success("保存成功！");
+                    resolve()
+                } else {
+                    message.error(res.message);
+                    reject('失败')
+                }
+            })
+            // } else {
+            //     message.error("发票金额和明细金额汇总不一致！");
+            //     reject('失败')
+            // }
         })
     }
 
