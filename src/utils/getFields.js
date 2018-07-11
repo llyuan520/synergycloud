@@ -17,6 +17,11 @@ const normFile = (e) => {
 }
 
 
+/*
+* 在该组件使用中，fieldName是antd中form的getFieldDecorator进行双向绑定。
+* */
+
+
 export const getFields = (form,fieldsData=[],layout) =>{
 
     const {getFieldDecorator,setFieldsValue,getFieldValue} = form;
@@ -96,6 +101,9 @@ export const getFields = (form,fieldsData=[],layout) =>{
                 break;
             case 'companyName':
                 CusComponent = CusFormItem.CompanyName;
+                break;
+            case 'outputName':
+                CusComponent = CusFormItem.OutputName;
                 break;
             case 'asyncSelect':
                 CusComponent = CusFormItem.AsyncSelect;

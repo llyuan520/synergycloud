@@ -5,7 +5,7 @@
 import React from 'react'
 import {Row, Col, Select} from 'antd';
 import "./styles.less"
-import {fMoney, requestDict, setSelectFormat} from "../../../../utils";
+import {fMoney, requestDict, setSelectFormat, strToObjRouter} from "../../../../utils";
 import request from "../../../../utils/request";
 import {withRouter} from "react-router-dom";
 
@@ -25,7 +25,7 @@ class TabPane1 extends React.Component {
     }
 
     getModel() {
-        request("/con/output/findEditData", {params: {contractid: this.props.location.search.split("=")[1]}})
+        request("/con/output/findEditData", {params: {contractid: strToObjRouter(this.props.location.search).id}})
         .then(res => {
             console.log(res);
             this.setState({
@@ -64,11 +64,11 @@ class TabPane1 extends React.Component {
                 <Row>
                     <Col span={12}>
                         <span className="span">甲方：</span>
-                        <span className="item-text">{data.companyA&&data.companyA.companyname}</span>
+                        <span className="item-text">{data.companyA && data.companyA.companyname}</span>
                     </Col>
                     <Col span={12}>
                         <span className="span">乙方：</span>
-                        <span className="item-text">{data.companyB&&data.companyB.companyname}</span>
+                        <span className="item-text">{data.companyB && data.companyB.companyname}</span>
                     </Col>
                 </Row>
                 <Row>
@@ -86,7 +86,7 @@ class TabPane1 extends React.Component {
                         <span className="span">发票类型：</span>
                         {/*{data.model.invoicetype}*/}
                         <Select style={{width: 100}} value={data.model.invoice_type}
-                                disabled={data.model.invoice_type === "0"}
+                                disabled={data.model.invoice_type === "0" || this.props.disabled}
                                 onSelect={e => {
                                     this.props.setData(e);
                                 }}>
