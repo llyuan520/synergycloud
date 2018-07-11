@@ -22,10 +22,11 @@ class Register extends Component {
         const {form,register,isPersonInfo,history} = this.props;
         form.validateFields((err, values) => {
             if (!err) {
-
                 this.toggleLoading(true)
                 register({
+                    //...values,
                     number: values.number,
+                     captcha:values.captcha,
                     password: values.password,
                     confirm: values.confirm,
                     success:()=>{

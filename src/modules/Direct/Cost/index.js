@@ -4,12 +4,16 @@ import { Button } from 'antd';
 import CustomizeStaticTabs from 'components/CustomizeStaticTabs'
 import TabPane1 from '../../Direct/Create/Step_1/tab1'
 import Cost from './Cost.r'
+import { getQueryString } from  'utils'
 
 export default class CostMeasure extends Component {
+    state={
+        updateKey:Date.now(),
+    }
     render(){
         return(
             <CustomizeStaticTabs
-                title="变更编号：xx一期-指令单-分包-土建-0127"
+                title={`变更编号：${getQueryString('number')}`}
                 defaultActiveKey='0'
                 tabPaneOptions={
                     [

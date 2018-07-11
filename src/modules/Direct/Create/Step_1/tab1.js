@@ -7,20 +7,34 @@ export default class TabPane1 extends Component{
 
     state={
         updateKey:Date.now(),
-        loading: false,
+        loaded: false,
         directId:getQueryString('directId'),
         data:{},
     }
 
+    componentDidMount() {
+        //判断是修改还是新增
+        const directId = this.state.directId;
+        if(directId){
+            let pLoader = Promise.all([this.getFindDirectiveData(directId)]);
+            pLoader.then(() => {
+                this.setState({
+                    loaded: true
+                });
+            }).catch( err => {
+                console.log(err);
+                message.error(`${err.message}`)
+            });
+        }
+    }
+
     getFindDirectiveData=(directId)=>{
-        this.toggleLoading(true);
         request(`/con/mdydirective/findDirectiveData`,{
             params:{
                 directId:directId
             }
         })
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
                         data:res.data.model,
@@ -30,28 +44,16 @@ export default class TabPane1 extends Component{
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
-    toggleLoading = (loading) => {
-        this.setState({
-            loading
-        });
-    }
-    componentDidMount() {
-        //判断是修改还是新增
-        const directId = this.state.directId;
-        directId && this.getFindDirectiveData(directId)
-    }
-
     render () {
 
-        const { updateKey,data,loading } = this.state;
+        const { updateKey,data,loaded } = this.state;
         const { style } = this.props;
 
         return (
-            <Card key={updateKey} loading={loading} style={{ padding: 0, border: 0 , ...style }}>
+            <Card key={updateKey} loading={!loaded} style={{ padding: 0, border: 0 , ...style }}>
                 <Row gutter={24}>
                     <Col span={8}>
                         <p>项目名称</p>
