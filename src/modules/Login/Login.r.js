@@ -105,7 +105,7 @@ class Login extends Component {
                         <div className="login-content-left">
                             <Form onSubmit={this.handleSubmit} className="loginForm">
                                 {/*<h2 className="welcome">登录</h2>
-                                <h4 className="welcomeSpan">您好！欢迎使用合同履约协同管理系统</h4>*/}
+                                 <h4 className="welcomeSpan">您好！欢迎使用合同履约协同管理系统</h4>*/}
                                 <FormItem>
                                     {getFieldDecorator('number', {
                                         initialValue: '13570818167',
