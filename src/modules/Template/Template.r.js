@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import {Button, Table} from "antd";
+import {Button, Popconfirm, Table} from "antd";
 import TemModal from "./PopModal";
 import request from "../../utils/request";
 import './styles.less'
@@ -31,11 +31,13 @@ const columns = (_this) => [{
     title: "生效时间"
 }, {
     title: "操作",
-    render: () => {
+    render: (text, record) => {
         return (
         <span>
             <span><a>编辑</a></span>
-            <span className="ml5"><a className="red">删除</a></span>
+            <Popconfirm className="ml10" title="是否要删除此行？" onConfirm={() => _this.remove(record.seq)}>
+                            <a style={{color: '#f5222d'}}>删除</a>
+                         </Popconfirm>
         </span>
         )
     }

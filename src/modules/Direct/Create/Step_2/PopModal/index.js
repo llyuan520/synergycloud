@@ -70,7 +70,7 @@ class PopModal extends Component{
                     result.forEach((r) => {
                         newData.push({
                             ...r,
-                            key: `${r.items_id}`,
+                            key: `${r.supplier_id}`,
                             label: r.contractName,
                         });
                     });

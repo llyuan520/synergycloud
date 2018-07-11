@@ -9,13 +9,30 @@ class Step1 extends Component {
     state={
         updateKey:Date.now(),
         submitLoading: false,
-        directLoading:true,
+        loaded:false,
         changeTypeData:[],
         specialtyData:[],
         //初始值
         model:{},
         itemList:[],
         directId:getQueryString('directId')
+    }
+
+    componentDidMount() {
+        let action = [this.getChangeType(), this.getSpecialty()];
+        const directId = this.state.directId;
+        if(directId){
+            action.push(this.getFindDirectiveData(directId))
+        }
+        let pLoader = Promise.all(action);
+        pLoader.then(() => {
+            this.setState({
+                loaded: true
+            });
+        }).catch( err => {
+            console.log(err);
+            message.error(`${err.message}`)
+        });
     }
 
     handleSubmit = (e) => {
@@ -55,14 +72,12 @@ class Step1 extends Component {
     }
 
     getFindDirectiveData=(directId)=>{
-        this.toggleDirectLoading(true);
         request(`/con/mdydirective/findDirectiveData`,{
             params:{
                 directId:directId
             }
         })
             .then(res => {
-                this.toggleDirectLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
                         model:res.data.model,
@@ -73,7 +88,6 @@ class Step1 extends Component {
                 }
             })
             .catch(err => {
-                this.toggleDirectLoading(false);
                 message.error(`${err.message}`)
             })
     }
@@ -81,19 +95,15 @@ class Step1 extends Component {
 
     //去数据字典里面的状态
     getChangeType=()=>{
-        this.toggleDirectLoading(true);
         requestDict(`['com.moya.contract.enums.MdyDirectiveTypeEnum']`,result=>{
-            this.toggleDirectLoading(false);
             this.setState({
                 changeTypeData:setSelectFormat(result.MdyDirectiveTypeEnum)
             })
         })
     }
     getSpecialty=()=>{
-        this.toggleDirectLoading(true);
         request('/con/mdydirective/initData')
             .then((res) => {
-                this.toggleDirectLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
                         specialtyData:setSelectFormat(res.data)
@@ -103,7 +113,6 @@ class Step1 extends Component {
                 }
             })
             .catch(err => {
-                this.toggleDirectLoading(false);
                 message.error(`${err.message}`)
             })
     }
@@ -112,22 +121,9 @@ class Step1 extends Component {
             submitLoading
         });
     }
-    toggleDirectLoading = (directLoading) => {
-        this.setState({
-            directLoading
-        });
-    }
-    componentDidMount() {
-        this.getChangeType();
-        this.getSpecialty();
-
-        //判断是修改还是新增
-        const directId = this.state.directId;
-        directId && this.getFindDirectiveData(directId)
-    }
 
     render(){
-        const { model,itemList, directLoading, submitLoading } = this.state;
+        const { model,itemList, loaded, submitLoading } = this.state;
         const { form } = this.props;
         const { getFieldDecorator, getFieldValue, getFieldError } = form;
         const itemListError = getFieldError('itemList');
@@ -135,7 +131,7 @@ class Step1 extends Component {
             <React.Fragment>
                 <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
                     <div className="advancedForm">
-                       <Card loading={directLoading}>
+                       <Card loading={!loaded}>
                             <p>指令单基本信息</p>
 
                             <Row gutter={24}>
@@ -307,7 +303,7 @@ class Step1 extends Component {
                             </Row>
                         </Card>
 
-                        <Card loading={directLoading}>
+                        <Card loading={!loaded}>
                             <p>指令单变更项</p>
                             <Row gutter={24}>
                                 {getFieldDecorator('itemList', {

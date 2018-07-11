@@ -122,7 +122,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
         if(type ==='companyName' || type === 'asyncSelect') {
             return (
                 <Col span={item['span'] || 8} key={i}>
-                    <CusComponent label={item['label']} fieldName={item['fieldName']}
+                    <CusComponent label={ item['label'] } hideLabel={ item['hideLabel'] } fieldName={item['fieldName']}
                                   fieldDecoratorOptions={item.fieldDecoratorOptions}
                                   decoratorOptions={item.fieldDecoratorOptions} formItemStyle={formItemStyle}
                                   form={form} {...item['componentProps']} componentProps={item['componentProps']}/>
