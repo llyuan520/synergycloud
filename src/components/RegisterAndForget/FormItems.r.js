@@ -34,14 +34,13 @@ class FormItems extends Component {
     handleFetchCaptcha = () => {
         const {form} = this.props;
         const value = form.getFieldValue('number');
-        const regex = regRules.companyPhone;
+        const regex = regRules.companyPhone.pattern;
 
         if (value) {
             if(regex.test(value)){
                 request('/captcha', {
-                    method: 'POST',
-                    body: {
-                        value,
+                    params: {
+                        phone:value,
                         type: this.props.isModules === 'register' ? 'captcha_register' : 'captcha_forget',
                     }
                 })

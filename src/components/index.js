@@ -5,7 +5,7 @@ export { default as LoadingPage } from './LoadingPage';
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as NoticeIcon } from './NoticeIcon';
-export { default as HeaderSearch } from './HeaderSearch';
+export { default as HeaderSearch } from './HeaderSearch/index';
 export { default as FormItems  } from './RegisterAndForget';
 export { default as TableSearchListForm } from './TableSearchListForm';
 export { default as SearchTable } from './SearchTable'

@@ -1,5 +1,5 @@
 // Created by liuliyuan on 2018/7/2
-import React,{Component} from 'react'
+import * as React from 'react'
 import { Table,Popconfirm, Button,Select,message } from 'antd';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -184,14 +184,13 @@ const columns = (context,getFieldDecorator) => [{
     }
 }];
 
-class DragSortingTable extends Component {
+class DragSortingTable extends React.Component {
 
     constructor(props){
         super(props)
         this.state = {
             updateKey:Date.now(),
             data:props.value,
-            loading:false,
             itemsId:getQueryString('items_id'),
             roleNameOption:[]
         }
@@ -241,14 +240,12 @@ class DragSortingTable extends Component {
 
     //根据项目查角色
     getFindRoleByItem=()=>{
-        this.toggleLoading(true);
         request(`/biz/itemsroles/findRoleByItem`,{
             params:{
                 itemsId:this.state.itemsId
             }
         })
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     this.mounted && this.setState({
                         roleNameOption:setSelectFormat(res.data, 'roleId', 'roleName'),
@@ -258,16 +255,10 @@ class DragSortingTable extends Component {
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
 
-    toggleLoading = (loading) => {
-        this.mounted && this.setState({
-            loading
-        });
-    }
 
     getRowByKey(seq, newData) {
         return (newData || this.state.data).filter(item => item.seq === seq)[0];

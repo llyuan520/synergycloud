@@ -1,8 +1,7 @@
 // Created by liuliyuan on 2018/7/4
 import React,{Component} from 'react';
-import {  Form, Row, Col, Card, Button, Collapse  } from 'antd';
-import { getFields } from 'utils'
-
+import {  Form, Row, Col, Card, Button, Collapse, message  } from 'antd';
+import { getFields,request,getQueryString } from  'utils'
 import './styles.less'
 
 const Panel = Collapse.Panel;
@@ -17,8 +16,31 @@ const formItemStyle = {
 class Cost extends Component {
     state={
         updateKey:Date.now(),
+        loaded: false,
         isVisible:false,
+        initData:[],
     }
+
+    componentDidMount() {
+        const directId = getQueryString('directId');
+        if(directId){
+            let pLoader = Promise.all([this.getInitData(directId)]);
+            pLoader.then(() => {
+                this.setState({
+                    loaded: true
+                });
+            }).catch( err => {
+                console.log(err);
+                message.error(`${err.message}`)
+            });
+        }
+    }
+
+    mounted=true
+    componentWillUnmount(){
+        this.mounted=null
+    }
+
     handleSubmit = (e) => {
         e && e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -29,6 +51,28 @@ class Cost extends Component {
                 })
             }
         });
+    }
+
+    //初始化数据
+    getInitData=(directId)=>{
+        request(`/con/directivemeasure/initData`,{
+            params:{
+                directId:directId
+            }
+        })
+            .then(res => {
+                if(res.state === 'ok'){
+                    const result = res.data;
+                    this.mounted && this.setState({
+                        initData:result.supplierItem,
+                    })
+                } else {
+                    return Promise.reject(res.message);
+                }
+            })
+            .catch(err => {
+                message.error(`${err.message}`)
+            })
     }
 
     editAndView = (display,form) =>{
@@ -162,65 +206,75 @@ class Cost extends Component {
 
     render(){
 
-        const { isVisible } = this.state;
+        const { loaded,isVisible,initData } = this.state;
 
         return(
             <React.Fragment>
                 <Form onSubmit={this.handleSubmit} className="ISA-collapse">
                     <Card
+                        loading={!loaded}
                         bordered={false}
                         bodyStyle={{
                             paddingTop:0
                         }}
                     >
-                        <Card
-                            style={{ border:'none',marginTop:'24px' }}
-                            bodyStyle={{
-                                padding:0
-                            }}
-                        >
-                            <p
-                                style={{
-                                    fontSize: 14,
-                                    color: 'rgba(0, 0, 0, 0.85)',
-                                    marginBottom: 16,
-                                    fontWeight: 500,
-                                }}
-                            >
-                                <a style={{ display: 'inline-block'  }}>供应商A</a>
-                                <span style={{ float:'right',color: 'rgba(153, 153, 153, 0.847058823529412)' }}>合同名称：青岛万科未来城项目底商幕墙工程合同</span>
-                            </p>
-                            <Card
-                                type="inner"
-                                title={
-                                    <React.Fragment>
-                                        <span style={{ fontWeight: 'bold' }}>变更项1</span>
-                                        <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，三房一厅的方案修改布线</span>
-                                    </React.Fragment>
-                                }
-                            >
-                                <Collapse bordered={false}>
-                                    <Panel header={ <span style={{ color:'#47ADBF' }}>查看变更项详情</span> } >
-                                        {
-                                            this.getCollapseDetail()
-                                        }
-                                    </Panel>
-                                </Collapse>
 
-                                {
-                                    this.editAndView(isVisible,this.props.form)
-                                }
+                        {
+                            initData.map((item,i)=>{
+                                return (
+                                    <Card
+                                        key={i}
+                                        style={{ border:'none',marginTop:'24px' }}
+                                        bodyStyle={{
+                                            padding:0
+                                        }}
+                                    >
+                                        <p
+                                            style={{
+                                                fontSize: 14,
+                                                color: 'rgba(0, 0, 0, 0.85)',
+                                                marginBottom: 16,
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            <span style={{ display: 'inline-block',color: '#47ADBF',fontSize:18  }}>{item.supplierName}</span>
+                                            <span style={{ float:'right',color: 'rgba(153, 153, 153, 0.847058823529412)' }}>合同名称：{item.contract_name}</span>
+                                        </p>
+                                        <Card
+                                            type="inner"
+                                            title={
+                                                <React.Fragment>
+                                                    <b>{item.item}</b>
+                                                    <span style={{ color: 'rgba(0, 0, 0, 0.647058823529412)' }}>，{item.item}</span>
+                                                </React.Fragment>
+                                            }
+                                        >
+                                            <Collapse bordered={false}>
+                                                <Panel header={ <span style={{ color:'#47ADBF' }}>查看变更项详情</span> } >
+                                                    {
+                                                        this.getCollapseDetail()
+                                                    }
+                                                </Panel>
+                                            </Collapse>
 
-                                <p
-                                    style={{ marginTop: 22 }}
-                                >
-                                    {
-                                        isVisible ? <Button type="primary" ghost onClick={this.handleSubmit}>保存</Button> : <Button type="primary" ghost onClick={this.handleSubmit}>修改</Button>
-                                    }
+                                            {
+                                                this.editAndView(isVisible,this.props.form)
+                                            }
 
-                                </p>
-                            </Card>
-                        </Card>
+                                            <p
+                                                style={{ marginTop: 22 }}
+                                            >
+                                                {
+                                                    isVisible ? <Button type="primary" ghost onClick={this.handleSubmit}>保存</Button> : <Button type="primary" ghost onClick={this.handleSubmit}>修改</Button>
+                                                }
+
+                                            </p>
+                                        </Card>
+                                    </Card>
+                                )
+                            })
+                        }
+
                     </Card>
                 </Form>
             </React.Fragment>

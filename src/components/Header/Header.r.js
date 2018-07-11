@@ -7,6 +7,7 @@ import groupBy from 'lodash/groupBy';
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import NoticeIcon from '../NoticeIcon';
+import HeaderSearch from '../HeaderSearch/index';
 //import { request } from 'utils'
 import './styles.less'
 //模拟数据
@@ -89,7 +90,7 @@ class WimsHeader extends Component {
         this.setState({
             fetchingNotices: true
         })
-        /*request.get('/notices').then(({data}) => {
+        /*request('/notices').then(({data}) => {
             if(data.code===200){
                 this.setState({
                     data:data.data,
@@ -171,7 +172,7 @@ class WimsHeader extends Component {
 
                     */}
                     <Row>
-                        <Col span={6}>
+                        <Col span={2}>
                             <div className='left'>
                                 <Dropdown overlay={routerMenu} placement="bottomLeft" >
                                     <span className='action account'>
@@ -183,7 +184,7 @@ class WimsHeader extends Component {
                                 </Dropdown>
                             </div>
                         </Col>
-                        <Col span={12}>
+                        <Col span={10}>
                             <div className='center'>
                                 <Link to="/web" className='logo'>
                                     <img className="login-logo" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="logo"/>
@@ -191,8 +192,19 @@ class WimsHeader extends Component {
                                 </Link>
                             </div>
                         </Col>
-                        <Col span={6}>
+                        <Col span={12}>
                             <div className='right'>
+                                <HeaderSearch
+                                    className='action search'
+                                    placeholder="站内搜索"
+                                    dataSource={['搜索提示一', '搜索提示二', '搜索提示三']}
+                                    onSearch={value => {
+                                        console.log('input', value); // eslint-disable-line
+                                    }}
+                                    onPressEnter={value => {
+                                        console.log('enter', value); // eslint-disable-line
+                                    }}
+                                />
 
                                 <Tooltip title="使用文档">
                                     <a
