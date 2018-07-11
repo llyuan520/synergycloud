@@ -62,7 +62,7 @@ const getColumns = (context) => [
         dataIndex: 'contractname',
         className: 'contract-info',
         sorter: true,
-        render: (text, record, index) => {
+        render: (text, record) => {
             return (
             <React.Fragment>
                 <div className="contract-name-p1">{record.contractname}</div>
@@ -82,12 +82,15 @@ const getColumns = (context) => [
         title: '影像状态',
         dataIndex: 'image_status',
         sorter: true,
+        render: (value) => {
+            return getSelectFormat(context.state.statusData, value)
+        }
     }, {
         title: '产值单状态',
         dataIndex: 'output_status',
         sorter: true,
-        render: (value, row, index) => {
-            return getSelectFormat(context.state.statusData, value)
+        render: (value) => {
+            return getSelectFormat(context.state.imgStatus, value)
         }
     }
 ];
@@ -101,6 +104,7 @@ class Output extends Component {
         this.state = {
             updateKey: Date.now(),
             statusData: [],
+            imgStatus: [],
             value: null,
             data: []
         }
@@ -111,6 +115,11 @@ class Output extends Component {
         requestDict(`['com.moya.contract.enums.OutputStatusEnum']`, result => {
             this.setState({
                 statusData: setSelectFormat(result.OutputStatusEnum)
+            })
+        });
+        requestDict(`['com.moya.contract.enums.ImageStatusEnum']`, result => {
+            this.setState({
+                imgStatus: setSelectFormat(result.ImageStatusEnum)
             })
         })
     };
@@ -138,7 +147,7 @@ class Output extends Component {
                 //scroll:{ x:1300 },
                 cardProps: {
                     title: <div>
-                        <Button type='primary' href={'/web/Output/create'} style={{marginRight: 5}}>
+                        <Button type='primary' href={'/web/Output/create/present'} style={{marginRight: 5}}>
                             <Icon type="plus"/>
                             产值提报
                         </Button>
