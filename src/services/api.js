@@ -35,6 +35,7 @@ export function accountRegister(options) {
         method: 'POST',
         body:{
             number: options.number,
+            captcha:options.captcha,
             password: options.password,
             confirm: options.confirm,
         }

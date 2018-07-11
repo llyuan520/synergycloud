@@ -5,7 +5,7 @@ export { default as LoadingPage } from './LoadingPage';
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as NoticeIcon } from './NoticeIcon';
-export { default as HeaderSearch } from './HeaderSearch';
+export { default as HeaderSearch } from './HeaderSearch/index';
 export { default as FormItems  } from './RegisterAndForget';
 export { default as TableSearchListForm } from './TableSearchListForm';
 export { default as SearchTable } from './SearchTable'
@@ -17,7 +17,7 @@ export { default as CustomizeStepsAndTabs } from './CustomizeStepsAndTabs';
 export { default as CustomizeStaticTabs } from './CustomizeStaticTabs';
 export { default as BasicLayout} from './BasicLayout';
 export { default as FileExport} from './FileExport';
-
+export { default as DescriptionList} from './DescriptionList';
 
 
 
