@@ -13,26 +13,7 @@ function getBase64(img, callback) {
 
 
 
-const tableData = [
-    {
-        periodization_code: '111211',
-        periodization_name: 'wwwwwkkkkk',
-        tax_methods: 'aaaaaa',
-        key: '1',
-    },
-    {
-        periodization_code: '111211',
-        periodization_name: 'wwwwwkkkkk',
-        tax_methods: 'aaaaaa',
-        key: '2',
-    },
-    {
-        periodization_code: '111211',
-        periodization_name: 'wwwwwkkkkk',
-        tax_methods: 'aaaaaa',
-         key: '3',
-    },
-];
+const tableData = [];
 
  class Step1 extends Component {
      state={
