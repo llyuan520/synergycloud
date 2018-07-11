@@ -12,12 +12,12 @@ import {wrapPage} from "../../components";
 const routes = [
     {
         path: '/web/contract/create/write',
-        component: wrapPage('合同履约协同平台 – 新建指令单', writeDirect),
+        component: wrapPage('合同履约协同平台 – 选择合同', writeDirect),
         name: '选择合同',
         exact: true,
     }, {
         path: '/web/contract/create/assign',
-        component: wrapPage('合同履约协同平台 – 指定供应商', AssignSupplier),
+        component: wrapPage('合同履约协同平台 – 填写金额', AssignSupplier),
         name: '填写结算金额',
         exact: true,
     }, {
