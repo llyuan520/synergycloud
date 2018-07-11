@@ -28,21 +28,41 @@ class TableFormStepTwo extends Component{
             if (err) {
                 return;
             }
+            console.log(value)
             let id = getQueryString('id')
-            let { members } = value;
             let lastMembers = [];
-            if(members.length === 0){
-                message.warn('请填写项目结构')
-                return;
-            }
-            for(let i =0; i< members.length;i++){
-                lastMembers[i] = {
-                    itemsrole_id: members[i].role_name_key,
-                    user_id: members[i].username_key
+            let items = [];
+            for(let k in value){
+                if(value[k].length === 0){
+                    message.warn('请填写项目结构')
+                    return;
+                }
+                let tmpMembers = []
+                for(let i =0; i< value[k].length;i++){
+                    tmpMembers[i] = {
+                        itemsrole_id: value[k][i].role_name,
+                        user_id: value[k][i].username.join(','),
+                        role_type: value[k][i].role_type_key
+                    }
                 }
 
+                let itemsstages_id = value[k][0].stages_id;
+
+                let item = {
+                    itemsstages_id:itemsstages_id ,
+                    members: tmpMembers
+                }
+                items.push(item);
             }
-            console.log(lastMembers)
+            console.log({
+                model:{
+                    company_id: this.props.company_id,
+                    items_id: id,
+                },
+                stages: items
+            })
+            return;
+
             let url = '/biz/itemsorganzation/save';
             request(url,{
                 method:'POST',
@@ -50,13 +70,14 @@ class TableFormStepTwo extends Component{
                     model:{
                         company_id: this.props.company_id,
                         items_id: id,
-                        itemsstages_id: (value.model && value.model.stages.key) || '',
                     },
-                    members: lastMembers
+                    stages: items
                 }
             }).then((data)=>{
+                console.log(data);
                 if(data.state === 'ok'){
-                    console.log('创建成功');
+                    message.success(`创建成功`)
+                    this.props.history.push(`/web/project`);
                 }
             })
                 .catch(err => {

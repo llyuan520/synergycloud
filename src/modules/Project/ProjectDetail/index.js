@@ -21,15 +21,7 @@ class TableFormStepTwo extends Component{
             updateKey: Date.now(),
             tabsOneData:{},
             tabsTwoData:{},
-            tabsThirdData:{members:[
-                {
-                    id:'1111111111111',
-                    rolename:'本公司',
-                    roletype:'甲方人员',
-                    username:'二狗,三狗,四狗'
-                }
-            ]},
-
+            tabsThirdData:{members:[]},
         }
     }
 
@@ -82,10 +74,7 @@ class TableFormStepTwo extends Component{
                 items_id:id,
             }
         }).then((data)=>{
-            console.log(data);
-            console.log('-------------')
             if(data.state === 'ok'){
-                console.log(data);
                 let dataSource = {
 
                 }

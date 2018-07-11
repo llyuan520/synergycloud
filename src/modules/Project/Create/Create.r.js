@@ -98,7 +98,7 @@ class CreateProject extends Component{
                 message.error(err.message)
             })
 
-            // this.props.history.push(`/web/project/org?id=${id}`);
+
 
         })
     }
