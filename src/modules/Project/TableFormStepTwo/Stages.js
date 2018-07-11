@@ -196,10 +196,8 @@ class Stages extends Component {
                         );
                     }
                     return (
-                        this.state.name_options.map(item=>{
-                            if(record.role_name === item.key){
-                                return item.label
-                            }
+                        this.state.name_options.map((item)=>{
+                            return record.role_name === item.key ? item.label : ''
                         })
                     );
                 },
@@ -216,7 +214,6 @@ class Stages extends Component {
                 key: 'username',
                 width: '30%',
                 render: (text, record) => {
-                    let totalShow = '';
                     if (record.editable) {
                         return (
                             <Select
@@ -237,13 +234,9 @@ class Stages extends Component {
                     }
                     return (
                         record.members_options.map((item,index)=>{
-                            let showData = '';
-                            record.username.map(e=>{
-                                if(e === item.key){
-                                    showData += `${item.label}，`;
-                                }
+                            let showData = record.username.map(e=>{
+                                return e === item.key ? `${item.label}，` : ''
                             })
-                            // showData = showData.substr(1)
                             return showData;
                         })
                     );

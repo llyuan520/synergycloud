@@ -1,7 +1,7 @@
 // created by Lee in 2018/07/05
 
 import React from 'react'
-import {  Row, Col, Card } from 'antd';
+import { Row, Col, Card } from 'antd';
 
 const TabPane1 = (props)=>{
     const data = props.data

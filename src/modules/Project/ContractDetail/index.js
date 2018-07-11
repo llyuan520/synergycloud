@@ -1,15 +1,13 @@
 // Created by Lee on 2018/7/5
 
 import React, { Component } from 'react';
-import { Row,message } from 'antd';
-import { request, getQueryString} from 'utils'
+import { Row } from 'antd';
+// import { request, getQueryString} from 'utils'
 import TabPane1 from '../TableForm/tab1'
-import TabPane2 from '../TableForm/tab2'
 import {Link} from 'react-router-dom'
 import AsyncTable from 'components/AsyncTable'
 import PropTypes from 'prop-types'
 import CustomizeStaticTabs from 'components/CustomizeStaticTabs'
-
 
 const getColumns = (context) => [
     {
@@ -68,14 +66,7 @@ class TableFormStepTwo extends Component{
             tableOption:PropTypes.object,
             updateKey: Date.now(),
             tabsOneData:{},
-            tabsTwoData:{members:[
-                {
-                    id:'1111111111111',
-                    rolename:'本公司',
-                    roletype:'甲方人员',
-                    username:'二狗,三狗,四狗'
-                }
-            ]},
+            tabsTwoData:{},
             /**
              * params条件，给table用的
              * */
@@ -86,19 +77,6 @@ class TableFormStepTwo extends Component{
              * 控制table刷新，要让table刷新，只要给这个值设置成新值即可
              * */
             tableUpDateKey: Date.now(),
-            tableInfo:[
-                {
-                    url:'',
-                    title:'变更单',
-                    columns: getChangeColumns(this),
-                },{
-                    url:'',
-                    title:'产值单',
-                    columns: getOutputColumns(this),
-                },{
-
-                }
-            ]
         }
     }
 
@@ -165,6 +143,8 @@ class TableFormStepTwo extends Component{
                             {
                                 title:'单据列表',
                                 component:
+                                <React.Fragment>
+
                                     <AsyncTable
                                         url={''}
                                         updateKey={tableUpDateKey}
@@ -181,6 +161,7 @@ class TableFormStepTwo extends Component{
                                             scroll:undefined,
                                             onDataChange:undefined,
                                         }} />
+                                </React.Fragment>
                             }, {
                                 title:'合同基本信息',
                                 component:<TabPane1 data = {this.state.tabsOneData}/>

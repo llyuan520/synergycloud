@@ -30,7 +30,6 @@ class TableFormStepTwo extends Component{
             }
             console.log(value)
             let id = getQueryString('id')
-            let lastMembers = [];
             let items = [];
             for(let k in value){
                 if(value[k].length === 0){
@@ -61,10 +60,8 @@ class TableFormStepTwo extends Component{
                 },
                 stages: items
             })
-            return;
 
-            let url = '/biz/itemsorganzation/save';
-            request(url,{
+            request("/biz/itemsorganzation/save", {
                 method:'POST',
                 body:{
                     model:{
