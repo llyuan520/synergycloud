@@ -8,21 +8,36 @@ import {Form, message} from "antd/lib/index";
 import {getFields, setSelectFormat} from "../../../utils"
 import './styles.less'
 import request from "../../../utils/request";
+import _ from "lodash"
 
 
 /*只可以单条编辑，通过传入this对象，state值与函数式组件view层进行双向绑定。
 * */
 
+const Option = Select.Option;
 const columns = (_this) => {
     let disable = (record) => _this.state.editingKey !== record.key;
     return [
         {title: "审批节点", key: "seq", dataIndex: "seq"},
         {
             title: "项目角色", key: "nodeName", dataIndex: "nodeName", render: (text, record) => {
+                console.log(_this.state.roleType);
+                const handleChange = (value) => {
+                    console.log(value);
+                    _this.getTypeByRole(value);
+                }
                 return (
                 disable(record)
                 ? <span>{text}</span>
-                : <Select placeholder="项目经理" style={{width: 120}}></Select>
+                : <Select onChange={handleChange} placeholder="项目经理" style={{width: 120}}>
+                    {
+                        _this.state.roleType.map(item => {
+                            return (
+                            <Option value={item.key}>{item.label}</Option>
+                            )
+                        })
+                    }
+                </Select>
                 )
             }
         },
@@ -112,11 +127,14 @@ class TemModal extends React.Component {
             isDelete: 1,
             modify: 1,
             isVisibleSchedule: 1,
+            list: []
         }],
+        //save的表单数据
+        list: [],
         editingKey: '',
         billType: [],
         itemType: [],
-        roleType: []
+        roleType: [],
     };
 
 
@@ -139,9 +157,17 @@ class TemModal extends React.Component {
         .then(res => {
             console.log(res);
             this.setState({
-                roleType: setSelectFormat(res.data, "itemsId", "itemsName")
+                roleType: setSelectFormat(res.data, "roleId", "roleName")
             })
         })
+    }
+
+    getTypeByRole(roleId) {
+        request("/biz/itemsroles/findRoleUsers", {params: {roleId}})
+        .then(res => {
+            console.log(res);
+        }
+        )
     }
 
     remove(seq) {
@@ -176,11 +202,13 @@ class TemModal extends React.Component {
 
     save() {
         let params = this.props.form.getFieldsValue();
-        params.costCalculation = params.costCalculation.format("YYYY-MM-DD");
-        params.effectiveDate = params.effectiveDate.format("YYYY-MM-DD");
+        params.costCalculation = params.costCalculation && params.costCalculation.format("YYYY-MM-DD");
+        params.effectiveDate = params.effectiveDate && params.effectiveDate.format("YYYY-MM-DD");
+        params.list = this.state.data;
         console.log(params);
-        request("/adt/template/save", {params})
+        request("/adt/template/save", {body: params, method: "POST"})
         .then(res => {
+            console.log(res);
             if (res.state === "ok") {
                 this.props.toggleModalVisible(false);
             } else {
@@ -197,7 +225,7 @@ class TemModal extends React.Component {
     render() {
         const {props} = this;
         const {disabled} = props;
-        const {data, billType, itemType,roleType} = this.state;
+        const {data, billType, itemType, roleType} = this.state;
         // console.log(props);
         return (
         <Modal
