@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import {Button, Icon} from 'antd';
 import {SearchTable} from '../../components'
-import {getSelectFormat} from '../../utils'
+import {getSelectFormat, requestDict, setSelectFormat} from '../../utils'
 import './styles.less'
 import {Form} from "antd/lib/index";
 import {Link} from "react-router-dom";
@@ -100,14 +100,24 @@ class Output extends Component {
         super();
         this.state = {
             updateKey: Date.now(),
-            statusData: [
-                {label: '未进行', key: '0'},
-                {label: '进行中', key: '1'},
-                {label: '已完成', key: '2'}
-            ],
+            statusData: [],
             value: null,
             data: []
         }
+    }
+
+    //去数据字典里面的状态
+    getStatus = () => {
+        requestDict(`['com.moya.contract.enums.OutputStatusEnum']`, result => {
+            this.setState({
+                statusData: setSelectFormat(result.OutputStatusEnum)
+            })
+        })
+    };
+
+
+    componentDidMount() {
+        this.getStatus();
     }
 
 

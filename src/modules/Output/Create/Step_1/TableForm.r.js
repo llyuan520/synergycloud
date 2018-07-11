@@ -68,7 +68,6 @@ export default class TableForm extends PureComponent {
         type: 'radio',
       },
     };
-      console.log(value);
       return (
 
     <React.Fragment>

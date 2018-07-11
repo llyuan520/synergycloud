@@ -1,5 +1,12 @@
-// Created by liuliyuan on 2018/6/30
-import React, {Component} from 'react'
+/**
+ *
+ * Created by fanzhe on 2018/7/11
+ *
+ * Copy CompanyName.r.js
+ */
+
+
+import React from "react";
 import {Form, Select, message} from 'antd'
 import PropTypes from 'prop-types'
 import {request} from 'utils'
@@ -10,17 +17,18 @@ const Option = Select.Option;
 let time;
 
 function fetchTaxMain(value, callback) {
-    request('/con/mdydirective/findCompanyByContract', {
+    request('/con/contract/getContractByName', {
         params: {
-            name: value,
+            contractname: value,
             //size:100
         }
     })
     .then((res) => {
+        console.log(res);
         if (res.state === 'ok') {
             const result = res.data;
             const newData = [];
-            result.forEach((r) => {
+            result.data && result.data.contract.forEach((r) => {
                 newData.push({
                     key: `${r.id}`,
                     label: r.name,
@@ -36,7 +44,7 @@ function fetchTaxMain(value, callback) {
     });
 }
 
-export default class CompanyName extends Component {
+class OutputName extends React.Component {
     static propTypes = {
         form: PropTypes.object.isRequired,
         formItemStyle: PropTypes.object,
@@ -66,7 +74,6 @@ export default class CompanyName extends Component {
     onSearch = (value) => {
         this.props.onSearch && this.props.onSearch(value);
         if (typeof value !== 'undefined' && value !== null) {
-            // 使用time避免重复请求
             clearTimeout(time);
             time = setTimeout(() => {
                 fetchTaxMain(value, data => {
@@ -97,7 +104,7 @@ export default class CompanyName extends Component {
         const {getFieldDecorator} = this.props.form;
         const {formItemStyle, fieldName, initialValue, fieldDecoratorOptions, componentProps} = this.props;
         return (
-        <FormItem label='选择企业' {...formItemStyle}>
+        <FormItem label='合同名称' {...formItemStyle}>
             {getFieldDecorator(fieldName, {
                 initialValue: initialValue,
                 ...fieldDecoratorOptions,
@@ -107,7 +114,7 @@ export default class CompanyName extends Component {
             style={{width: '100%'}}
             optionFilterProp="children"
             onSearch={value => this.onSearch(value)}
-            placeholder="请选择企业"
+            placeholder="请选择合同名称"
             {...componentProps}
             >
                 {
@@ -121,3 +128,5 @@ export default class CompanyName extends Component {
         )
     }
 }
+
+export default Form.create()(OutputName)

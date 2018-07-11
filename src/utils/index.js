@@ -59,6 +59,7 @@ const requestDict = async (type, callback) => {
 
 //设置select值名不同
 const setSelectFormat = (data, name = 'value', value = 'name') => {
+    console.log(name, value);
     if (data === undefined) {
         return []
     } else {
