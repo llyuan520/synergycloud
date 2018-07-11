@@ -1,7 +1,8 @@
 // Created by liuliyuan on 2018/6/22
 import React,{Component} from 'react';
 import PropTypes from 'prop-types'
-import {Form,Input,Button,Icon,Row,Col} from 'antd'
+import { Form,Input,Button,Icon,Row,Col,Alert } from 'antd'
+import QueueAnim from 'rc-queue-anim';
 import {Link} from 'react-router-dom'
 import { compose } from 'redux';
 import {connect} from 'react-redux';
@@ -20,7 +21,7 @@ class Login extends Component {
     state={
         error:{
             visible:false,
-            msg:'出错了！'
+            msg:''
         },
         loading:false
     }
@@ -149,6 +150,13 @@ class Login extends Component {
                                     <Button loading={this.state.loading} type="primary" htmlType="submit" className="loginFormButton">
                                         登录
                                     </Button>
+                                </FormItem>
+                                <FormItem>
+                                    <QueueAnim type='alpha'>
+                                        {
+                                            this.state.error.visible ? <Alert key='errorMsg' message={this.state.error.msg} type="error" /> : null
+                                        }
+                                    </QueueAnim>
                                 </FormItem>
                             </Form>
                         </div>

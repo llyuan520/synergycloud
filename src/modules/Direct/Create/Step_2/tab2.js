@@ -5,12 +5,11 @@ import TableForm from './TableForm.r'
 import PopModal from './PopModal'
 import { request,getQueryString } from  'utils'
 
-
 class TabPane2 extends Component {
     state={
         updateKey:Date.now(),
         visible:false,
-        loading: false,
+        loaded: false,
         directId:getQueryString('directId'),
         modalConfig:{
             type:''
@@ -27,6 +26,21 @@ class TabPane2 extends Component {
             dataList:[],
         },
 
+    }
+
+    componentDidMount() {
+        const directId = this.state.directId;
+        if(directId){
+            let pLoader = Promise.all([this.getFindDirectiveData(directId), this.getFindDirectiveInitData(directId)]);
+                pLoader.then(() => {
+                    this.setState({
+                        loaded: true
+                    });
+                }).catch( err => {
+                    console.log(err);
+                    message.error(`${err.message}`)
+                });
+        }
     }
 
     setDataList = dataList =>{
@@ -56,17 +70,15 @@ class TabPane2 extends Component {
     }
     //给弹出框用的
     getFindDirectiveData=(directId)=>{
-        this.toggleLoading(true);
         request(`/con/mdydirective/findDirectiveData`,{
             params:{
                 directId:directId
             }
         })
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     const result = res.data;
-                    this.setState({
+                    this.mounted && this.setState({
                         itemsId:result.model.items_id,
                         itemList:result.itemList,
                     })
@@ -75,7 +87,6 @@ class TabPane2 extends Component {
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
@@ -88,9 +99,8 @@ class TabPane2 extends Component {
             }
         })
             .then(res => {
-                console.log(res.data)
                 if(res.state === 'ok'){
-                    this.setState({
+                    this.mounted && this.setState({
                         initData:{
                             supplier_id:res.data.supplier_id,
                             contract_id:res.data.contract_id,
@@ -105,27 +115,12 @@ class TabPane2 extends Component {
                 message.error(`${err.message}`)
             })
     }
-
-    toggleLoading = (loading) => {
-        this.setState({
-            loading
-        });
-    }
-
-    componentDidMount() {
-        //判断是修改还是新增
-        const directId = this.state.directId;
-        if(directId){
-            this.getFindDirectiveData(directId)
-            this.getFindDirectiveInitData(directId)
-        }
-    }
     mounted=true
     componentWillUnmount(){
         this.mounted=null
     }
     render(){
-        const { updateKey,visible,loading,modalConfig,itemsId,itemList,initData } = this.state;
+        const { updateKey,visible,loaded,modalConfig,itemsId,itemList,initData } = this.state;
         const { form,display } = this.props;
         const { getFieldDecorator, getFieldError } = form;
         const dataListError = getFieldError('dataList');
@@ -134,7 +129,7 @@ class TabPane2 extends Component {
 
                     <Card
                         key={updateKey}
-                        loading={loading}
+                        loading={!loaded}
                         bordered={false}
                         bodyStyle={{
                             paddingTop:0

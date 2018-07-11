@@ -1,5 +1,5 @@
 // Created by liuliyuan on 2018/6/30
-import React,{Component} from 'react';
+import * as React from 'react'
 import CustomizeStepsAndTabs from '../../../components/CustomizeStepsAndTabs'
 import routes from '../routes'
 import './styles.less'
@@ -12,7 +12,7 @@ const steps = [{
     title: '设置审批流',
 }];
 
-export default class Create extends Component {
+export default class Create extends React.Component {
 
     getCurrentStep=()=>{
         const { location } = this.props;

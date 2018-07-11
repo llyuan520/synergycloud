@@ -25,14 +25,14 @@ class ForgetPassword extends Component {
 
                 this.toggleLoading(true)
                 console.log(values);
-                request('/forgetPassword', {
+                request('/resetPassword', {
                     method: 'POST',
                     body: values
                 })
                     .then(res => {
                         this.toggleLoading(false)
                         if(res.state === 'ok'){
-                            message.success('修改密码成功!', 3);
+                            message.success('密码重置成功!', 3);
                             history.replace('/login');
                             return ;
                         } else {

@@ -1,5 +1,5 @@
 // Created by liuliyuan on 2018/6/30
-import React from 'react'
+import * as React from 'react'
 import {withRouter} from 'react-router-dom'
 import { Form,Button,message } from 'antd';
 import CustomizeTabs from '../../../../components/Tabs/index'
@@ -30,7 +30,14 @@ class Step3 extends React.Component {
                     })
                 })
                 values.dataList = data;
-                console.log(values);
+                console.log({
+                    ...values,
+                    directId:getQueryString('directId'),
+                    biztypeId:getQueryString('biztypeId'),
+                    itemsId:getQueryString('items_id'),
+                });
+
+
 
                 this.toggleSubmitLoading(true);
                 request('/adt/instance/save', {

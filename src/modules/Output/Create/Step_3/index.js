@@ -11,6 +11,7 @@ import TabPane1 from "../Step_1/tab1";
 import {withRouter} from "react-router-dom";
 import request from "../../../../utils/request";
 import _ from "lodash"
+import {strToObjRouter} from "../../../../utils";
 
 
 class Step3 extends React.Component {
@@ -33,7 +34,6 @@ class Step3 extends React.Component {
     }
 
 
-
     setOutput(data, count) {
         console.log(count);
         this.setState({
@@ -53,28 +53,32 @@ class Step3 extends React.Component {
     save() {
         return new Promise((resolve, reject) => {
             const model = this.state.model.model;
-            const {outputprojectCount, invoiceCount} = this.state;
-            if (outputprojectCount * 1 === invoiceCount * 1) {
-                const params = {
-                    model: _.extend(model, {id: this.props.location.state.outputId, tax_amounts: outputprojectCount}),
-                    outputproject: this.state.outputproject.length ? this.state.outputproject : this.state.tableData.datas,
-                    invoice: this.state.invoice
-                };
-                console.log(params);
-                request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
-                .then(res => {
-                    if (res.state === "ok") {
-                        message.success("保存成功！");
-                        resolve()
-                    } else {
-                        message.error(res.message);
-                        reject('失败')
-                    }
-                })
-            } else {
-                message.error("发票金额和明细金额汇总不一致！");
-                reject('失败')
-            }
+            const {outputprojectCount} = this.state;
+            //  console.log(outputprojectCount, invoiceCount);
+            // if (outputprojectCount * 1 === invoiceCount * 1) {
+            const params = {
+                model: _.extend(model, {
+                    id: strToObjRouter(this.props.location.search).outputId,
+                    tax_amounts: outputprojectCount
+                }),
+                outputproject: this.state.outputproject.length ? this.state.outputproject : this.state.tableData.datas,
+                invoice: this.state.invoice
+            };
+            console.log(params);
+            request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
+            .then(res => {
+                if (res.state === "ok") {
+                    message.success("保存成功！");
+                    resolve()
+                } else {
+                    message.error(res.message);
+                    reject('失败')
+                }
+            })
+            // } else {
+            //     message.error("发票金额和明细金额汇总不一致！");
+            //     reject('失败')
+            // }
         })
     }
 
@@ -82,8 +86,7 @@ class Step3 extends React.Component {
         const routerChange = () => {
             this.props.history.push({
                 pathname: '/web/output/create/site',
-                search: `?id=${this.props.location.search.split("=")[1]}`,
-                state: this.props.location.state
+                search: this.props.location.search,
             })
         };
         Promise.all([this.save()])
@@ -111,12 +114,12 @@ class Step3 extends React.Component {
                     },
                     {
                         title: '形象进展',
-                        component: <TabPane2 disabled={true} />
+                        component: <TabPane2 disabled={true}/>
                     },
                     {
                         title: '产值明细和发票',
                         component: <TabPane3 setOutput={this.setOutput.bind(this)}
-                                             setInvoice={this.setInvoice.bind(this)} />
+                                             setInvoice={this.setInvoice.bind(this)}/>
                     }
                 ]
             }
@@ -128,7 +131,7 @@ class Step3 extends React.Component {
                     <Button style={{marginLeft: 8}}
                             onClick={() => this.props.history.push({
                                 pathname: '/web/output/create/fill',
-                                search: `?id=${this.props.location.search.split("=")[1]}`
+                                search: this.props.location.search
                             })}> 上一步 </Button>
                 </div>
             }

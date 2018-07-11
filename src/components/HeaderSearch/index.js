@@ -1,88 +1,76 @@
-// Created by liuliyuan on 2018/6/23
+// Created by liuliyuan on 2018/7/11
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { Input, Icon, AutoComplete } from 'antd';
-import classNames from 'classnames';
+import {withRouter} from 'react-router-dom'
+import { compose } from 'redux';
+import {connect} from 'react-redux';
+import { Form } from 'antd';
+import {getFields} from 'utils'
+import {saveCompanyId} from '../../ducks/user'
 import './styles.less';
 
-export default class HeaderSearch extends PureComponent {
-    static defaultProps = {
-        defaultActiveFirstOption: false,
-        onPressEnter: () => {},
-        onSearch: () => {},
-        className: '',
-        placeholder: '',
-        dataSource: [],
-        defaultOpen: false,
-    };
-    static propTypes = {
-        className: PropTypes.string,
-        placeholder: PropTypes.string,
-        onSearch: PropTypes.func,
-        onPressEnter: PropTypes.func,
-        defaultActiveFirstOption: PropTypes.bool,
-        dataSource: PropTypes.array,
-        defaultOpen: PropTypes.bool,
-    };
+class HeaderSearch extends PureComponent {
+
     state = {
-        searchMode: this.props.defaultOpen,
-        value: '',
+
     };
-    componentWillUnmount() {
-        clearTimeout(this.timeout);
+
+    mounted = true;
+    componentWillUnmount(){
+        this.mounted = null;
     }
-    onKeyDown = e => {
-        if (e.key === 'Enter') {
-            this.timeout = setTimeout(() => {
-                this.props.onPressEnter(this.state.value); // Fix duplicate onPressEnter
-            }, 0);
-        }
-    };
-    onChange = value => {
-        this.setState({ value });
-        if (this.props.onChange) {
-            this.props.onChange();
-        }
-    };
-    enterSearchMode = () => {
-        this.setState({ searchMode: true }, () => {
-            if (this.state.searchMode) {
-                this.input.focus();
+    handleCompanyChange = (value) => {
+        const { saveCompanyId } = this.props;
+        this.mounted && this.setState({
+            value
+        },()=>{
+            saveCompanyId(value);
+            if(this.mounted && saveCompanyId !== this.props.companyId){
+                this.props.history.replace('/web');
             }
         });
-    };
-    leaveSearchMode = () => {
-        this.setState({
-            searchMode: false,
-            value: '',
-        });
-    };
+    }
+
     render() {
-        const { className, placeholder, ...restProps } = this.props;
-        delete restProps.defaultOpen; // for rc-select not affected
-        const inputClass = classNames('input', {
-            'show': this.state.searchMode,
-        });
         return (
-            <span className={classNames(className, 'headerSearch')} onClick={this.enterSearchMode}>
-                <Icon type="search" key="Icon" />
-                <AutoComplete
-                    key="AutoComplete"
-                    {...restProps}
-                    className={inputClass}
-                    value={this.state.value}
-                    onChange={this.onChange}
-                >
-                  <Input
-                      placeholder={placeholder}
-                      ref={node => {
-                          this.input = node;
-                      }}
-                      onKeyDown={this.onKeyDown}
-                      onBlur={this.leaveSearchMode}
-                  />
-                </AutoComplete>
+            <span className='headerSearch'>
+                {
+                    getFields(this.props.form,[
+                        {
+                            label:'企业名称',
+                            fieldName:'company_id',
+                            type:'asyncSelect',
+                            span:24,
+                            hideLabel:true,
+                            componentProps:{
+                                fieldTextName:'name',
+                                fieldValueName:'id',
+                                doNotFetchDidMount:false,
+                                notShowAll:true,
+                                url:`/con/mdydirective/findCompanyByContract`,
+                                selectOptions:{
+                                    onChange:this.handleCompanyChange,
+                                    defaultActiveFirstOption:true,
+                                    showSearch:true,
+                                    optionFilterProp:'children',
+                                },
+                            },
+                            fieldDecoratorOptions: {
+                                //initialValue: this.props.areaId
+                            }
+                        }
+                    ])
+                }
             </span>
         );
     }
 }
+
+const enhance = compose(
+    connect(state=>({
+        companyId:state.user.getIn(['personal','companyId']),
+    }),dispatch=>({
+        saveCompanyId:saveCompanyId,
+    })),
+    Form.create()
+)
+export default withRouter(enhance(HeaderSearch));

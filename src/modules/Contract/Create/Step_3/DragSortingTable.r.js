@@ -1,10 +1,9 @@
 // Created by liuliyuan on 2018/7/2
-import * as React from 'react'
-import { Table,Popconfirm, Button,Select,message } from 'antd';
+import React,{Component} from 'react'
+import { Table,Popconfirm, Button,Select,Input } from 'antd';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import { request,getQueryString,setSelectFormat } from  'utils'
 import './styles.less'
 
 
@@ -120,27 +119,42 @@ const columns = (context,getFieldDecorator) => [{
     key: 'seq',
     width:60,
 }, {
+    title: '审批节点名称',
+    dataIndex: 'nodeName',
+    key: 'nodeName',
+    width:200,
+    render: (text, record) => {
+        if (record.editable) {
+            return (
+                <Input
+                    value={text}
+                    autoFocus
+                    onChange={e => context.handleNodeNameChange(e, 'nodeName', record.seq)}
+                    //onKeyPress={e => context.handleKeyPress(e, record.seq)}
+                    placeholder="但责单位描述"
+                />
+            )
+        }
+        return text;
+    }
+}, {
     title: '项目角色',
     dataIndex: 'roleName',
     key: 'roleName',
     width:200,
     render: (text, record) => {
-        if (record.isNew) {
+        if (record.editable) {
             return (
                 <Select
                     placeholder="请选择项目角色"
-                    style={{width: '100%'}}
-                    onChange={e => context.handleRoleNameChange(e, 'roleName','userId','users', record.seq)}
+                    defaultValue="0"
+                    style={{ width: '100%' }}
+                    //onChange={e => this.handleRoleNameChange(e, 'roleName', record.seq)}
                 >
-                    {
-                        context.state.roleNameOption && context.state.roleNameOption.map((option,i)=>{
-                            return (
-                                <Option key={i} value={option.key}>{option.label}</Option>
-                            )
-                        })
-                    }
+                    <Option value="0">否</Option>
+                    <Option value="1">是</Option>
                 </Select>
-            )
+            );
         }
         return text;
     }
@@ -150,49 +164,39 @@ const columns = (context,getFieldDecorator) => [{
     key: 'userId',
     width:300,
     render: (text, record) => {
-        return (
-            <Select
-                mode="multiple"
-                style={{width: '100%'}}
-                placeholder="请输入审批人"
-                value={text}
-                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} //本地搜索
-                onChange={e => context.handleUserIdChange(e, 'userId', record.seq)}
-            >
-                {
-                    record.users.map(ele=>{
-                        return (
-                            <Option key={ele.userId}>{ele.userName}</Option>
-                        )
-                    })
-                }
-            </Select>
-        )
+        if (record.editable) {
+            return (
+                <Select
+                    mode="tags"
+                    style={{width: '100%'}}
+                    placeholder="请输入审批人"
+                    //onChange={e => this.handleUserIdChange(e, 'roleName', record.seq)}
+                >
+                </Select>
+            )
+        }
+        return text;
     }
 }, {
     title: '操作',
     key: 'action',
     width:60,
     render: (text, record) => {
-        if (record.isDelNode === '1' || record.isNew) {
-            return (
-                <Popconfirm title="是否要删除此行？" onConfirm={() => context.remove(record.seq)}>
-                    <a style={{color: '#f5222d'}}>删除</a>
-                </Popconfirm>
-            )
-        }
+        return (
+            <Popconfirm title="是否要删除此行？" onConfirm={() => context.remove(record.seq)}>
+                <a style={{ color: '#f5222d' }}>删除</a>
+            </Popconfirm>
+        )
     }
 }];
 
-class DragSortingTable extends React.Component {
+class DragSortingTable extends Component {
 
     constructor(props){
         super(props)
         this.state = {
             updateKey:Date.now(),
-            data:props.value,
-            itemsId:getQueryString('items_id'),
-            roleNameOption:[]
+            data:props.dataSource,
         }
     }
 
@@ -201,100 +205,30 @@ class DragSortingTable extends React.Component {
             row: DragableBodyRow,
         },
     }
-    componentDidMount() {
-        this.getFindRoleByItem()
-    }
 
     componentWillReceiveProps(nextProps) {
-        if ('value' in nextProps) {
+        if ('dataSource' in nextProps) {
             this.setState({
-                data: nextProps.value,
+                data: nextProps.dataSource,
             });
         }
     }
-
-    mounted=true
-    componentWillUnmount(){
-        this.mounted=null
-    }
-
-    //根据项目和角色id查询审批人
-    getFindUserByItem=(roleId,cb)=>{
-        request(`/biz/itemsroles/findUserByItem`,{
-            params:{
-                itemsId:this.state.itemsId,
-                roleId:roleId,
-            }
-        })
-            .then(res => {
-                if(res.state === 'ok'){
-                    cb && cb(res.data)
-                } else {
-                    return Promise.reject(res.message);
-                }
-            })
-            .catch(err => {
-                message.error(`${err.message}`)
-            })
-    }
-
-    //根据项目查角色
-    getFindRoleByItem=()=>{
-        request(`/biz/itemsroles/findRoleByItem`,{
-            params:{
-                itemsId:this.state.itemsId
-            }
-        })
-            .then(res => {
-                if(res.state === 'ok'){
-                    this.mounted && this.setState({
-                        roleNameOption:setSelectFormat(res.data, 'roleId', 'roleName'),
-                    })
-                } else {
-                    return Promise.reject(res.message);
-                }
-            })
-            .catch(err => {
-                message.error(`${err.message}`)
-            })
-    }
-
 
     getRowByKey(seq, newData) {
         return (newData || this.state.data).filter(item => item.seq === seq)[0];
     }
 
-    handleRoleNameChange(e, fieldName,userId, fieldName2, seq){
+    handleNodeNameChange(e, fieldName, seq) {
         const newData = this.state.data.map(item => ({...item}));
         const target = this.getRowByKey(seq, newData);
         if (target) {
-            target[fieldName] = e;
-            this.getFindUserByItem(e,(data)=>{
-                target[userId] = [];
-                target[fieldName2] = data;
-                this.setState({
-                    data: newData
-                },()=>{
-                    console.log(this.state.data, newData)
-                });
-                this.props.onChange(newData);
-            })
-        }
-    }
-    handleUserIdChange(e, fieldName, seq){
-        const newData = this.state.data.map(item => ({...item}));
-        const target = this.getRowByKey(seq, newData);
-        if (target) {
-            target[fieldName] = e;
+            target[fieldName] = e.target.value;
             this.setState({data: newData});
-            this.props.onChange(newData);
         }
     }
-
     remove(seq) {
         const newData = this.state.data.filter(item => item.seq !== seq);
         this.setState({data: newData});
-        this.props.onChange(newData);
     }
 
     moveRow = (dragIndex, hoverIndex) => {
@@ -308,19 +242,15 @@ class DragSortingTable extends React.Component {
                 },
             }),
         );
-        this.props.onChange(this.state.data);
-
-
     }
     newMember = () => {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
             seq: `new_${newData.length+1}`,
+            nodeName: '',
             roleName: '',
-            userId: [],
-            isAddNode: '1',
-            users:[],
-            isNew: true,
+            userId: '',
+            editable: true,
         });
         this.index += 1;
         this.setState({ data: newData });

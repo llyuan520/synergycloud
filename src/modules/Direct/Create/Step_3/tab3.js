@@ -1,10 +1,10 @@
 // Created by liuliyuan on 2018/7/2
-import React,{Component} from 'react'
+import * as React from 'react'
 import { Row, Card,message,Alert  } from 'antd';
 import DragSortTable from './DragSortingTable.r'
 import { getFields,request,setSelectFormat,getQueryString } from  'utils'
 
-class TabPane3 extends Component {
+class TabPane3 extends React.Component {
 
     state = {
         updateKey:Date.now(),
@@ -18,12 +18,28 @@ class TabPane3 extends Component {
         dataList:[],
     }
 
+    componentDidMount() {
+
+        let action = [this.getFindByCompanyId()];
+        if(this.state.itemsId){
+            action.push(this.getFindUsersByItem(this.state.itemsId))
+        }
+        let pLoader = Promise.all(action);
+            pLoader.then(() => {
+                this.setState({
+                    loaded: true
+                });
+            }).catch( err => {
+                console.log(err);
+                message.error(`${err.message}`)
+            });
+
+    }
+
     //获取审批模板
     getFindByCompanyId=()=>{
-        this.toggleLoading(true);
         request(`/adt/template/findByCompanyId`)
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
                         templateData:setSelectFormat(res.data, 'id'),
@@ -33,21 +49,18 @@ class TabPane3 extends Component {
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
 
     //获取抄送
     getFindUsersByItem=(itemsId)=>{
-        this.toggleLoading(true);
         request(`/biz/itemsroles/findUsersByItem`,{
             params:{
                 itemsId:itemsId
             }
         })
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
                         copytoUserIdData:setSelectFormat(res.data, 'userId','userName'),
@@ -57,7 +70,6 @@ class TabPane3 extends Component {
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
@@ -87,34 +99,21 @@ class TabPane3 extends Component {
             })
     }
 
-
-    toggleLoading = (loading) => {
-        this.setState({
-            loading
-        });
-    }
-
     toggleSiteLoading = (siteLoading) => {
         this.setState({
             siteLoading
         });
     }
 
-    componentDidMount() {
-        //判断是修改还是新增
-        this.getFindByCompanyId()
-        this.state.itemsId && this.getFindUsersByItem(this.state.itemsId)
-    }
-
     render(){
-        const { loading,siteLoading, templateData, copytoUserIdData, dataList,templateId } = this.state;
+        const { loaded,siteLoading, templateData, copytoUserIdData, dataList,templateId } = this.state;
         const { getFieldDecorator, getFieldError } = this.props.form;
         const dataListError = getFieldError('dataList');
         return(
             <React.Fragment>
                     <Card
                         bordered={false}
-                        loading={loading}
+                        loading={!loaded}
                         bodyStyle={{
                             paddingTop:0
                         }}
@@ -124,7 +123,7 @@ class TabPane3 extends Component {
                                 getFields(this.props.form, [
                                     {
                                         label:'审批模板',
-                                        fieldName:'model.templateId',
+                                        fieldName:'templateId',
                                         type:'select',
                                         span:8,
                                         options:templateData,
@@ -148,7 +147,7 @@ class TabPane3 extends Component {
                                         },
                                     },{
                                         label:'抄送',
-                                        fieldName:'model.copytoUserId',
+                                        fieldName:'copytoUserId',
                                         type:'select',
                                         span:16,
                                         options:copytoUserIdData,
