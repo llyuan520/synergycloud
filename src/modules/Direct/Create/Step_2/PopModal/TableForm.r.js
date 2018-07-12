@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/7/5
 import React, { PureComponent } from 'react';
 import { Row,Col,Table, Input, Checkbox,DatePicker } from 'antd';
-
+import moment from 'moment';
 const { RangePicker } = DatePicker;
 
 export default class TableForms extends PureComponent {
@@ -9,18 +9,28 @@ export default class TableForms extends PureComponent {
         super(props);
 
         this.state = {
-            data: props.value,
-            selectedRowKeys: [],
+            data: [], //props.value,
+            selectedRowKeys: props.selectedRowKeys || [],
+            //record:props.record || [],
             loading: false,
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        if ('value' in nextProps) {
+        if(JSON.stringify(nextProps.record)!=='{}'){
+            //console.log(nextProps)
             this.setState({
-                data: nextProps.value,
+                data:nextProps.record.newData
             });
+        }else{
+            if ('value' in nextProps) {
+                this.setState({
+                    data:nextProps.value
+                });
+            }
         }
+
+
     }
 
     getRowByKey(seq, newData) {
@@ -28,16 +38,15 @@ export default class TableForms extends PureComponent {
     }
 
     handleFieldChange(e, fieldName, seq) {
+        console.log(e.target.value);
         const newData = this.state.data.map(item => ({...item}));
         const target = this.getRowByKey(seq, newData);
         if (target) {
             target[fieldName] = e.target.value;
             this.setState({
                 data: newData
-            },()=>{
-                this.props.onChange(this.state.data);
             });
-
+            this.props.onChange(newData);
         }
     }
 
@@ -49,9 +58,8 @@ export default class TableForms extends PureComponent {
             target[`${fieldName}End`] = dateString[1];
             this.setState({
                 data: newData
-            },()=>{
-                this.props.onChange(this.state.data);
             });
+            this.props.onChange(newData);
         }
     }
 
@@ -59,15 +67,15 @@ export default class TableForms extends PureComponent {
         const newData = this.state.data.map(item => ({...item}));
         const target = this.getRowByKey(seq, newData);
         if (target) {
-            target[fieldName] = e.target.checked ? '1' : '0';
+
+            target[fieldName] = e.target.checked===true ? '1' : '0';
             if(e.target.checked === false){
                 target[fieldName2] = '';
             }
             this.setState({
                 data: newData
-            },()=>{
-                this.props.onChange(this.state.data);
             });
+            this.props.onChange(newData);
         }
     }
 
@@ -91,20 +99,28 @@ export default class TableForms extends PureComponent {
             },
             {
                 title: '但责单位',
-                dataIndex: 'accountability_reason',
-                key: 'accountability_reason',
+                dataIndex: 'is_accountability',
+                key: 'is_accountability',
                //width: '300px',
                 render: (text, record) => {
+                    console.log(record.is_accountability)
                     return (
                         <Row gutter={24}>
                             <Col span={4}>
-                                <Checkbox defaultChecked={record.is_accountability==='1'} onChange={e => this.handleCheckBoxChange(e, 'is_accountability', 'accountability_reason', record.seq)}/>
+                                <Checkbox
+                                    defaultChecked={record.is_accountability==='1'}
+                                    //checked={record.is_accountability==='1'}
+                                    //value={record.is_accountability==='1'}
+                                    onChange={e => this.handleCheckBoxChange(e, 'is_accountability', 'accountability_reason', record.seq)}
+                                />
                             </Col>
                             {
                                 record.is_accountability==='1' && <Col span={20}>
                                     <Input
-                                        value={text}
-                                        autoFocus
+                                        //id="accountability_reason"
+                                        defaultValue={record.accountability_reason}
+                                        //value={text}
+                                        //autoFocus
                                         onChange={e => this.handleFieldChange(e, 'accountability_reason', record.seq)}
                                         placeholder="但责单位描述"
                                     />
@@ -121,7 +137,11 @@ export default class TableForms extends PureComponent {
                 //width: '300px',
                 render: (text, record) => {
                     return (
-                        <RangePicker onChange={(date, dateString)=>this.handleRangePickerChange(date, dateString, 'planDate',record.seq)} />
+                        <RangePicker
+                            defaultValue={ (record.planDateStart && [moment(record.planDateStart, 'YYYY-MM-DD'), moment(record.planDateEnd, 'YYYY-MM-DD')]) || [undefined,undefined] }
+                            //value={ record.planDateStart && [moment(record.planDateStart, 'YYYY-MM-DD'), moment(record.planDateEnd, 'YYYY-MM-DD')] }
+                            onChange={(date, dateString)=>this.handleRangePickerChange(date, dateString, 'planDate',record.seq)}
+                        />
                     );
                 },
             },

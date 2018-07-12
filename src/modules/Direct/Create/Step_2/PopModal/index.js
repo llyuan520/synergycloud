@@ -3,6 +3,7 @@ import React,{ Component } from 'react';
 import { Modal,Row, Col,Alert, Form,Button,Spin,message } from 'antd';
 import { request,getFields } from 'utils'
 import TableForm from './TableForm.r'
+import _ from 'lodash';
 import './styles.less'
 
 class PopModal extends Component{
@@ -14,9 +15,12 @@ class PopModal extends Component{
     state = {
         data: [],
         loading: true,
+        itemListError:null,
         selectedRowKeys:[],
         supplierData:[],
         contract_id:'',
+
+        record:{},
     };
 
     getRowByKey(seq, newData) {
@@ -24,28 +28,49 @@ class PopModal extends Component{
     }
 
     setSelectedRowKeys = selectedRowKeys =>{
+        this.props.getSelectedRowKeys && this.props.getSelectedRowKeys(selectedRowKeys)
         this.mounted && this.setState({
             selectedRowKeys
+        },()=>{
+            if(this.state.selectedRowKeys.length>0){
+                this.setState({
+                    itemListError:null
+                })
+            }
         })
     }
 
     handleSubmit = (e) => {
         e && e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
-                //console.log(values, this.state.selectedRowKeys)
-                let newData = this.state.selectedRowKeys.map(req=>{
-                    return this.getRowByKey(req, values.itemList)
-                })
+            if (!err && this.state.selectedRowKeys.length>0) {
 
-                const item = {
-                    supplier_id:values.supplier_id,
-                    contract_id:this.state.contract_id,
-                    newData:newData
-                }
-                //console.log(item);
-                this.props.setDataList && this.props.setDataList(item);
-                this.props.toggleModalVisible(false);
+                console.log(values);
+                debugger
+
+
+                    //console.log(this.props.initData,  values, this.state.selectedRowKeys)  accountability_reason
+                    let newData = this.state.selectedRowKeys.map(req=>{
+                        return this.getRowByKey(req, values.itemList)
+                    })
+
+
+                    const item = {
+                        supplier_id:{...values.supplier_id},
+                        contract_id:this.state.contract_id,
+                        newData:newData
+                    }
+
+                    let prevData = this.props.initData;
+                    // 数组去重
+                    let nextData = _.uniqBy(prevData.concat(item), 'supplier_id.key');
+                    this.props.setDataList && this.props.setDataList(nextData);
+                    this.props.toggleModalVisible(false);
+
+            }else{
+                this.setState({
+                    itemListError:'请选择供应商'
+                })
             }
         });
     }
@@ -102,14 +127,20 @@ class PopModal extends Component{
             /**
              * 弹出的时候如果类型不为新增，则异步请求数据
              * */
-            console.log(nextProps)
             this.setState({
-                data:nextProps.data
+                data:nextProps.data,
             },()=>{
                 if(nextProps && nextProps.itemsId !== ''){
                     this.getFindCompanyByItemId(nextProps.itemsId)
                 }
             })
+
+            if(nextProps.modalConfig.type==='edit'){
+                this.setState({
+                    record:nextProps.modalConfig.record,
+                    selectedRowKeys:nextProps.modalConfig.selectedRowKeys
+                })
+            }
 
         }
     }
@@ -118,7 +149,7 @@ class PopModal extends Component{
         this.mounted=null
     }
     render(){
-        const { data,loading,supplierData } = this.state;
+        const { data,loading,supplierData,itemListError,record } = this.state;
         const props = this.props;
         let title='';
         const type = props.modalConfig.type;
@@ -134,8 +165,7 @@ class PopModal extends Component{
         }
 
         const { form } = this.props;
-        const { getFieldDecorator, getFieldError } = form;
-        const itemListError = getFieldError('itemList');
+        const { getFieldDecorator } = form;
 
         return(
             <Modal
@@ -166,7 +196,7 @@ class PopModal extends Component{
                                         span: 12,
                                         options: supplierData,
                                         fieldDecoratorOptions: {
-                                            //initialValue: {label: '全部', key: ''},
+                                            initialValue: record && record.supplier_id,
                                             rules: [
                                                 {
                                                     required: true,
@@ -175,12 +205,11 @@ class PopModal extends Component{
                                             ]
                                         },
                                         componentProps: {
-                                            //labelInValue: true,
+                                            labelInValue: true,
                                             onChange:(value)=>{
-                                                const data = supplierData.filter(item => item.key === value)[0];
-                                                console.log(data);
+                                                const data = supplierData.filter(item => item.key === value.key)[0];
                                                 this.setState({
-                                                    contract_id:data.contract_id
+                                                    contract_id: data.contract_id
                                                 })
                                             }
 
@@ -199,9 +228,16 @@ class PopModal extends Component{
                                         message:'请选择供应商'
                                     }
                                 ]
-                            })(<TableForm form={this.props.form} setSelectedRowKeys={this.setSelectedRowKeys.bind(this)} />)}
+                            })(
+                                <TableForm
+                                    form={this.props.form}
+                                    selectedRowKeys={props.modalConfig.selectedRowKeys}
+                                    record={record}
+                                    setSelectedRowKeys={this.setSelectedRowKeys.bind(this)}
+                                />
+                            )}
                             {
-                                itemListError ? <Alert key='errorMsg' message={itemListError.join(',')} type="error" /> : null
+                                itemListError ? <Alert key='errorMsg' message={itemListError} type="error" /> : null
                             }
 
                         </Row>
