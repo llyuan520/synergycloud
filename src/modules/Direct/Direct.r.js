@@ -42,7 +42,7 @@ const fieldsData = (context) => [
 ]
 
 const statusToJumpUrl = (status, params) =>{
-    let url = '/web/direct/';
+    let url = '';
     switch (status) {
         case '0':
             url = 'cost';  //已创建
@@ -84,7 +84,7 @@ const statusToJumpUrl = (status, params) =>{
         default:
         //break
     }
-    return url+`?${parseJsonToParams(params)}`;
+    return `/web/direct/${url}?${parseJsonToParams(params)}`;
 }
 
 const getColumns =(context)=>[

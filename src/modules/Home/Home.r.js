@@ -92,6 +92,7 @@ class Home extends Component {
         loaded: false,
         activeKey: 'tab1',
         updateKey: Date.now(),
+        pieUpdateKey: Date.now(),
         data:[],
 
         //饼图数据
@@ -102,7 +103,8 @@ class Home extends Component {
         let pLoader = Promise.all([this.getStayApprovalCount(), this.getFindDirectiveNumber()]);
             pLoader.then(() => {
                 this.setState({
-                    loaded:true
+                    loaded:true,
+                    pieUpdateKey: Date.now(),
                 })
             }).catch(err => {
                 message.error(`${err.message}`)
