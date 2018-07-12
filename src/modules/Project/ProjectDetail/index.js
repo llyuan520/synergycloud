@@ -19,7 +19,7 @@ class TableFormStepTwo extends Component{
             updateKey: Date.now(),
             tabsOneData:{},
             tabsTwoData:{},
-            tabsThirdData:{members:[]},
+            idArr:[]
         }
     }
 
@@ -32,33 +32,44 @@ class TableFormStepTwo extends Component{
             }
         }).then((data)=>{
             if(data.state === 'ok'){
+                console.log(data)
                 let model =  data.data.model;
                 let stages = data.data.stages;
                 let stages_options = [];
+                let idArr = [];
                 if(stages instanceof Array === true){
                     for(let i =0;i< stages.length;i++){
+                        let tax_type_obj = JSON.parse(stages[i].tax_type);
                         stages_options.push({
                             label:stages[i].stages_name,
                             code:stages[i].stages_number,
-                            tax_type: stages[i].tax_type,
-                            key: `${i}`,
+                            tax_type: tax_type_obj.label,
+                            tax_type_key: tax_type_obj.key,
+                            key: stages[i].id,
+                            editable:false,
+                            isNew:false,
                         })
+                        idArr.push(stages[i].id)
                     }
                 }
 
-
+                let tax_type_obj = JSON.parse(model.tax_type);
+                let status_obj = JSON.parse(model.status);
                 let dataSource = {
                     project_name: model.name,
                     project_simplename: model.simple_name,
                     project_id: model.number,
-                    tax_type: model.tax_type,
-                    status: model.status,
+                    tax_type: tax_type_obj.label,
+                    tax_type_key: tax_type_obj.key,
+                    status: status_obj.label,
+                    status_key: status_obj.key,
                     longitudeAndLatitude: model.longitude + ',' + model.latitude,
                     stages_options: stages_options
                 }
 
                 this.setState({
-                    tabsTwoData: dataSource
+                    tabsTwoData: dataSource,
+                    idArr:idArr
                 })
             }
         }).catch(err => {
@@ -66,28 +77,7 @@ class TableFormStepTwo extends Component{
             message.error(err.message)
         })
 
-        //获取项目组织架构的
-        let urlThird = '/biz/itemsorganzation/findViewData';
-        request(urlThird,{
-            params:{
-                items_id:id,
-            }
-        }).then((data)=>{
-            if(data.state === 'ok'){
-                //console.log(data);
 
-                let dataSource = {
-
-                }
-
-                this.setState({
-                    tabsThirdData: dataSource
-                })
-            }
-        }).catch(err => {
-                console.log(err)
-                message.error(err.message)
-        })
 
     }
 
@@ -116,7 +106,7 @@ class TableFormStepTwo extends Component{
                                     component:<TabPane1 data = {this.state.tabsTwoData}/>
                                 }, {
                                     title:'项目组织架构',
-                                    component:<TabPane2 data = {this.state.tabsThirdData}  />
+                                    component:<TabPane2 idArr = {this.state.idArr}/>
                                 }
                             ]
                         }
