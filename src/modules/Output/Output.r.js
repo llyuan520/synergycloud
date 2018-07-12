@@ -50,7 +50,7 @@ const getColumns = (context) => [
         title: '产值单号',
         className: 'text-center',
         render: (e) => (
-        <Link to={{pathname: "/web/output/create/write", state: {outputId: e.id}}}>{e.number}</Link>
+        <Link to={{pathname: "/web/output/create/present", state: {outputId: e.id}}}>{e.number}</Link>
         )
     }, {
         title: (
@@ -147,7 +147,7 @@ class Output extends Component {
                 //scroll:{ x:1300 },
                 cardProps: {
                     title: <div>
-                        <Button type='primary' href={'/web/Output/create/present'} style={{marginRight: 5}}>
+                        <Button type='primary' href={'/web/Output/create/write'} style={{marginRight: 5}}>
                             <Icon type="plus"/>
                             产值提报
                         </Button>

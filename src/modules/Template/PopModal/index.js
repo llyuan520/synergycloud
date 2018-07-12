@@ -8,7 +8,7 @@ import {Form, message} from "antd/lib/index";
 import {getFields, setSelectFormat} from "../../../utils"
 import './styles.less'
 import request from "../../../utils/request";
-import _ from "lodash"
+import moment from "moment"
 
 
 /*只可以单条编辑，通过传入this对象，state值与函数式组件view层进行双向绑定。
@@ -17,23 +17,32 @@ import _ from "lodash"
 const Option = Select.Option;
 const columns = (_this) => {
     let disable = (record) => _this.state.editingKey !== record.key;
+    let changeState = (key, value, text) => {
+        let data = _this.state.data.map((item => ({...item})));
+        data[key - 1][value] = text;
+        _this.setState({data});
+    };
     return [
         {title: "审批节点", key: "seq", dataIndex: "seq"},
         {
             title: "项目角色", key: "nodeName", dataIndex: "nodeName", render: (text, record) => {
-                console.log(_this.state.roleType);
                 const handleChange = (value) => {
-                    console.log(value);
+                    // changeState(record.key, "roleType", _this.state.roleType.filter(item => item.roleId === value)[0].roleType);
+                    // changeState(record.key, "roleId", _this.state.roleType.filter(item => item.roleId === value)[0].roleId);
+                    let data = _this.state.data.map((item => ({...item})));
+                    data[record.key - 1]["roleType"] = _this.state.roleType.filter(item => item.roleId === value)[0].roleType;
+                    data[record.key - 1]["roleId"] = _this.state.roleType.filter(item => item.roleId === value)[0].roleId;
+                    _this.setState({data});
                     _this.getTypeByRole(value);
-                }
+                };
                 return (
                 disable(record)
-                ? <span>{text}</span>
-                : <Select onChange={handleChange} placeholder="项目经理" style={{width: 120}}>
+                ? <span>{record.roleName}</span>
+                : <Select onChange={handleChange} defaultValue={record.roleType} style={{width: 120}}>
                     {
                         _this.state.roleType.map(item => {
                             return (
-                            <Option value={item.key}>{item.label}</Option>
+                            <Option value={item.roleId}>{item.roleName}</Option>
                             )
                         })
                     }
@@ -41,20 +50,29 @@ const columns = (_this) => {
                 )
             }
         },
-        {title: "角色类型", key: "roleId", dataIndex: "roleId"},
+        {title: "角色类型", key: "roleType", dataIndex: "roleType"},
         {
-            title: "审批人员", key: "companyId", dataIndex: "companyId", render: (text, record) => {
+            title: "审批人员", key: "userId", dataIndex: "companyId", render: (text, record) => {
                 return (
                 disable(record)
-                ? <span>{text}</span>
-                : <Select mode="multiple" placeholder="可选择多人" style={{width: 120}}></Select>
+                ? <span>{record.userName}</span>
+                : <Select mode="multiple" placeholder="可选择多人" onChange={(e) => changeState(record.key, "userId", e)}
+                          style={{width: 200}}>
+                    {
+                        _this.state.roleUser.map(item => {
+                            return (
+                            <Option value={item.userId}>{item.userName}</Option>
+                            )
+                        })
+                    }
+                </Select>
                 )
             }
         },
         {
-            title: "允许删除", key: "isDelete", dataIndex: "isDelete", align: "center", render: (text, record) => {
-                const onChange = () => {
-                    console.log(_this.state);
+            title: "允许删除", key: "isDelete", dataIndex: "isDelete", align: "center", render: (text, record, index) => {
+                const onChange = (e) => {
+                    changeState(record.key, "isDelete", e.target.checked ? 1 : 0)
                 }
 
                 return <Checkbox onChange={onChange} defaultChecked={text} disabled={disable(record)}/>
@@ -66,23 +84,20 @@ const columns = (_this) => {
             dataIndex: "isVisibleSchedule",
             align: "center",
             render: (text, record) => {
-                const onChange = () => {
-                    console.log(1);
-                }
-                return <Checkbox onChange={onChange} defaultChecked={text} disabled={disable(record)}/>
+                return <Checkbox onChange={e => changeState(record.key, "isVisibleSchedule", e.target.checked ? 1 : 0)}
+                                 defaultChecked={text} disabled={disable(record)}/>
             }
         },
         {
-            title: "修改数据", key: "modify", dataIndex: "modify", align: "center", render: (text, record) => {
-                const onChange = (e) => {
-                    // console.log(e.target.checked);
-                }
-                return <Checkbox onChange={onChange} defaultChecked={text} disabled={disable(record)}/>
+            title: "修改数据", key: "isUpdateData", dataIndex: "isUpdateData", align: "center", render: (text, record) => {
+                return <Checkbox
+                onChange={e => changeState(record.key, "isUpdateData", e.target.checked ? 1 : 0)}
+                defaultChecked={text} disabled={disable(record)}/>
             }
         },
         {
             title: "操作", render: (text, record) => {
-                return (
+                return !_this.props.disabled && (
                 <span>
                 {
                     disable(record)
@@ -97,7 +112,6 @@ const columns = (_this) => {
                     </span>
                     : <span>
                         <a onClick={() => {
-                            _this.save(record);
                             _this.setState({editingKey: ""})
                         }}>保存</a>
                         <a className="ml10" style={{color: '#f5222d'}} onClick={() => {
@@ -118,23 +132,13 @@ const columns = (_this) => {
 class TemModal extends React.Component {
 
     state = {
-        data: [{
-            key: 1,
-            seq: 1,
-            nodeName: '项目经理',
-            roleId: "本公司",
-            companyId: '张三',
-            isDelete: 1,
-            modify: 1,
-            isVisibleSchedule: 1,
-            list: []
-        }],
+        data: [],
         //save的表单数据
-        list: [],
         editingKey: '',
         billType: [],
         itemType: [],
         roleType: [],
+        roleUser: []
     };
 
 
@@ -148,7 +152,7 @@ class TemModal extends React.Component {
         });
         request("/biz/items/findItemsByCompanyId")
         .then(res => {
-            console.log(res);
+            console.log(res, "item");
             this.setState({
                 itemType: setSelectFormat(res.data, "itemsId", "itemsName")
             })
@@ -157,7 +161,7 @@ class TemModal extends React.Component {
         .then(res => {
             console.log(res);
             this.setState({
-                roleType: setSelectFormat(res.data, "roleId", "roleName")
+                roleType: res.data,
             })
         })
     }
@@ -165,7 +169,9 @@ class TemModal extends React.Component {
     getTypeByRole(roleId) {
         request("/biz/itemsroles/findRoleUsers", {params: {roleId}})
         .then(res => {
-            console.log(res);
+            this.setState({
+                roleUser: res.data
+            })
         }
         )
     }
@@ -176,14 +182,19 @@ class TemModal extends React.Component {
     }
 
     newMember = () => {
+        console.log(this.state);
         const newData = this.state.data.map(item => ({...item}));
         newData.push({
-            seq: `${newData.length + 1}`,
+            key: `${(newData.length + 1)}`,
+            seq: `${(newData.length + 1) * 10}`,
             nodeName: '项目经理',
-            roleId: "本公司",
+            roleId: "",
             companyId: '张三',
             isDelete: 1,
             isVisibleSchedule: 1,
+            isUpdateData: 1,
+            roleType: "",
+            isNode: 0
         });
         this.index += 1;
         this.setState({data: newData});
@@ -191,30 +202,48 @@ class TemModal extends React.Component {
 
     handleSubmit = (e) => {
         e && e.preventDefault();
-        // this.save();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                this.save();
+                this.props.data ? this.save(this.props.data.id) : this.save();
             }
         });
 
     };
 
-    save() {
+    save(id) {
         let params = this.props.form.getFieldsValue();
         params.costCalculation = params.costCalculation && params.costCalculation.format("YYYY-MM-DD");
         params.effectiveDate = params.effectiveDate && params.effectiveDate.format("YYYY-MM-DD");
-        params.list = this.state.data;
+        params.isAddNode = this.state.isNode ? 1 : 0;
+
+        const API = id ? "/adt/template/update" : "/adt/template/save";
+        if (id) {
+            params.id = id;
+            params.updateList = this.state.data;
+        } else {
+            params.createList = this.state.data;
+        }
         console.log(params);
-        request("/adt/template/save", {body: params, method: "POST"})
+        request(API, {body: params, method: "POST"})
         .then(res => {
             console.log(res);
             if (res.state === "ok") {
                 this.props.toggleModalVisible(false);
+                this.props.getList();
             } else {
                 message.error(res.message)
             }
         })
+    }
+
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.data.nodeList) {
+            this.setState({
+                data: nextProps.data.nodeList,
+                editingKey: []
+            })
+        }
     }
 
     componentDidMount() {
@@ -225,8 +254,7 @@ class TemModal extends React.Component {
     render() {
         const {props} = this;
         const {disabled} = props;
-        const {data, billType, itemType, roleType} = this.state;
-        // console.log(props);
+        const {data, billType, itemType} = this.state;
         return (
         <Modal
         maskClosable={false}
@@ -239,7 +267,7 @@ class TemModal extends React.Component {
                 <Col span={12}></Col>
                 <Col span={12}>
                     <Button onClick={() => props.toggleModalVisible(false)}>取消</Button>
-                    <Button type="primary" onClick={this.handleSubmit}>确定</Button>
+                    <Button type="primary" disabled={props.disabled} onClick={this.handleSubmit}>确定</Button>
                 </Col>
             </Row>
         }
@@ -250,34 +278,34 @@ class TemModal extends React.Component {
                     <Row gutter={24}>
                         <Col span={8}>
                             <span className="model-title">模板名称:</span>
-                            <span className="model-text">模板名称</span>
+                            <span className="model-text">{props.data.name}</span>
                         </Col>
                         <Col span={8}>
                             <span className="model-title">选择项目:</span>
-                            <span className="model-text">模板名称</span>
+                            <span className="model-text">{props.data.itemsName}</span>
                         </Col>
                         <Col span={8}>
                             <span className="model-title">分期名称:</span>
-                            <span className="model-text">模板名称</span>
+                            <span className="model-text">{props.data.stagesName}</span>
                         </Col>
                     </Row>
                     <Row gutter={24}>
                         <Col span={8}>
                             <span className="model-title">单据类型:</span>
-                            <span className="model-text">模板名称</span>
+                            <span className="model-text">{props.data.billName}</span>
                         </Col>
                         <Col span={8}>
                             <span className="model-title">生效日期:</span>
-                            <span className="model-text">模板名称</span>
+                            <span className="model-text">{props.data.effectiveDate}</span>
                         </Col>
                         <Col span={8}>
                             <span className="model-title">失效日期:</span>
-                            <span className="model-text">模板名称</span>
+                            <span className="model-text">{props.data.invalidDate}</span>
                         </Col>
                     </Row>
 
                 </div>
-                : <div>
+                : <Form>
                     <Row gutter={24}>
                         {
                             getFields(this.props.form, [
@@ -287,7 +315,7 @@ class TemModal extends React.Component {
                                     type: 'input',
                                     span: 8,
                                     fieldDecoratorOptions: {
-                                        initialValue: '',
+                                        initialValue: props.data.name || '',
                                         rules: [
                                             {
                                                 required: true,
@@ -301,9 +329,9 @@ class TemModal extends React.Component {
                                     fieldName: 'itemsId',
                                     type: 'select',
                                     span: 8,
-                                    options: [{label: '全部', key: ''}].concat(itemType),
+                                    options: itemType,
                                     fieldDecoratorOptions: {
-                                        initialValue: "",
+                                        initialValue: props.data.itemsId || "",
                                     },
                                 },
                                 {
@@ -312,7 +340,7 @@ class TemModal extends React.Component {
                                     type: 'input',
                                     span: 8,
                                     fieldDecoratorOptions: {
-                                        initialValue: '',
+                                        initialValue: props.data.stagesId || '',
                                     },
                                 }
 
@@ -327,12 +355,13 @@ class TemModal extends React.Component {
                                     fieldName: 'biztypeId',
                                     type: 'select',
                                     span: 8,
-                                    options: [{label: '全部', key: ''}].concat(billType),
+                                    options: billType,
                                     fieldDecoratorOptions: {
-                                        initialValue: "",
+                                        initialValue: props.data.biztypeId || "",
                                         rules: [
                                             {
                                                 required: true,
+                                                message: "请选择单据类型"
                                             }
                                         ]
                                     },
@@ -345,41 +374,59 @@ class TemModal extends React.Component {
                                     fieldDecoratorOptions: {
                                         initialValue: '',
                                     },
+                                    componentProps: {
+                                        // defaultValue: moment(),
+                                        disabledDate: (current) => {
+                                            return current && current < moment().endOf('day');
+                                        }
+                                    }
                                 },
                                 {
                                     label: ' 失效日期',
-                                    fieldName: 'costCalculation',
+                                    fieldName: 'invalidDate',
                                     type: 'datePicker',
                                     span: 8,
                                     fieldDecoratorOptions: {
                                         initialValue: '',
                                     },
+                                    componentProps: {
+                                        // defaultValue: moment(),
+                                        disabledDate: (current) => {
+                                            return current && current < moment().endOf('day');
+                                        }
+                                    }
                                 }
 
                             ])
                         }
                     </Row>
 
-                </div>
+                </Form>
             }
 
             <Row gutter={24}>
                 <Col span={8}>
-                    <Checkbox disabled={disabled}>允许子公司引用模板</Checkbox>
+                    <Checkbox onChange={v => {
+                        this.setState({isNode: v.target.checked})
+                    }} checked={props.data.isAddNode}
+                              disabled={disabled}>允许子公司增加流程节点</Checkbox>
                 </Col>
             </Row>
 
 
             <Table columns={columns(this)} dataSource={data}
                    pagination={false}/>
-            <Button
-            style={{width: '100%', marginTop: 16, marginBottom: 8}}
-            type="dashed"
-            onClick={this.newMember}
-            icon="plus"
-            >
-                新增审批节点
-            </Button>
+            {
+                !props.disabled &&
+                <Button
+                style={{width: '100%', marginTop: 16, marginBottom: 8}}
+                type="dashed"
+                onClick={() => this.newMember()}
+                icon="plus"
+                >
+                    新增审批节点
+                </Button>
+            }
         </Modal>
         )
     }
