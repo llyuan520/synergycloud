@@ -17,6 +17,7 @@ export default class TableForm extends PureComponent {
         if ('value' in nextProps) {
             this.setState({
                 data: nextProps.value,
+                options:nextProps.taxOptions
             });
         }
     }
@@ -49,13 +50,14 @@ export default class TableForm extends PureComponent {
         newData.push({
             label: '',
             tax_type:'',
+            tax_type_key:'',
             code:'',
             key: `new_${this.index}`,
             editable: true,
             isNew: true,
         });
         this.index += 1;
-        this.setState({ options:this.props.taxOptions})
+
         this.setState({ data: newData });
     };
     handleKeyPress(e, key) {

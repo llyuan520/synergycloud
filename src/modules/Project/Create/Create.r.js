@@ -74,6 +74,7 @@ class CreateProject extends Component{
                 message.warn('请选择状态');
                 return
             }
+
             let url = '/biz/items/save'
             request(url, {
                 method: 'POST',
@@ -81,7 +82,7 @@ class CreateProject extends Component{
             }).then((data) => {
                 // taxOptions
                 // statusOptions
-
+                console.log(data);
                 if(data.state === 'ok'){
                     id = data.items_id;
 

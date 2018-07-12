@@ -137,7 +137,7 @@ class TableFormStepTwo extends Component{
 
                 <CustomizeStaticTabs
                     title=""
-                    defaultActiveKey='1'
+                    defaultActiveKey='0'
                     tabPaneOptions={
                         [
                             {
