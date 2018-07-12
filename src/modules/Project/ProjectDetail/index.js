@@ -1,11 +1,9 @@
 // Created by Lee on 2018/7/5
-
 import React, { Component } from 'react';
 import { Row,message } from 'antd';
 import { request, getQueryString} from 'utils'
-import TabPane1 from '../TableForm/tab1'
-import TabPane2 from '../TableForm/tab2'
-
+import TabPane1 from './tab1'
+import TabPane2 from './tab2'
 import PropTypes from 'prop-types'
 import CustomizeStaticTabs from 'components/CustomizeStaticTabs'
 import Tableintabs from './tableInTabs'
@@ -41,8 +39,9 @@ class TableFormStepTwo extends Component{
                     for(let i =0;i< stages.length;i++){
                         stages_options.push({
                             label:stages[i].stages_name,
-                            key:stages[i].stages_number,
-                            tax_type: stages[i].tax_type
+                            code:stages[i].stages_number,
+                            tax_type: stages[i].tax_type,
+                            key: `${i}`,
                         })
                     }
                 }
@@ -75,6 +74,8 @@ class TableFormStepTwo extends Component{
             }
         }).then((data)=>{
             if(data.state === 'ok'){
+                //console.log(data);
+
                 let dataSource = {
 
                 }
@@ -103,7 +104,7 @@ class TableFormStepTwo extends Component{
                 <Row>
                     <CustomizeStaticTabs
                         title=""
-                        defaultActiveKey='0'
+                        defaultActiveKey='1'
                         tabPaneOptions={
                             [
                                 {
@@ -115,7 +116,7 @@ class TableFormStepTwo extends Component{
                                     component:<TabPane1 data = {this.state.tabsTwoData}/>
                                 }, {
                                     title:'项目组织架构',
-                                    component:<TabPane2 data = {this.state.tabsThirdData} />
+                                    component:<TabPane2 data = {this.state.tabsThirdData}  />
                                 }
                             ]
                         }
