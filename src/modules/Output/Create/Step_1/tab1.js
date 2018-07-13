@@ -6,7 +6,7 @@ import React from 'react'
 import {Row, Col, Select} from 'antd';
 import "./styles.less"
 import {fMoney, requestDict, setSelectFormat, strToObjRouter} from "../../../../utils";
-import request from "../../../../utils/request";
+import {request} from "utils";
 import {withRouter} from "react-router-dom";
 
 const Option = Select.Option;
@@ -47,7 +47,6 @@ class TabPane1 extends React.Component {
 
     render() {
         const {data, outputName} = this.state;
-        console.log(data, outputName);
         return (
         <div className="container">
             <div className="editContent">
@@ -80,7 +79,7 @@ class TabPane1 extends React.Component {
                 <Row>
                     <Col span={12}>
                         <span className="span">产值类型：</span>
-                        <span className="item-text">{data.model.outputtype}</span>
+                        <span className="item-text">{data.model.output_type}</span>
                     </Col>
                     <Col span={12}>
                         <span className="span">发票类型：</span>

@@ -25,7 +25,8 @@ class Step1 extends Component {
             outputnumber: '',
             status: '',
             itemsname: ''
-        }
+        },
+        page: 1
     }
 
     handleSubmit = (e) => {
@@ -50,25 +51,6 @@ class Step1 extends Component {
         })
     }
 
-    getConName(contractname) {
-        request("/con/contract/getContractByName", {params: {contractname}})
-        .then(res => {
-            console.log(res.data.contract);
-            this.setState({
-                conName: setSelectFormat(res.data.contract, "id", "contract_name")
-            })
-        })
-    }
-
-    getConNum(contractnumber) {
-        request("/con/contract/getContractByNumber", {params: {contractnumber}})
-        .then(res => {
-            console.log(res.data.contract);
-            this.setState({
-                conNum: setSelectFormat(res.data.contract)
-            })
-        })
-    }
 
     getList() {
         let params = this.state.query;
@@ -77,8 +59,10 @@ class Step1 extends Component {
                 delete params[i]
             }
         }
+        _.extend(this.state.query, {page: this.state.page});
         request('/con/contract/findListData', {params})
         .then(res => {
+            console.log(res);
             this.setState({
                 tableData: res.data,
                 count: res.count
@@ -95,7 +79,7 @@ class Step1 extends Component {
 
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
-        const {disabled, tableData, conName, conNum, statusData} = this.state;
+        const {disabled, tableData, conNum, statusData} = this.state;
         let itime;
         return (
         <React.Fragment>
@@ -107,53 +91,48 @@ class Step1 extends Component {
                             {
                                 getFields(form, [
                                     {
-                                        label: '合同名称：',
-                                        fieldName: 'outputName',
-                                        type: 'select',
+                                        label: '合同名称',
+                                        fieldName: 'outputnumber',
+                                        type: 'asyncSelect',
                                         span: 8,
-                                        options: [{label: '全部', key: ''}].concat(conNum),
-                                        fieldDecoratorOptions: {
-                                            initialValue: "",
-                                        },
                                         componentProps: {
-                                            showSearch: true,
-                                            onSearch: (e) => {
-                                                clearTimeout(itime);
-                                                itime = setTimeout(() => {
-                                                    this.getConName(e)
-                                                }, 500);
+                                            fieldTextName: 'contract_name',
+                                            fieldValueName: 'id',
+                                            doNotFetchDidMount: false,
+                                            notShowAll: true,
+                                            url: `/con/contract/getContractByName`,
+                                            selectOptions: {
+                                                // onChange:this.handleCompanyChange,
+                                                defaultActiveFirstOption: true,
+                                                showSearch: true,
+                                                optionFilterProp: 'children',
                                             },
-                                            onSelect: (e) => {
-                                                this.setState({
-                                                    query: _.extend(this.state.query, {contractname: e})
-                                                })
-                                            }
                                         },
+                                        fieldDecoratorOptions: {
+                                            //initialValue: this.props.areaId
+                                        }
                                     }, {
-                                        label: '合同编号：',
+                                        label: '合同编号',
                                         fieldName: 'outputNum',
-                                        type: 'select',
+                                        type: 'asyncSelect',
                                         span: 8,
-                                        options: [{label: '全部', key: ''}].concat(conNum),
-                                        fieldDecoratorOptions: {
-                                            initialValue: "",
-                                        },
                                         componentProps: {
-                                            showSearch: true,
-                                            onSearch: (e) => {
-                                                clearTimeout(itime);
-                                                itime = setTimeout(() => {
-                                                    this.getConNum(e)
-                                                }, 500);
+                                            fieldTextName: 'number',
+                                            fieldValueName: 'id',
+                                            doNotFetchDidMount: false,
+                                            notShowAll: true,
+                                            url: `/con/contract/getContractByNumber`,
+                                            selectOptions: {
+                                                // onChange:this.handleCompanyChange,
+                                                defaultActiveFirstOption: true,
+                                                showSearch: true,
+                                                optionFilterProp: 'children',
                                             },
-                                            onSelect: (e) => {
-                                                this.setState({
-                                                    query: _.extend(this.state.query, {outputnumber: e})
-                                                })
-                                            }
                                         },
+                                        fieldDecoratorOptions: {
+                                            //initialValue: this.props.areaId
+                                        }
                                     },
-
                                     {
                                         label: '合同状态：',
                                         fieldName: 'type',
@@ -209,6 +188,10 @@ class Step1 extends Component {
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
                             })(<TableForm form={this.props.form}
+                                          pageChange={(page) => {
+                                              this.setState({page}, () => this.getList())
+                                          }}
+                                          total={this.state.count}
                                           next={(e) => this.setState({
                                               disabled: false,
                                               id: e[0].id,

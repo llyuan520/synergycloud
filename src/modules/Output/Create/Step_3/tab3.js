@@ -71,7 +71,7 @@ const columnsList = [{
     title: '结算单号',
     key: "jsdh",
     dataIndex: "jsdh",
-    // editable: true,
+    editable: true,
     type: "date"
 }, {
     title: '发票代码',
@@ -113,7 +113,7 @@ const columnsList = [{
     key: "fpkprq",
     dataIndex: "fpkprq",
     editable: true,
-    type: "price",
+    type: "date",
 }, {
     title: '发票状态',
     key: "fpzt",
