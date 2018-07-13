@@ -19,6 +19,8 @@ import Contract from "./Contract";
 import ContractCreate from "./Contract/Create";
 import TemList from "./Template"
 import ProjectDetail from "./Project/ProjectDetail"
+import ContractDetail from "./Project/ContractDetail"
+import Company from "./Company"
 
 const routes = [
     {
@@ -119,6 +121,17 @@ const routes = [
         path: '/web/project/projectDetail',
         component: wrapPage('合同履约协同平台 – 项目详情', ProjectDetail),
         name: '项目详情',
+        exact: true,
+    }, {
+        path:'/web/project/projectDetail/contractDetail',
+        component:wrapPage('合同履约协同平台 – 合同详情', ContractDetail),
+        name:'合同详情',
+        exact:true,
+    }, {
+        path:'/web/company',
+        component:wrapPage('合同履约协同平台 - 企业管理', Company),
+        name: '企业管理',
+        // icon: 'api',
         exact: true,
     }, {
         path: '/403',

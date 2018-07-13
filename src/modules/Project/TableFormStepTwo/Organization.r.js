@@ -77,7 +77,6 @@ class Organization extends PureComponent {
 
     render() {
         const { data,name_options,type_options,member_options } = this.state;
-        let id = getQueryString('id')
         const { getFieldDecorator } = this.props.form;
         return (
             <React.Fragment>

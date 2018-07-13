@@ -1,4 +1,4 @@
-// Created by Lee on 2018/7/4
+// Created by Lee on 2018/7/11
 import React, { PureComponent } from 'react';
 import { Table, Button, message, Popconfirm, Divider,Select, Input } from 'antd';
 const Option = Select.Option;
@@ -9,7 +9,7 @@ export default class TableForm extends PureComponent {
         this.state = {
             data: props.value,
             loading: false,
-            options: this.props.taxOptions
+            options: props.taxOptions,
         };
     }
 
@@ -17,6 +17,7 @@ export default class TableForm extends PureComponent {
         if ('value' in nextProps) {
             this.setState({
                 data: nextProps.value,
+                options:nextProps.taxOptions
             });
         }
     }
@@ -47,15 +48,16 @@ export default class TableForm extends PureComponent {
     newMember = () => {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
-            periodization_code: '',
-            periodization_name: '',
-            tax_methods: '',
-            key: newData.length+1,
+            label: '',
+            tax_type:'',
+            tax_type_key:'',
+            code:'',
+            key: `new_${this.index}`,
             editable: true,
             isNew: true,
         });
         this.index += 1;
-        this.setState({ options:this.props.taxOptions})
+
         this.setState({ data: newData });
     };
     handleKeyPress(e, key) {
@@ -93,13 +95,23 @@ export default class TableForm extends PureComponent {
                 return;
             }
             const target = this.getRowByKey(key) || {};
-            if (!target.periodization_code || !target.periodization_name || !target.tax_methods) {
+            if (!target.code || !target.label || !target.tax_type_key) {
                 message.error('请填写完整成员信息。');
                 e.target.focus();
                 this.setState({
                     loading: false,
                 });
                 return;
+            }
+            for(let i = 0;i< this.state.data.length;i++){
+                if(target.code === this.state.data[i].code && target.key !== this.state.data[i].key){
+                    message.error('分期编号已存在')
+                    e.target.focus();
+                    this.setState({
+                        loading: false,
+                    });
+                    return;
+                }
             }
             delete target.isNew;
             this.toggleEditable(e, key);
@@ -123,25 +135,20 @@ export default class TableForm extends PureComponent {
         this.clickedCancel = false;
     }
 
-    componentDidMount(){
-
-    }
-
-
     render() {
         const columns = [
             {
                 title:'分期编号',
-                dataIndex: 'periodization_code',
-                key:'periodization_code',
+                dataIndex: 'code',
+                key:'code',
                 width: '30%',
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <Input value = {text}
-                                   autoFocus="autofocus"
+                            <Input value={text}
+                                    autoFocus="autofocus"
                                    placeholder="分期编号"
-                                   onChange={e => this.handleFieldChange(e, 'periodization_code', record.key)}
+                                   onChange={e => this.handleFieldChange(e, 'code', record.key)}
                                    onKeyPress={e => this.handleKeyPress(e, record.key)}
                             />
                         )
@@ -150,31 +157,31 @@ export default class TableForm extends PureComponent {
                 }
             },{
                 title:'分期名称',
-                dataIndex: 'periodization_name',
-                key:'periodization_name', 
+                dataIndex: 'label',
+                key:'label',
                 width: '30%',
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <Input value = {text}
+                            <Input value={text}
                                    autoFocus="autofocus"
                                    placeholder="分期名称"
-                                   onChange={e => this.handleFieldChange(e, 'periodization_name', record.key)}
+                                   onChange={e => this.handleFieldChange(e, 'label', record.key)}
                                    onKeyPress={e => this.handleKeyPress(e, record.key)}
-                                />
+                            />
                         )
                     }
                     return text;
                 }
             },{
                 title:'计税方式',
-                dataIndex: 'tax_methods',
-                key:'tax_methods',
+                dataIndex: 'tax_type',
+                key:'tax_type',
                 width: '20%',
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <Select value={{key:text}} labelInValue onChange= {(e) => this.handleSelectChange(e, 'tax_methods', record.key)} style={{width:'100%'}} >
+                            <Select value={{key:text}} labelInValue onChange= {(e) => this.handleSelectChange(e, 'tax_type', record.key)} style={{width:'100%'}} >
                                 {
                                     this.state.options.map((option,i)=>(
                                         <Option key={i} value={option.key}>{option.label}</Option>

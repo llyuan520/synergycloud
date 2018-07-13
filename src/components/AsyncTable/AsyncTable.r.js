@@ -62,7 +62,6 @@ export default class AsyncTable extends Component{
         request(props.url,{
             params:composeParams
         }).then((res) => {
-            console.log(res);
             if(res.state === 'ok'){
                 const pagination = { ...this.state.pagination };
                 pagination.total =  res.count;

@@ -19,12 +19,14 @@ class Stages extends Component {
             member_options: props.member_options,//角色成员选项
             stages_id: props.stages_id || '',//分期项目选项
             updateKey: Date.now(),
+            editable: props.editable || false
         };
     }
     componentWillReceiveProps(nextProps) {
         if ('value' in nextProps) {
             this.setState({
                 data: nextProps.value,
+                editable: nextProps.editable
             });
         }
     }
@@ -159,15 +161,6 @@ class Stages extends Component {
             })
     }
 
-    componentDidMount(){
-
-    }
-
-    refreshTable=()=>{
-        this.setState({
-            updateKey:Date.now()
-        })
-    }
 
     render() {
         const columns = [
@@ -184,9 +177,9 @@ class Stages extends Component {
                                 // defaultValue = {
                                 //     this.state.name_options.length>0 ?
                                 //         {label:this.state.name_options[0].label,key:this.state.name_options[0].key} : ''}
-                                    onChange= {(e) => this.handleSelectChangeRole(e, 'role_name','username', record.key)}
-                                    placeholder="请选择项目角色"
-                                    style={{width:'100%'}} >
+                                onChange= {(e) => this.handleSelectChangeRole(e, 'role_name','username', record.key)}
+                                placeholder="请选择项目角色"
+                                style={{width:'100%'}} >
                                 {
                                     this.state.name_options.map((option,i)=>(
                                         <Option key={i} value={option.key}>{option.label}</Option>
@@ -196,9 +189,10 @@ class Stages extends Component {
                         );
                     }
                     return (
-                        this.state.name_options.map((item)=>{
-                            return record.role_name === item.key ? item.label : ''
-                        })
+                        // this.state.name_options.map((item)=>{
+                        //     return record.role_name === item.key ? item.label : ''
+                        // })
+                        text
                     );
                 },
             },
@@ -218,11 +212,11 @@ class Stages extends Component {
                         return (
                             <Select
                                 //labelInValue
-                                    value={text}
-                                    mode="multiple"
-                                    filterOption={(input, option) => option.props.children && option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                    onChange= {(e) => this.handleSelectChange(e, 'username', record.key)}
-                                    style={{width:'100%'}}
+                                value={text}
+                                mode="multiple"
+                                filterOption={(input, option) => option.props.children && option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                onChange= {(e) => this.handleSelectChange(e, 'username', record.key)}
+                                style={{width:'100%'}}
                             >
                                 {
                                     this.state.member_options.map((option,i)=>(
@@ -233,12 +227,13 @@ class Stages extends Component {
                         );
                     }
                     return (
+                        record.members_options && record.members_options.length > 0 ?
                         record.members_options.map((item,index)=>{
                             let showData = record.username.map(e=>{
                                 return e === item.key ? `${item.label}，` : ''
                             })
                             return showData;
-                        })
+                        }) : text
                     );
                 },
             },
@@ -249,34 +244,37 @@ class Stages extends Component {
                     if (!!record.editable && this.state.loading) {
                         return null;
                     }
+                    if (this.state.editable === false){
+                        return null;
+                    }
                     if (record.editable) {
                         if (record.isNew) {
                             return (
                                 <span>
-                  <a onClick={e => this.saveRow(e, record.key)}>保存</a>
-                  <Divider type="vertical" />
-                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                    <a>删除</a>
-                  </Popconfirm>
-                </span>
+                                  <a onClick={e => this.saveRow(e, record.key)}>保存</a>
+                                  <Divider type="vertical" />
+                                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
+                                    <a>删除</a>
+                                  </Popconfirm>
+                                </span>
                             );
                         }
                         return (
                             <span>
-                <a onClick={e => this.saveRow(e, record.key)}>保存</a>
-                <Divider type="vertical" />
-                <a onClick={e => this.cancel(e, record.key)}>取消</a>
-              </span>
+                                <a onClick={e => this.saveRow(e, record.key)}>保存</a>
+                                <Divider type="vertical" />
+                                <a onClick={e => this.cancel(e, record.key)}>取消</a>
+                            </span>
                         );
                     }
                     return (
                         <span>
-              <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                <a>删除</a>
-              </Popconfirm>
-            </span>
+                          <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
+                          <Divider type="vertical" />
+                          <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
+                            <a>删除</a>
+                          </Popconfirm>
+                        </span>
                     );
                 },
             },
@@ -293,14 +291,18 @@ class Stages extends Component {
                         return record.editable ? 'editable' : '';
                     }}
                 />
-                <Button
-                    style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
-                    type="dashed"
-                    onClick={this.newMember}
-                    icon="plus"
-                >
-                    新增成员
-                </Button>
+                {
+                    this.state.editable === false ? '' :
+                        <Button
+                            style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
+                            type="dashed"
+                            onClick={this.newMember}
+                            icon="plus"
+                        >
+                            新增成员
+                        </Button>
+                }
+
             </Fragment>
         );
     }
