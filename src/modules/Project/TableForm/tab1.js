@@ -1,10 +1,11 @@
 // created by Lee in 2018/07/05
 
 import React from 'react'
-import {  Row, Col, Card } from 'antd';
+import { Row, Col, Card } from 'antd';
 
 const TabPane1 = (props)=>{
     const data = props.data
+    console.log(data)
     return (
         <Card bordered={false}>
             <Row gutter={24}>
@@ -24,11 +25,17 @@ const TabPane1 = (props)=>{
             <Row gutter={24}>
                 <Col span={8}>
                     <p>计税方式</p>
-                    <p>{data.tax_type}</p>
+                    <p>
+                        {
+                            (JSON.parse(data.tax_type)).label
+                        }
+                    </p>
                 </Col>
                 <Col span={8}>
                     <p>项目状态</p>
-                    <p>{data.status}</p>
+                    <p>
+                        {(JSON.parse(data.status)).label}
+                    </p>
                 </Col>
                 <Col span={8}>
                     <p>经纬度</p>
@@ -45,7 +52,7 @@ const TabPane1 = (props)=>{
                         (data.stages_options && data.stages_options.length) > 0 ?
                         data.stages_options.map((item)=>{
                             return (
-                                <p key={item.key}>分期编号：{ item.key }, 分期名称： { item.label }, 计税方式：{item.tax_type} </p>
+                                <p key={item.key}>分期编号：{ item.key }, 分期名称： { item.label }, 计税方式：{(JSON.parse(item.tax_type)).label} </p>
                             )
                         }) : ''
                     }

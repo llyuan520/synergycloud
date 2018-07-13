@@ -1,12 +1,12 @@
 // created by Lee in 2018/07/05
 
 import React, {Component} from 'react';
-import { Form, Row, Button,message   } from 'antd';
+import { Form, Button,message   } from 'antd';
 import { compose } from 'redux';
 import {connect} from 'react-redux';
-import { getFields,request } from  'utils'
-import TableForm from '../TableForm/TableForm.r'
+import { request } from  'utils'
 import {withRouter} from 'react-router-dom';
+import Projectinfo from '../ProjectUtil/Projectinfo'
 import './styles.less'
 
 
@@ -34,9 +34,6 @@ class CreateProject extends Component{
             let id = '';
             let model = {...value};
             model.model.company_id = this.props.company_id;
-
-
-
             for(let i = 0;i< model.members.length;i++){
                 let periodization_code = model.members[i].periodization_code;
                 let periodization_name = model.members[i].periodization_name;
@@ -77,6 +74,8 @@ class CreateProject extends Component{
                 message.warn('请选择状态');
                 return
             }
+
+
             let url = '/biz/items/save'
             request(url, {
                 method: 'POST',
@@ -84,7 +83,7 @@ class CreateProject extends Component{
             }).then((data) => {
                 // taxOptions
                 // statusOptions
-
+                console.log(data);
                 if(data.state === 'ok'){
                     id = data.items_id;
 
@@ -98,56 +97,14 @@ class CreateProject extends Component{
                 message.error(err.message)
             })
 
-            // this.props.history.push(`/web/project/org?id=${id}`);
+
 
         })
     }
 
-    componentWillMount(){
-        let url = '/biz/items/findEditData'
-        request(url, {
-            params:{
-                company_id: this.props.company_id,
-            }
-        }).then((data) => {
-            // taxOptions
-            // statusOptions
-                if(data.state === 'ok'){
-                    let tax_type = data.data.tax_type;
-                    let item_status = data.data.item_status;
-                    let taxOptions = [];
-                    let statusOptions = [];
-                    for(let i = 0;i< tax_type.length;i++){
-                        taxOptions.push({
-                            label: tax_type[i].name,
-                            key: tax_type[i].value
-                        })
-                    }
-                    for(let i = 0;i< item_status.length;i++){
-                        statusOptions.push({
-                            label: item_status[i].name,
-                            key: item_status[i].value
-                        })
-                    }
-                    this.setState({
-                        taxOptions : taxOptions,
-                        statusOptions: statusOptions,
-                        //item_number: data.data.item_number,
-                    })
 
-
-                }
-            })
-            .catch(err => {
-                console.log(err)
-                message.error(err.message)
-            })
-
-    }
 
     render(){
-        const { form } = this.props;
-        const { getFieldDecorator } = form;
         return (
             <div className="ISA-fragment ISA-bgColor create-project">
                 <Form>
@@ -155,74 +112,7 @@ class CreateProject extends Component{
 
                     <div className="createProjectContent">
                         <h4 className="createProjectChildTitle">项目基本信息</h4>
-                        <Row className="mt35">
-                            {
-                                getFields(this.props.form, [
-                                    {
-                                        label: '项目名称',
-                                        fieldName: 'model.name',
-                                        fieldDecoratorOptions:{
-                                            initialValue: ''
-                                        },
-                                        type: 'input',
-                                        span: 8
-                                    },{
-                                        label: '项目简称',
-                                        fieldName: 'model.simple_name',
-                                        fieldDecoratorOptions:{
-                                            initialValue: ''
-                                        },
-                                        type: 'input',
-                                        span: 8
-                                    },{
-                                        label: '企业项目编码',
-                                        fieldName: 'model.number',
-                                        type: 'input',
-                                        // fieldDecoratorOptions:{
-                                        //     initialValue: this.state.item_number
-                                        // },
-                                        span: 8,
-                                        // componentProps: {
-                                        //     disabled: true
-                                        // },
-                                    }
-                                ])
-                            }
-                        </Row>
-                        <Row >
-                            {
-                                getFields(this.props.form, [
-                                    {
-                                        label: '计税方式',
-                                        fieldName: 'model.tax_type',
-                                        type: 'select',
-                                        span: 8,
-                                        options: this.state.taxOptions,
-                                    },{
-                                        label: '状态',
-                                        fieldName: 'model.status',
-                                        type: 'select',
-                                        span: 8,
-                                        options: this.state.statusOptions,
-                                    },{
-                                        label: '经纬度',
-                                        fieldName: 'model.longitudeAndLatitude',
-                                        fieldDecoratorOptions:{
-                                            initialValue: ''
-                                        },
-                                        type: 'longitudeAndLatitude',
-                                        span: 8,
-                                    }
-                                ])
-                            }
-                        </Row>
-                        <Row className="mt35">
-                            {getFieldDecorator('members', {
-                                initialValue: tableData,
-                            })(
-                                <TableForm taxOptions = {this.state.taxOptions} form={this.props.form}  />
-                            )}
-                        </Row>
+                            <Projectinfo form={this.props.form} tableData = { tableData }/>
                     </div>
                     <div className="steps-action">
                         <Button type="primary" onClick={this.handleSubmit}> 下一步 </Button>

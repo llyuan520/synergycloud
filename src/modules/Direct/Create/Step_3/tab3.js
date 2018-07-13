@@ -1,25 +1,45 @@
 // Created by liuliyuan on 2018/7/2
-import React,{Component} from 'react'
-import { Row, Card,message  } from 'antd';
+import * as React from 'react'
+import { Row, Card,message,Alert  } from 'antd';
 import DragSortTable from './DragSortingTable.r'
-import { getFields,request,setSelectFormat } from  'utils'
+import { getFields,request,setSelectFormat,getQueryString } from  'utils'
 
-class TabPane3 extends Component {
+class TabPane3 extends React.Component {
 
     state = {
         updateKey:Date.now(),
         loading: false,
+        siteLoading:false,
         submitLoading: false,
+        itemsId:getQueryString('items_id'),
         templateId:undefined,
         templateData:[],
-        dataSource:[],
+        copytoUserIdData:[],
+        dataList:[],
     }
 
+    componentDidMount() {
+
+        let action = [this.getFindByCompanyId()];
+        if(this.state.itemsId){
+            action.push(this.getFindUsersByItem(this.state.itemsId))
+        }
+        let pLoader = Promise.all(action);
+            pLoader.then(() => {
+                this.setState({
+                    loaded: true
+                });
+            }).catch( err => {
+                console.log(err);
+                message.error(`${err.message}`)
+            });
+
+    }
+
+    //获取审批模板
     getFindByCompanyId=()=>{
-        this.toggleLoading(true);
         request(`/adt/template/findByCompanyId`)
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
                         templateData:setSelectFormat(res.data, 'id'),
@@ -29,64 +49,81 @@ class TabPane3 extends Component {
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
 
-    getFindByTempId=(tempId)=>{
-        this.toggleLoading(true);
-        request(`/adt/template/findByTempId`,{
+    //获取抄送
+    getFindUsersByItem=(itemsId)=>{
+        request(`/biz/itemsroles/findUsersByItem`,{
             params:{
-                templateId:tempId
+                itemsId:itemsId
             }
         })
             .then(res => {
-                this.toggleLoading(false);
                 if(res.state === 'ok'){
                     this.setState({
-                        dataSource:res.data.nodeList,
+                        copytoUserIdData:setSelectFormat(res.data, 'userId','userName'),
                     })
                 } else {
                     return Promise.reject(res.message);
                 }
             })
             .catch(err => {
-                this.toggleLoading(false);
                 message.error(`${err.message}`)
             })
     }
 
+    //获取审批流
+    getFindByTempId=(tempId)=>{
+        this.toggleSiteLoading(true);
+        request(`/adt/template/findByTempId`,{
+            params:{
+                templateId:tempId,
+                itemsId:getQueryString('items_id')
+            }
+        })
+            .then(res => {
+                this.toggleSiteLoading(false);
+                if(res.state === 'ok'){
+                    this.setState({
+                        dataList:res.data.nodeList,
+                    })
+                } else {
+                    return Promise.reject(res.message);
+                }
+            })
+            .catch(err => {
+                this.toggleSiteLoading(false);
+                message.error(`${err.message}`)
+            })
+    }
 
-    toggleLoading = (loading) => {
+    toggleSiteLoading = (siteLoading) => {
         this.setState({
-            loading
+            siteLoading
         });
     }
 
-    componentDidMount() {
-        //判断是修改还是新增
-        this.getFindByCompanyId()
-    }
-
     render(){
-        const { updateKey, loading, templateData, dataSource,templateId } = this.state
+        const { loaded,siteLoading, templateData, copytoUserIdData, dataList,templateId } = this.state;
+        const { getFieldDecorator, getFieldError } = this.props.form;
+        const dataListError = getFieldError('dataList');
         return(
             <React.Fragment>
                     <Card
-                        key={updateKey}
                         bordered={false}
-                        loading={loading}
+                        loading={!loaded}
                         bodyStyle={{
                             paddingTop:0
                         }}
                     >
-                        <Row gutter={24} style={{ marginBottom: 12 }}>
+                        <Row gutter={24}>
                             {
                                 getFields(this.props.form, [
                                     {
                                         label:'审批模板',
-                                        fieldName:'model.templateId',
+                                        fieldName:'templateId',
                                         type:'select',
                                         span:8,
                                         options:templateData,
@@ -105,25 +142,46 @@ class TabPane3 extends Component {
                                                 this.setState({
                                                     templateId:value
                                                 })
-                                                this.getFindByTempId(value)
+                                                value !== '' && this.getFindByTempId(value)
                                             }
                                         },
                                     },{
                                         label:'抄送',
-                                        fieldName:'model.copytoUserId',
+                                        fieldName:'copytoUserId',
                                         type:'select',
                                         span:16,
-                                        options:[],
+                                        options:copytoUserIdData,
                                         componentProps:{
-                                            mode:'tags'
+                                            mode:'multiple'
                                         }
                                     },
 
                                 ])
                             }
                         </Row>
+                    </Card>
+                    <Card
+                        bordered={false}
+                        loading={siteLoading}
+                        bodyStyle={{
+                            paddingTop:0
+                        }}
+                    >
+                        <Row gutter={24}>
+                            {getFieldDecorator('dataList', {
+                                initialValue: dataList,
+                                rules:[
+                                    {
+                                        required:true,
+                                        message:'请选设置审批流'
+                                    }
+                                ]
+                            })(<DragSortTable form={this.props.form} />)}
+                            {
+                                dataListError ? <Alert key='errorMsg' message={dataListError.join(',')} type="error" /> : null
+                            }
+                        </Row>
 
-                        <DragSortTable form={this.props.form} dataSource={dataSource} />
                     </Card>
             </React.Fragment>
         )

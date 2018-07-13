@@ -57,6 +57,10 @@ export default class AsyncSelect extends Component{
         }
         this.onSearch = debounce(this.onSearch,300)
     }
+    mounted = true
+    componentWillUnmount(){
+        this.mounted=null;
+    }
     componentWillReceiveProps(nextProps){
         if(this.props.url !== nextProps.url){
             if(nextProps.fetchAble){
@@ -96,10 +100,6 @@ export default class AsyncSelect extends Component{
             .catch(err => {
                 message.error(err.message)
             })
-    }
-    mounted = true
-    componentWillUnmount(){
-        this.mounted=null;
     }
     onSearch = (value) => {
         const { selectOptions:{ showSearch }, customValues, searchType } = this.props;
@@ -146,10 +146,10 @@ export default class AsyncSelect extends Component{
     render(){
         const {dataSource,loaded}=this.state;
         const {getFieldDecorator} = this.props.form;
-        const {formItemStyle,fieldName,initialValues,fieldTextName,fieldValueName,label,selectOptions,decoratorOptions} = this.props;
+        const {formItemStyle,fieldName,initialValues,fieldTextName,fieldValueName,label,hideLabel,selectOptions,decoratorOptions} = this.props;
         return(
             <Spin spinning={!loaded}>
-                <FormItem label={label} {...formItemStyle}>
+                <FormItem label={ hideLabel !== true && label} {...formItemStyle}>
                     {getFieldDecorator(fieldName,{
                         initialValue: initialValues,
                         ...decoratorOptions

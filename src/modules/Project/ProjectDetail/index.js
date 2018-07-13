@@ -1,11 +1,9 @@
 // Created by Lee on 2018/7/5
-
 import React, { Component } from 'react';
 import { Row,message } from 'antd';
 import { request, getQueryString} from 'utils'
-import TabPane1 from '../TableForm/tab1'
-import TabPane2 from '../TableForm/tab2'
-
+import TabPane1 from './tab1'
+import TabPane2 from './tab2'
 import PropTypes from 'prop-types'
 import CustomizeStaticTabs from 'components/CustomizeStaticTabs'
 import Tableintabs from './tableInTabs'
@@ -21,15 +19,8 @@ class TableFormStepTwo extends Component{
             updateKey: Date.now(),
             tabsOneData:{},
             tabsTwoData:{},
-            tabsThirdData:{members:[
-                {
-                    id:'1111111111111',
-                    rolename:'本公司',
-                    roletype:'甲方人员',
-                    username:'二狗,三狗,四狗'
-                }
-            ]},
-
+            idArr:[],
+            allEditable:'',
         }
     }
 
@@ -42,32 +33,46 @@ class TableFormStepTwo extends Component{
             }
         }).then((data)=>{
             if(data.state === 'ok'){
+                console.log(data)
                 let model =  data.data.model;
                 let stages = data.data.stages;
                 let stages_options = [];
+                let idArr = [];
                 if(stages instanceof Array === true){
                     for(let i =0;i< stages.length;i++){
+                        let tax_type_obj = JSON.parse(stages[i].tax_type);
                         stages_options.push({
                             label:stages[i].stages_name,
-                            key:stages[i].stages_number,
-                            tax_type: stages[i].tax_type
+                            code:stages[i].stages_number,
+                            tax_type: tax_type_obj.label,
+                            tax_type_key: tax_type_obj.key,
+
+                            key: stages[i].id,
+                            editable:false,
+                            isNew:false,
                         })
+                        idArr.push(stages[i].id)
                     }
                 }
 
-
+                let tax_type_obj = JSON.parse(model.tax_type);
+                let status_obj = JSON.parse(model.status);
                 let dataSource = {
                     project_name: model.name,
                     project_simplename: model.simple_name,
                     project_id: model.number,
-                    tax_type: model.tax_type,
-                    status: model.status,
+                    tax_type: tax_type_obj.label,
+                    tax_type_key: tax_type_obj.key,
+                    status: status_obj.label,
+                    status_key: status_obj.key,
                     longitudeAndLatitude: model.longitude + ',' + model.latitude,
                     stages_options: stages_options
                 }
-
+                let allEditable = data.data.type;
                 this.setState({
-                    tabsTwoData: dataSource
+                    tabsTwoData: dataSource,
+                    idArr:idArr,
+                    allEditable:allEditable
                 })
             }
         }).catch(err => {
@@ -75,29 +80,7 @@ class TableFormStepTwo extends Component{
             message.error(err.message)
         })
 
-        //获取项目组织架构的
-        let urlThird = '/biz/itemsorganzation/findViewData';
-        request(urlThird,{
-            params:{
-                items_id:id,
-            }
-        }).then((data)=>{
-            console.log(data);
-            console.log('-------------')
-            if(data.state === 'ok'){
-                console.log(data);
-                let dataSource = {
 
-                }
-
-                this.setState({
-                    tabsThirdData: dataSource
-                })
-            }
-        }).catch(err => {
-                console.log(err)
-                message.error(err.message)
-        })
 
     }
 
@@ -108,7 +91,7 @@ class TableFormStepTwo extends Component{
         return (
             <React.Fragment>
 
-                <div style={{paddingTop:120,paddingLeft:60,height:60,}}>
+                <div className="ISA-fragment ISA-bgColor">
                     <span style={{ fontSize: 24, fontWeight:600 }}>{this.state.tabsTwoData.project_name}</span>
                 </div>
                 <Row>
@@ -126,7 +109,7 @@ class TableFormStepTwo extends Component{
                                     component:<TabPane1 data = {this.state.tabsTwoData}/>
                                 }, {
                                     title:'项目组织架构',
-                                    component:<TabPane2 data = {this.state.tabsThirdData} />
+                                    component:<TabPane2 edit={this.state.allEditable} idArr = {this.state.idArr}/>
                                 }
                             ]
                         }

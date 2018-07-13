@@ -35,8 +35,8 @@ const columns = [{
     render: (e) => {
         return (
         <div className="apply-form-list-th">
-            <p className="apply-form-list-p1">{e.Acompanyname}</p>
-            <p className="apply-form-list-p1">{e.Bcompanyname}</p>
+            <p className="apply-form-list-p1">{e.companyA}</p>
+            <p className="apply-form-list-p1">{e.companyB}</p>
         </div>
         )
     }
@@ -68,7 +68,8 @@ export default class TableForm extends PureComponent {
         type: 'radio',
       },
     };
-    return (
+      return (
+
     <React.Fragment>
       <Table rowKey={record => record.id} rowSelection={rowSelection} columns={columns} dataSource={value}/>
     </React.Fragment>

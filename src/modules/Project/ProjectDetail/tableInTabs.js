@@ -15,7 +15,7 @@ const getColumns = (context) => [
         render: (text, record) => (
             <div>
                 <p className="apply-form-list-p1">
-                    <Link to={ `/web?id=${record.number}`  }>
+                        <Link to={ `/web/project/projectDetail/contractDetail?id=${record.number}`  }>
                         {record.contract_name}
                     </Link>
                 </p >
@@ -69,6 +69,16 @@ class Tableintabs extends Component{
         }
     }
 
+    componentDidMount() {
+        //默认进来的时候key值是相同的，所以要手动刷新key值 获取数据
+        this.refreshTable()
+    }
+
+    refreshTable=()=>{
+        this.setState({
+            tableUpDateKey:Date.now()
+        })
+    }
 
 
     render(){
