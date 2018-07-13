@@ -25,20 +25,20 @@ const columns = (_this) => {
     return [
         {title: "审批节点", key: "seq", dataIndex: "seq"},
         {
-            title: "项目角色", key: "nodeName", dataIndex: "nodeName", render: (text, record) => {
+            title: "项目角色", key: "roleName", dataIndex: "roleName", render: (text, record) => {
                 const handleChange = (value) => {
-                    // changeState(record.key, "roleType", _this.state.roleType.filter(item => item.roleId === value)[0].roleType);
-                    // changeState(record.key, "roleId", _this.state.roleType.filter(item => item.roleId === value)[0].roleId);
                     let data = _this.state.data.map((item => ({...item})));
                     data[record.key - 1]["roleType"] = _this.state.roleType.filter(item => item.roleId === value)[0].roleType;
                     data[record.key - 1]["roleId"] = _this.state.roleType.filter(item => item.roleId === value)[0].roleId;
+                    data[record.key - 1]["roleName"] = _this.state.roleType.filter(item => item.roleId === value)[0].roleName;
+                    data[record.key - 1]["userName"] = "";
                     _this.setState({data});
                     _this.getTypeByRole(value);
                 };
                 return (
                 disable(record)
-                ? <span>{record.roleName}</span>
-                : <Select onChange={handleChange} defaultValue={record.roleType} style={{width: 120}}>
+                ? <span>{text}</span>
+                : <Select onChange={handleChange} defaultValue={record.roleName} style={{width: 120}}>
                     {
                         _this.state.roleType.map(item => {
                             return (
@@ -52,11 +52,20 @@ const columns = (_this) => {
         },
         {title: "角色类型", key: "roleType", dataIndex: "roleType"},
         {
-            title: "审批人员", key: "userId", dataIndex: "companyId", render: (text, record) => {
+            title: "审批人员", key: "userId", dataIndex: "userId", render: (text, record) => {
                 return (
                 disable(record)
                 ? <span>{record.userName}</span>
-                : <Select mode="multiple" placeholder="可选择多人" onChange={(e) => changeState(record.key, "userId", e)}
+                : <Select placeholder="可选择多人"
+                          value={record.userName}
+                          onChange={(e) => {
+                              let data = _this.state.data.map((item => ({...item})));
+                              data[record.key - 1]["userId"] = e;
+                              data[record.key - 1]["userName"] = _this.state.roleUser.filter(item => item.userId)[0].userName;
+
+                              _this.setState({data});
+                          }
+                          }
                           style={{width: 200}}>
                     {
                         _this.state.roleUser.map(item => {
@@ -75,7 +84,7 @@ const columns = (_this) => {
                     changeState(record.key, "isDelete", e.target.checked ? 1 : 0)
                 }
 
-                return <Checkbox onChange={onChange} defaultChecked={text} disabled={disable(record)}/>
+                return <Checkbox onChange={onChange} defaultChecked={text * 1} disabled={disable(record)}/>
             }
         },
         {
@@ -85,14 +94,14 @@ const columns = (_this) => {
             align: "center",
             render: (text, record) => {
                 return <Checkbox onChange={e => changeState(record.key, "isVisibleSchedule", e.target.checked ? 1 : 0)}
-                                 defaultChecked={text} disabled={disable(record)}/>
+                                 defaultChecked={text * 1} disabled={disable(record)}/>
             }
         },
         {
             title: "修改数据", key: "isUpdateData", dataIndex: "isUpdateData", align: "center", render: (text, record) => {
                 return <Checkbox
                 onChange={e => changeState(record.key, "isUpdateData", e.target.checked ? 1 : 0)}
-                defaultChecked={text} disabled={disable(record)}/>
+                defaultChecked={text * 1} disabled={disable(record)}/>
             }
         },
         {
@@ -145,21 +154,18 @@ class TemModal extends React.Component {
     getBillTypeSelect() {
         request("/bill/type/findBillType")
         .then(res => {
-            console.log(res);
             this.setState({
                 billType: setSelectFormat(res.data, "biztypeId", "biztypeName")
             })
         });
         request("/biz/items/findItemsByCompanyId")
         .then(res => {
-            console.log(res, "item");
             this.setState({
                 itemType: setSelectFormat(res.data, "itemsId", "itemsName")
             })
         })
         request("/biz/itemsroles/findRole")
         .then(res => {
-            console.log(res);
             this.setState({
                 roleType: res.data,
             })
@@ -182,14 +188,11 @@ class TemModal extends React.Component {
     }
 
     newMember = () => {
-        console.log(this.state);
         const newData = this.state.data.map(item => ({...item}));
         newData.push({
             key: `${(newData.length + 1)}`,
             seq: `${(newData.length + 1) * 10}`,
-            nodeName: '项目经理',
             roleId: "",
-            companyId: '张三',
             isDelete: 1,
             isVisibleSchedule: 1,
             isUpdateData: 1,
@@ -197,7 +200,7 @@ class TemModal extends React.Component {
             isNode: 0
         });
         this.index += 1;
-        this.setState({data: newData});
+        this.setState({data: newData, roleUser: []});
     };
 
     handleSubmit = (e) => {
@@ -223,10 +226,8 @@ class TemModal extends React.Component {
         } else {
             params.createList = this.state.data;
         }
-        console.log(params);
         request(API, {body: params, method: "POST"})
         .then(res => {
-            console.log(res);
             if (res.state === "ok") {
                 this.props.toggleModalVisible(false);
                 this.props.getList();
@@ -264,7 +265,7 @@ class TemModal extends React.Component {
         visible={props.visible}
         footer={
             <Row>
-                <Col span={12}></Col>
+                <Col span={12}/>
                 <Col span={12}>
                     <Button onClick={() => props.toggleModalVisible(false)}>取消</Button>
                     <Button type="primary" disabled={props.disabled} onClick={this.handleSubmit}>确定</Button>
@@ -408,7 +409,7 @@ class TemModal extends React.Component {
                 <Col span={8}>
                     <Checkbox onChange={v => {
                         this.setState({isNode: v.target.checked})
-                    }} checked={props.data.isAddNode}
+                    }} defaultChecked={props.data.isAddNode}
                               disabled={disabled}>允许子公司增加流程节点</Checkbox>
                 </Col>
             </Row>

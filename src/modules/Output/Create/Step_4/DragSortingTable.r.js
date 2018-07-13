@@ -191,7 +191,7 @@ class DragSortingTable extends React.Component {
         this.state = {
             updateKey: Date.now(),
             data: props.value,
-            itemsId: getQueryString('items_id'),
+            itemsId: this.props.projectId,
             roleNameOption: []
         }
     }
@@ -248,6 +248,7 @@ class DragSortingTable extends React.Component {
             }
         })
         .then(res => {
+            console.log(res);
             if (res.state === 'ok') {
                 this.mounted && this.setState({
                     roleNameOption: setSelectFormat(res.data, 'roleId', 'roleName'),

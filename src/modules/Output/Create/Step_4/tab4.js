@@ -6,6 +6,7 @@ import React, {Component} from 'react'
 import {Row, message, Card, Form, Alert} from 'antd';
 import DragSortTable from './DragSortingTable.r'
 import {getFields, getQueryString, request, setSelectFormat} from 'utils'
+import {withRouter} from "react-router-dom";
 
 class TabPane4 extends Component {
 
@@ -81,11 +82,13 @@ class TabPane4 extends Component {
     //获取审批流
     getFindByTempId = (tempId) => {
         this.toggleSiteLoading(true);
+        let params = {
+            templateId: tempId,
+            itemsId: this.props.location.state.project_id
+        };
+        console.log(params);
         request(`/adt/template/findByTempId`, {
-            params: {
-                templateId: tempId,
-                itemsId: getQueryString('items_id')
-            }
+            params
         })
         .then(res => {
             console.log(res);
@@ -181,7 +184,7 @@ class TabPane4 extends Component {
                                 message: '请选设置审批流'
                             }
                         ]
-                    })(<DragSortTable form={this.props.form}/>)}
+                    })(<DragSortTable form={this.props.form} projectId={this.props.location.state.project_id}/>)}
                     {
                         dataListError ? <Alert key='errorMsg' message={dataListError.join(',')} type="error"/> : null
                     }
@@ -193,4 +196,4 @@ class TabPane4 extends Component {
     }
 }
 
-export default Form.create()(TabPane4)
+export default Form.create()(withRouter(TabPane4))
