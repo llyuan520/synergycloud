@@ -9,28 +9,10 @@ export default class TableForms extends PureComponent {
         super(props);
 
         this.state = {
-            data: [], //props.value,
-            selectedRowKeys: props.selectedRowKeys || [],
-            //record:props.record || [],
+            data: props.data,
+            //selectedRowKeys: props.selectedRowKeys || [],
             loading: false,
         };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if(JSON.stringify(nextProps.record)!=='{}'){
-            //console.log(nextProps)
-            this.setState({
-                data:nextProps.record.newData
-            });
-        }else{
-            if ('value' in nextProps) {
-                this.setState({
-                    data:nextProps.value
-                });
-            }
-        }
-
-
     }
 
     getRowByKey(seq, newData) {
@@ -38,7 +20,6 @@ export default class TableForms extends PureComponent {
     }
 
     handleFieldChange(e, fieldName, seq) {
-        console.log(e.target.value);
         const newData = this.state.data.map(item => ({...item}));
         const target = this.getRowByKey(seq, newData);
         if (target) {
@@ -46,7 +27,7 @@ export default class TableForms extends PureComponent {
             this.setState({
                 data: newData
             });
-            this.props.onChange(newData);
+            //this.props.onChange(newData);
         }
     }
 
@@ -59,7 +40,7 @@ export default class TableForms extends PureComponent {
             this.setState({
                 data: newData
             });
-            this.props.onChange(newData);
+            //this.props.onChange(newData);
         }
     }
 
@@ -67,7 +48,6 @@ export default class TableForms extends PureComponent {
         const newData = this.state.data.map(item => ({...item}));
         const target = this.getRowByKey(seq, newData);
         if (target) {
-
             target[fieldName] = e.target.checked===true ? '1' : '0';
             if(e.target.checked === false){
                 target[fieldName2] = '';
@@ -75,7 +55,7 @@ export default class TableForms extends PureComponent {
             this.setState({
                 data: newData
             });
-            this.props.onChange(newData);
+            //this.props.onChange(newData);
         }
     }
 
@@ -83,8 +63,10 @@ export default class TableForms extends PureComponent {
         this.setState({ selectedRowKeys });
         this.props.setSelectedRowKeys && this.props.setSelectedRowKeys(selectedRowKeys)
     }
+
     render() {
         const { loading, selectedRowKeys } = this.state;
+        const { getFieldDecorator } = this.props.form;
         const columns = [
             {
                 title: '序号',
@@ -101,29 +83,50 @@ export default class TableForms extends PureComponent {
                 title: '但责单位',
                 dataIndex: 'is_accountability',
                 key: 'is_accountability',
-               //width: '300px',
+                //width: '300px',
                 render: (text, record) => {
-                    console.log(record.is_accountability)
+                    //console.log(record.seq)
                     return (
                         <Row gutter={24}>
                             <Col span={4}>
-                                <Checkbox
-                                    defaultChecked={record.is_accountability==='1'}
-                                    //checked={record.is_accountability==='1'}
-                                    //value={record.is_accountability==='1'}
-                                    onChange={e => this.handleCheckBoxChange(e, 'is_accountability', 'accountability_reason', record.seq)}
-                                />
+                                {
+                                    getFieldDecorator(`data[${record.seq}].is_accountability`, {
+                                        valuePropName: 'checked' ,
+                                        initialValue: record.is_accountability==='1',
+                                        rules: [
+                                            {
+                                                required: true,
+                                                message: ''
+                                            }
+                                        ]
+                                    })(
+                                        <Checkbox
+                                            onChange={e => this.handleCheckBoxChange(e, `is_accountability`, `accountability_reason`, record.seq)}
+                                        />
+                                    )
+                                }
+
                             </Col>
+
+
                             {
                                 record.is_accountability==='1' && <Col span={20}>
-                                    <Input
-                                        //id="accountability_reason"
-                                        defaultValue={record.accountability_reason}
-                                        //value={text}
-                                        //autoFocus
-                                        onChange={e => this.handleFieldChange(e, 'accountability_reason', record.seq)}
-                                        placeholder="但责单位描述"
-                                    />
+                                    {
+                                        getFieldDecorator(`data[${record.seq}].accountability_reason`, {
+                                            initialValue: record.accountability_reason,
+                                            rules: [
+                                                {
+                                                    required: true,
+                                                    message: '请输入但责单位描述'
+                                                }
+                                            ]
+                                        })(
+                                            <Input
+                                                onChange={e => this.handleFieldChange(e, `accountability_reason`, record.seq)}
+                                                placeholder="但责单位描述"
+                                            />
+                                        )
+                                    }
                                 </Col>
                             }
                         </Row>
@@ -137,11 +140,24 @@ export default class TableForms extends PureComponent {
                 //width: '300px',
                 render: (text, record) => {
                     return (
-                        <RangePicker
-                            defaultValue={ (record.planDateStart && [moment(record.planDateStart, 'YYYY-MM-DD'), moment(record.planDateEnd, 'YYYY-MM-DD')]) || [undefined,undefined] }
-                            //value={ record.planDateStart && [moment(record.planDateStart, 'YYYY-MM-DD'), moment(record.planDateEnd, 'YYYY-MM-DD')] }
-                            onChange={(date, dateString)=>this.handleRangePickerChange(date, dateString, 'planDate',record.seq)}
-                        />
+                        <span>
+                            {
+                                getFieldDecorator(`data[${record.seq}].planDate`, {
+                                    initialValue: (record.planDateStart && [moment(record.planDateStart, 'YYYY-MM-DD'), moment(record.planDateEnd, 'YYYY-MM-DD')]) || [undefined,undefined],
+                                    rules: [
+                                        {
+                                            required: true,
+                                            message: '请选择预计时间'
+                                        }
+                                    ]
+                                })(
+                                    <RangePicker
+                                        onChange={(date, dateString)=>this.handleRangePickerChange(date, dateString, `planDate`,record.seq)}
+                                    />
+                                )
+                            }
+                        </span>
+
                     );
                 },
             },
