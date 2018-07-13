@@ -162,7 +162,7 @@ const strToObjRouter = (search) => {
  * @param obj {object} 对象
  * fanzhe
  */
-const objToStrRouter = (obj) => {
+const objToStrRouter = (obj={}) => {
     let str = "?";
     if (typeof obj === "object") {
         for (let i in obj) {

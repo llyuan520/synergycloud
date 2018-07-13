@@ -32,13 +32,11 @@ class Step2 extends Component {
         console.log(this.save);
         e && e.preventDefault();
         const changeRouter = () => {
-            const {outputId, modelM} = this.state;
-            // is_synergy中0表示不是协同
+            const {outputId} = this.state;
             this.props.history.push({
                 pathname: '/web/output/create/present',
                 search: objToStrRouter(_.extend(strToObjRouter(this.props.location.search), {
                     outputId,
-                    is_synergy: modelM.is_synergy
                 })),
             })
         }
