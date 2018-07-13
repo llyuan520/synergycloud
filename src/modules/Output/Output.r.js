@@ -55,7 +55,6 @@ const getColumns = (context) => [
             search: objToStrRouter({
                 id: e.contract_id,
                 outputId: e.id,
-                outputStatus: e.output_status,
                 isOutput: 1
             })
         }}>{e.number}</Link>
