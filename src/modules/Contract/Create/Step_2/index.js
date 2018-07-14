@@ -8,13 +8,12 @@ import CustomizeTabs from "../../../../components/Tabs/index"
 import {Button, Form} from "antd";
 import TabPane1 from "../Step_1/tab1"
 import TabPane2 from "./tab2"
-import {objToStrRouter, strToObjRouter} from "../../../../utils";
-import _ from "lodash";
 
 class Step2 extends React.Component {
 
     handleSubmit = (e) => {
         e && e.preventDefault();
+        this.changeRouter();
         // save
     }
 
@@ -24,19 +23,14 @@ class Step2 extends React.Component {
     }
 
     changeRouter() {
-        const {outputId} = this.state;
         this.props.history.push({
-            pathname: '/web/output/create/present',
-            search: objToStrRouter(_.extend(strToObjRouter(this.props.location.search), {
-                outputId,
-            })),
+            pathname: '/web/contract/create/site',
         })
     };
 
     render() {
         return (
         <div>
-            1
             <React.Fragment>
                 <CustomizeTabs
                 defaultActiveKey='1'
@@ -44,23 +38,22 @@ class Step2 extends React.Component {
                     [
                         {
                             title: '产值单基本信息',
-                            component: <TabPane1 setData={this.setModel.bind(this)}/>
+                            component: <TabPane1/>
                         },
                         {
                             title: '形象进展',
-                            component: <TabPane2 setData={this.setData.bind(this)}/>
+                            component: <TabPane2/>
                         }
                     ]
                 }
                 stepsAction={
                     <div className="steps-action">
-                        <Button type="primary" onClick={this.handleSubmit}> 下一步 </Button>
+                        <Button type="primary" onClick={() => this.handleSubmit()}> 提交审批 </Button>
                         <Button style={{marginLeft: 8}} onClick={() => {
                             this.save()
                         }}> 保存 </Button>
                         <Button style={{marginLeft: 8}} onClick={() => this.props.history.push({
                             pathname: '/web/contract/create/write',
-                            // search: this.props.location.search
                         })
                         }> 上一步 </Button>
                     </div>
@@ -72,4 +65,4 @@ class Step2 extends React.Component {
     }
 }
 
-export default Form.create(Step2)
+export default Form.create()(Step2)

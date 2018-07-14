@@ -62,7 +62,7 @@ class Step3 extends React.Component {
                             <div className="steps-action">
                                 <Button type="primary" onClick={this.handleSubmit} > 提交 </Button>
                                 <Button style={{ marginLeft: 8 }} onClick={this.handleSave} > 保存 </Button>
-                                <Button style={{ marginLeft: 8 }} href={`/web/direct/create/assign?directId=${getQueryString('directId')}`} > 上一步 </Button>
+                                <Button style={{ marginLeft: 8 }} href="/web/contract/create/assign" > 上一步 </Button>
                             </div>
                         }
                     />
