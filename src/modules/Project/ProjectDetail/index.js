@@ -19,7 +19,8 @@ class TableFormStepTwo extends Component{
             updateKey: Date.now(),
             tabsOneData:{},
             tabsTwoData:{},
-            idArr:[]
+            idArr:[],
+            allEditable:'',
         }
     }
 
@@ -45,6 +46,7 @@ class TableFormStepTwo extends Component{
                             code:stages[i].stages_number,
                             tax_type: tax_type_obj.label,
                             tax_type_key: tax_type_obj.key,
+
                             key: stages[i].id,
                             editable:false,
                             isNew:false,
@@ -66,10 +68,11 @@ class TableFormStepTwo extends Component{
                     longitudeAndLatitude: model.longitude + ',' + model.latitude,
                     stages_options: stages_options
                 }
-
+                let allEditable = data.data.type;
                 this.setState({
                     tabsTwoData: dataSource,
-                    idArr:idArr
+                    idArr:idArr,
+                    allEditable:allEditable
                 })
             }
         }).catch(err => {
@@ -88,13 +91,13 @@ class TableFormStepTwo extends Component{
         return (
             <React.Fragment>
 
-                <div style={{paddingTop:120,paddingLeft:60,height:60,}}>
+                <div className="ISA-fragment ISA-bgColor">
                     <span style={{ fontSize: 24, fontWeight:600 }}>{this.state.tabsTwoData.project_name}</span>
                 </div>
                 <Row>
                     <CustomizeStaticTabs
                         title=""
-                        defaultActiveKey='1'
+                        defaultActiveKey='0'
                         tabPaneOptions={
                             [
                                 {
@@ -106,7 +109,7 @@ class TableFormStepTwo extends Component{
                                     component:<TabPane1 data = {this.state.tabsTwoData}/>
                                 }, {
                                     title:'项目组织架构',
-                                    component:<TabPane2 idArr = {this.state.idArr}/>
+                                    component:<TabPane2 edit={this.state.allEditable} idArr = {this.state.idArr}/>
                                 }
                             ]
                         }

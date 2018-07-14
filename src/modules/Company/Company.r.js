@@ -16,7 +16,10 @@ class Company extends Component{
     render(){
         return (
             <div style={{marginTop:64}}>
-                '你到这里来了啊啊'
+                <Row>
+                    '你到这里来了啊啊'
+
+                </Row>
 
             </div>
         )
