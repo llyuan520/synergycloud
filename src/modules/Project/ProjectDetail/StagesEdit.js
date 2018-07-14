@@ -35,6 +35,26 @@ class Stages extends Component {
     }
     index = 0;
     cacheOriginData = {};
+    clickEditHandler = (obj)=>{
+        for(let i =0;i< obj.username.length;i++){
+            for(let j = 0;j< obj.members_options.length;j++){
+                if(obj.username[i] === obj.members_options[j].key){
+                    obj.username[i] = obj.members_options[j].label
+                }
+            }
+        }
+    }
+
+    clickSaveHandler = (obj)=>{
+        for(let i =0;i< obj.username.length;i++){
+            for(let j = 0;j< obj.members_options.length;j++){
+                if(obj.username[i] === obj.members_options[j].label){
+                    obj.username[i] = obj.members_options[j].key
+                }
+            }
+        }
+    }
+
     toggleEditable = (e, key) => {
         e.preventDefault();
         const newData = this.state.data.map(item => ({ ...item }));
@@ -45,6 +65,8 @@ class Stages extends Component {
                 this.cacheOriginData[key] = { ...target };
             }
             target.editable = !target.editable;
+            this.clickEditHandler(target)
+            console.log(newData);
             this.setState({ data: newData });
         }
     };
@@ -85,7 +107,6 @@ class Stages extends Component {
             target[username] = [];
 
             this.getRoleTypeAndPerson(value, (data) => {
-                console.log(data);
                 target['role_type'] = data.role_type[0] || '';
                 target['role_type_key'] = data.role_type[1] || '';
                 target['members_options'] = setSelectFormat(data.person,'id','name');
@@ -111,7 +132,6 @@ class Stages extends Component {
                 return;
             }
             const target = this.getRowByKey(key) || {};
-            console.log(target.username);
             if (!target.role_type || !target.role_name || target.username.length === 0) {
                 message.error('请填写完整成员信息。');
                 e.target.focus();
@@ -123,6 +143,7 @@ class Stages extends Component {
             delete target.isNew;
             this.toggleEditable(e, key);
             this.props.onChange(this.state.data);
+            this.clickSaveHandler(target)
             this.setState({
                 loading: false,
             });
@@ -138,6 +159,7 @@ class Stages extends Component {
             target.editable = false;
             delete this.cacheOriginData[key];
         }
+        this.clickSaveHandler(target)
         this.setState({ data: newData });
         this.clickedCancel = false;
     }
@@ -173,10 +195,7 @@ class Stages extends Component {
                     if (record.editable) {
                         return (
                             <Select
-                                //labelInValue
-                                // defaultValue = {
-                                //     this.state.name_options.length>0 ?
-                                //         {label:this.state.name_options[0].label,key:this.state.name_options[0].key} : ''}
+                                defaultValue={ record.role_name || '' }
                                 onChange= {(e) => this.handleSelectChangeRole(e, 'role_name','username', record.key)}
                                 placeholder="请选择项目角色"
                                 style={{width:'100%'}} >
@@ -189,11 +208,10 @@ class Stages extends Component {
                         );
                     }
                     return (
-                        // this.state.name_options.map((item)=>{
-                        //     return record.role_name === item.key ? item.label : ''
-                        // })
-                        text
-                    );
+                        this.state.name_options.map((item)=>{
+                            return record.role_name === item.key ? item.label : ''
+                        })
+                    )
                 },
             },
             {
@@ -212,6 +230,7 @@ class Stages extends Component {
                         return (
                             <Select
                                 //labelInValue
+                                defaultValue={ record.username || []}
                                 value={text}
                                 mode="multiple"
                                 filterOption={(input, option) => option.props.children && option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}

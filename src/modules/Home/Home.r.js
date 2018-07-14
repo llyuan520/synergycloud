@@ -119,7 +119,7 @@ class Home extends Component {
     }
     //查询待我审核
     getStayApprovalCount=()=>{
-        request(`/adt/instance/StayApprovalCount`)
+        request(`/adt/instance/stayApprovalCount`)
             .then(res => {
                 if(res.state === 'ok'){
                     let result = res.data;

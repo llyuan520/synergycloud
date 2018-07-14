@@ -23,7 +23,6 @@ export default class TabPane2 extends Component {
 
         //编辑选中的初始数据
         record:{},
-        selectedRowKeys:[],
 
     }
 
@@ -37,7 +36,6 @@ export default class TabPane2 extends Component {
                         loaded: true
                     });
                 }).catch( err => {
-                    console.log(err);
                     message.error(`${err.message}`)
                 });
         }
@@ -49,6 +47,7 @@ export default class TabPane2 extends Component {
             initData: dataList
         })
     }
+
     toggleModalVisible=visible=>{
         this.setState({
             visible
@@ -70,15 +69,16 @@ export default class TabPane2 extends Component {
             selectedRowKeys
         })
     }
-    toggleEditable = (e, key) => {
+
+    /*toggleEditable = (e, key) => {
         e.preventDefault();
         let record = this.state.initData.filter(item => item.supplier_id.key === key)[0];
         this.setState({
-                record
+            record
         },()=>{
             this.showModal('edit')
         })
-    };
+    };*/
 
     remove(key) {
         let newData = this.state.initData.filter(item => item.supplier_id.key !== key);
@@ -223,7 +223,7 @@ const MapCard =props=>(
                 <Col span={8}>
                     <p style={{ textAlign:'right' }}>
                         <React.Fragment>
-                            <a onClick={e => props.context.toggleEditable(e, props.supplierId.key)} style={{ marginRight:10 }}>编辑</a>
+                            {/*<a onClick={e => props.context.toggleEditable(e, props.supplierId.key)} style={{ marginRight:10 }}>编辑</a>*/}
                             <Popconfirm title="是否要删除此行？" onConfirm={() => props.context.remove(props.supplierId.key)}>
                                 <a  style={{ color: '#F07060' }}>删除</a>
                             </Popconfirm>

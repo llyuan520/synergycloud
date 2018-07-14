@@ -39,6 +39,7 @@ class TableFormStepTwo extends Component{
                 let tmpMembers = []
                 for(let i =0; i< value[k].length;i++){
                     tmpMembers[i] = {
+                        organization_id: "",
                         itemsrole_id: value[k][i].role_name,
                         user_id: value[k][i].username.join(','),
                         role_type: value[k][i].role_type_key

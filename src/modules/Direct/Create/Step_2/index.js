@@ -29,8 +29,11 @@ class Step2 extends Component {
         e && e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+
+                console.log(values, this.state.data)
+
                 //判断是修改还是新增
-                if(this.state.directId){
+                /*if(this.state.directId){
                     values['directId'] = this.state.directId;
                 }
                 if(this.state.data.contract_id){
@@ -59,7 +62,7 @@ class Step2 extends Component {
 
                         this.toggleSubmitLoading(false);
                         message.error(`${err.message}`);
-                    });
+                    });*/
             }
         });
     }

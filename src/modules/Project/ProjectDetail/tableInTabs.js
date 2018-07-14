@@ -15,7 +15,7 @@ const getColumns = (context) => [
         render: (text, record) => (
             <div>
                 <p className="apply-form-list-p1">
-                    <Link to={ `/web/project/projectDetail/contractDetail?id=${record.number}`  }>
+                        <Link to={ `/web/project/projectDetail/contractDetail?id=${record.number}`  }>
                         {record.contract_name}
                     </Link>
                 </p >
