@@ -89,7 +89,6 @@ export default class AsyncSelect extends Component {
         this.toggleLoaded(false)
         request(url || this.props.url)
         .then((res) => {
-            console.log(res);
             if (res.state === 'ok' && this.mounted) {
                 this.toggleLoaded(true)
                 const result = res.data;
@@ -150,7 +149,6 @@ export default class AsyncSelect extends Component {
     // }
     render() {
         const {dataSource, loaded} = this.state;
-        console.log(dataSource);
         const {getFieldDecorator} = this.props.form;
         const {formItemStyle, fieldName, initialValues, fieldTextName, fieldValueName, label, hideLabel, selectOptions, decoratorOptions} = this.props;
         return (

@@ -5,7 +5,7 @@
 import React, {Component} from 'react'
 import {Row, message, Card, Form, Alert} from 'antd';
 import DragSortTable from './DragSortingTable.r'
-import {getFields, getQueryString, request, setSelectFormat} from 'utils'
+import {getFields, request, setSelectFormat} from 'utils'
 import {withRouter} from "react-router-dom";
 
 class TabPane4 extends Component {
@@ -15,7 +15,7 @@ class TabPane4 extends Component {
         loading: false,
         siteLoading: false,
         submitLoading: false,
-        itemsId: getQueryString('items_id'),
+        itemsId: this.props.location.state.project_id,
         templateId: undefined,
         templateData: [],
         copytoUserIdData: [],

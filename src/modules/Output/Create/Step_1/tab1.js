@@ -42,11 +42,17 @@ class TabPane1 extends React.Component {
                 outputName: setSelectFormat(result.InvoiceTypeEnum)
             })
         })
+        requestDict(`['com.moya.contract.enums.OutputTypeEnum']`, result => {
+            console.log(result);
+            this.setState({
+                outputType: setSelectFormat(result.OutputTypeEnum)
+            })
+        })
     }
 
 
     render() {
-        const {data, outputName} = this.state;
+        const {data, outputName, outputType} = this.state;
         return (
         <div className="container">
             <div className="editContent">
@@ -79,7 +85,12 @@ class TabPane1 extends React.Component {
                 <Row>
                     <Col span={12}>
                         <span className="span">产值类型：</span>
-                        <span className="item-text">{data.model.output_type}</span>
+                        <span
+                        className="item-text">{
+                            data.model.output_type
+                            && outputType
+                            && outputType.filter(item => item.key === (data.model.output_type + ""))[0].label
+                        }</span>
                     </Col>
                     <Col span={12}>
                         <span className="span">发票类型：</span>

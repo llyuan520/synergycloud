@@ -5,10 +5,9 @@
  * 由于数据过多，数据流较为复杂，所以就将这部分进行拆分组件层次，减少了一层组件套用。
  * 导致的问题是，该js文件中有大量代码冗余。很多地方可以进行对状态判断而封装不同功能的函数，
  * 目前赶进度，后期需要将该js进行重构。
- * 要注意的一点：要将所有的tab组件数据改变成从路由获取参数，自get接口数据。父组件传回调传值回流。
  */
 import React from 'react'
-import {DatePicker, Divider, Form} from 'antd';
+import {DatePicker, Divider, Form, Select} from 'antd';
 import {fMoney, getRouter, strToObjRouter} from "../../../../utils";
 import {Table, Input, Icon, Button} from 'antd';
 import './style.less';
@@ -19,19 +18,26 @@ import {withRouter} from "react-router-dom";
 
 const columnsDetails = [{
     title: '大类名称',
-    dataIndex: 'ticket_name',
-    key: 'ticket_name',
-    editable: true,
-}, {
-    title: '商品名称',
     dataIndex: 'countrygoodsname',
     key: 'countrygoodsname',
     editable: true,
+    type: "goodsName"
 }, {
-    title: '数量/单位',
+    title: '商品名称',
+    dataIndex: 'ticket_name',
+    key: 'ticket_name',
+    editable: true,
+    type: "ticketName"
+}, {
+    title: '数量',
     editable: true,
     key: "amounts",
     dataIndex: "amounts"
+}, {
+    title: '单位',
+    editable: true,
+    key: "unitname",
+    dataIndex: "unitname"
 }, {
     title: '单价',
     key: "price",
@@ -83,7 +89,6 @@ const columnsList = [{
     key: "fphm",
     dataIndex: "fphm",
     editable: true,
-    type: "price",
 }, {
     title: '不含税金额',
     key: "bhsje",
@@ -119,7 +124,6 @@ const columnsList = [{
     key: "fpzt",
     dataIndex: "fpzt",
     editable: true,
-    type: "price",
 },];
 
 
@@ -213,7 +217,30 @@ class TabPane3 extends React.Component {
                     />
                     ),
                 })
-            } else {
+            } else if (item.type === "goodsName") {
+                const options = this.state.data.map(d => <Option key={d.value}>{d.text}</Option>);
+                this.columns.push({
+                    title: item.title,
+                    dataIndex: item.dataIndex,
+                    render:(text, record)=>{
+                        return(
+                        <Select
+                        mode="combobox"
+                        value={text}
+                        defaultActiveFirstOption={false}
+                        filterOption={false}
+                        onChange={this.handleChange}
+                        >
+                            {options}
+                        </Select>
+                        )
+                    }
+                })
+
+            } else if (item.type === "ticketName") {
+
+            }
+            else {
                 this.columns.push({
                     title: item.title,
                     dataIndex: item.dataIndex,
@@ -274,15 +301,13 @@ class TabPane3 extends React.Component {
             API = "/con/output/getOutputProject";
             params = {output_id: _router.outputId}
         }
-        console.log(API, params);
         request(API, {params})
         .then((res => {
             console.log(res);
             let data = res.data;
-            data && data.datas.map((item, index) => {
-                return item.key = index;
+            data && data.datas.forEach((item, index) => {
+                item.key = index + 1;
             });
-            data.key = 1;
             console.log(data);
             this.setState({
                 dataSource: data.datas,
@@ -302,7 +327,7 @@ class TabPane3 extends React.Component {
             _.map(res.data.datas, item => {
                 dataListCount = dataListCount + item.tax_amounts
             });
-            console.log(dataListCount);
+            res.data.datas.forEach((item, index) => item.key = index);
             this.setState({
                 dataList: res.data.datas,
                 dataListCount
@@ -335,7 +360,7 @@ class TabPane3 extends React.Component {
                 target[dataIndex] = value;
                 let dataListCount = 0;
                 dataList.forEach(item => {
-                    dataListCount = dataListCount + item.tax_amounts * 1
+                    dataListCount = dataListCount + item.hsje * 1
                 });
                 this.setState({dataList, dataListCount});
                 this.props.setInvoice(dataList, dataListCount)
@@ -353,11 +378,29 @@ class TabPane3 extends React.Component {
         }
     }
 
-    onDelete(key) {
+    handleDelete = () => {
+        const {key} = this.state;
+        let dataSource = _.cloneDeep(this.state.dataSource);
+        key.sort().reverse().forEach(item => {
+            console.log(item);
+            this.onDelete(item, dataSource);
+        })
+    }
+    handleDeleteList = () => {
+        const {keyList} = this.state;
+        let dataList = _.cloneDeep(this.state.dataList);
+        keyList.sort().reverse().forEach(item => {
+            this.onDeleteList(item, dataList);
+        })
+    }
+
+    onDelete(key, data) {
         key = key + '';
-        let dataSource = [];
-        _.map(this.state.dataSource, item => {
-            item.key = key && dataSource.pop(item)
+        let dataSource = data;
+        dataSource.forEach((item, index) => {
+            if ((item.key + "") === key) {
+                delete dataSource[index]
+            }
         });
         let dataSourceCount = 0;
         dataSource.forEach(item => {
@@ -367,24 +410,42 @@ class TabPane3 extends React.Component {
         this.props.setOutput && this.props.setOutput(dataSource, dataSourceCount)
     }
 
-    onDeleteList(key) {
+    onDeleteList(key, data) {
         key = key + '';
-        let dataList = [];
-        _.map(this.state.dataList, item => {
-            item.key = key && dataList.pop(item)
+        let dataList = data;
+        _.map(dataList, item => {
+            (item.key + "") === key && dataList.pop(item)
         });
         let dataListCount = 0;
         dataList.forEach(item => {
-            dataListCount = dataListCount + item.tax_amounts * 1
+            dataListCount = dataListCount + item.hsje * 1
         });
         this.setState({dataList, dataListCount});
         this.props.setInvoice && this.props.setInvoice(dataList, dataListCount)
     }
 
+    onSelectChange = (selectedRowKeys, row) => {
+        let key = [];
+        row.forEach(item => {
+            key.push(item.key)
+        });
+        this.setState({selectedRowKeys, key});
+    }
+
+    onSelectChangeList = (selectedRowKeysList, row) => {
+        let keyList = [];
+        row.forEach(item => {
+            keyList.push(item.key)
+        });
+        this.setState({selectedRowKeysList}, keyList);
+    }
+
+
     handleAdd = () => {
         const {count} = this.state;
         const dataSource = this.state.dataSource || [];
         const newData = {
+            key: count,
             ticket_name: "大类名称" + count,
             countrygoodsname: '商品名称',
             amounts: '1',
@@ -410,48 +471,30 @@ class TabPane3 extends React.Component {
     handleAddList = () => {
         const {dataList, countList} = this.state;
         const newData = {
-            invoice_code: "发票代码" + countList,
-            invoice_number: '发票号码' + countList,
-            make_invoicedate: '2018-07-10',
-            rate: '0.1',
-            notax_amounts: '0',
-            tax: '0',
-            tax_amounts: '0',
-            invoice_status: '0',
+            key: countList,
+            fpxlh: "发票代码" + countList,
+            fplx: '发票类型' + countList,
+            jsdh: '结算单号',
+            fpdm: '发票代码',
+            fphm: '发票号码',
+            bhsje: '0',
+            sl: '0',
+            se: '0',
+            hsje: '0',
+            fpkprq: '开票日期',
+            fpzt: '发票状态',
         };
         let dataListCount = 0;
         dataList.forEach(item => {
-            dataListCount = dataListCount + item.tax_amounts * 1
+            dataListCount = dataListCount + item.hsje * 1
         });
         this.setState({
             dataList: [...dataList, newData],
-            countList: countList + 1
+            countList: countList + 1,
+            dataListCount
         }, () => {
             this.props.setInvoice && this.props.setInvoice(dataList, countList)
         });
-    }
-
-    handleDelete = () => {
-        const {selectedRowKeys} = this.state;
-        selectedRowKeys.sort().reverse().forEach(item => {
-            console.log(item);
-            this.onDelete(item);
-        })
-    }
-    handleDeleteList = () => {
-        const {selectedRowKeysList} = this.state;
-        selectedRowKeysList.sort().reverse().forEach(item => {
-            this.onDeleteList(item);
-        })
-    }
-
-    onSelectChange = (selectedRowKeys) => {
-        this.setState({selectedRowKeys});
-    }
-
-    onSelectChangeList = (selectedRowKeysList) => {
-        console.log(selectedRowKeysList);
-        this.setState({selectedRowKeysList});
     }
 
 
@@ -475,7 +518,6 @@ class TabPane3 extends React.Component {
         };
         const hasSelected = selectedRowKeys.length > 0;
         const hasSelectedList = selectedRowKeysList.length > 0;
-        console.log(dataSource, dataList);
         return (
         <div>
             <div className="m10">

@@ -5,8 +5,7 @@
 import React, {Component} from 'react';
 import {Button, Modal, Form, Row, Col, Divider, message} from 'antd';
 import './styles.less'
-import {fMoney, getFields} from "../../../../../utils";
-import request from "../../../../../utils/request";
+import {fMoney, request, getFields, requestDict, setSelectFormat} from "utils";
 import {withRouter} from "react-router-dom";
 
 
@@ -68,6 +67,12 @@ class PopModal extends Component {
                 state: {outputId: res.data.res}
             })
         })
+        requestDict(`['com.moya.contract.enums.InvoiceTypeEnum']`, result => {
+            console.log(setSelectFormat(result.InvoiceTypeEnum));
+            this.setState({
+                outputName: setSelectFormat(result.InvoiceTypeEnum)
+            })
+        })
     }
 
 
@@ -88,7 +93,7 @@ class PopModal extends Component {
                     }
                 })
             })
-        }),1000)
+        }), 1000)
     }
 
     chooseUser(e) {
@@ -101,12 +106,24 @@ class PopModal extends Component {
     componentDidMount() {
         this.getModel();
         this.getConName();
+        requestDict(`['com.moya.contract.enums.OutputTypeEnum']`, result => {
+            console.log(result);
+            this.setState({
+                outputType: setSelectFormat(result.OutputTypeEnum)
+            })
+        })
+        requestDict(`['com.moya.contract.enums.InvoiceTypeEnum']`, result => {
+            console.log(setSelectFormat(result.InvoiceTypeEnum));
+            this.setState({
+                outputName: setSelectFormat(result.InvoiceTypeEnum)
+            })
+        })
     }
 
     render() {
         const props = this.props;
         const {form} = props;
-        const {data, conName} = this.state;
+        const {data, conName, outputType, outputName} = this.state;
         console.log(data);
         return (
         <Modal
@@ -156,12 +173,19 @@ class PopModal extends Component {
                     <Row>
                         <Col span={12}>
                             <span className="span">产值类型：</span>
-                            <span className="item-text">{data.model.output_type}</span>
+                            <span className="item-text">{data.model.output_type
+                            && outputType
+                            && outputType.filter(item => item.key === (data.model.output_type + ""))[0].label
+                            }</span>
                         </Col>
                         <Col span={12}>
                             <span className="span">发票类型：</span>
                             {/*{data.model.invoicetype}*/}
-                            <span className="item-text">{data.model.invoice_type}</span>
+                            <span className="item-text">{
+                                data.model.invoice_type
+                                && outputName
+                                && outputName.filter(item => item.key === (data.model.invoice_type + ""))[0].label
+                            }</span>
                         </Col>
                     </Row>
                 </div>

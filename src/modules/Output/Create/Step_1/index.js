@@ -54,15 +54,18 @@ class Step1 extends Component {
 
     getList() {
         let params = this.state.query;
+
+        // console.log(this.props.form.getFieldsValue());
+        _.extend(this.state.query, {page: this.state.page},this.props.form.getFieldsValue());
         for (let i in params) {
             if (!params[i]) {
                 delete params[i]
             }
         }
-        _.extend(this.state.query, {page: this.state.page});
+        console.log(params);
         request('/con/contract/findListData', {params})
         .then(res => {
-            console.log(res);
+            // console.log(res);
             this.setState({
                 tableData: res.data,
                 count: res.count
@@ -79,8 +82,7 @@ class Step1 extends Component {
 
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
-        const {disabled, tableData, conNum, statusData} = this.state;
-        let itime;
+        const {disabled, tableData, statusData} = this.state;
         return (
         <React.Fragment>
             <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
@@ -92,7 +94,7 @@ class Step1 extends Component {
                                 getFields(form, [
                                     {
                                         label: '合同名称',
-                                        fieldName: 'outputnumber',
+                                        fieldName: 'contract_id1',
                                         type: 'asyncSelect',
                                         span: 8,
                                         componentProps: {
@@ -113,7 +115,7 @@ class Step1 extends Component {
                                         }
                                     }, {
                                         label: '合同编号',
-                                        fieldName: 'outputNum',
+                                        fieldName: 'contract_id2',
                                         type: 'asyncSelect',
                                         span: 8,
                                         componentProps: {
@@ -135,7 +137,7 @@ class Step1 extends Component {
                                     },
                                     {
                                         label: '合同状态：',
-                                        fieldName: 'type',
+                                        fieldName: 'status',
                                         type: 'select',
                                         span: 8,
                                         options: [{label: '全部', key: ''}].concat(statusData),
@@ -158,13 +160,13 @@ class Step1 extends Component {
                             {
                                 getFields(form, [{
                                     label: '选择企业',
-                                    fieldName: 'supplier',
+                                    fieldName: 'company_id',
                                     type: 'companyName',
                                     span: 8,
                                     formItemStyle: null,
                                 }, {
                                     label: '选择项目',
-                                    fieldName: 'project',
+                                    fieldName: 'items_id',
                                     type: 'asyncSelect',
                                     span: 8,
                                     formItemStyle: null,
