@@ -8,7 +8,7 @@
  */
 import React from 'react'
 import {DatePicker, Divider, Form, Select} from 'antd';
-import {fMoney, getRouter, strToObjRouter} from "../../../../utils";
+import {fMoney, strToObjRouter} from "../../../../utils";
 import {Table, Input, Icon, Button} from 'antd';
 import './style.less';
 import moment from 'moment';
@@ -222,7 +222,7 @@ class TabPane3 extends React.Component {
                 this.columns.push({
                     title: item.title,
                     dataIndex: item.dataIndex,
-                    render:(text, record)=>{
+                    render:(text)=>{
                         return(
                         <Select
                         mode="combobox"

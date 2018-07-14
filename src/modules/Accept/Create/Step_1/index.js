@@ -39,7 +39,7 @@ class Step1 extends React.Component {
             <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
                 <div className="advancedForm">
                     <Card>
-                        <h4>选择要发起合同结算的合同</h4>
+                        <h4>选择要发起竣工验收的合同</h4>
                         <Row gutter={24} className='content-flex-end'>
                             {
                                 getFields(form, [
@@ -141,6 +141,10 @@ class Step1 extends React.Component {
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
                             })(<TableForm form={this.props.form}
+                                          pageChange={(page) => {
+                                              this.setState({page}, () => this.getList())
+                                          }}
+                                          total={this.state.count}
                                           next={(e) => this.setState({
                                               disabled: false,
                                               id: e[0].id,
@@ -149,7 +153,7 @@ class Step1 extends React.Component {
                         </Row>
                     </Card>
                 </div>
-                <div>
+                <div className="steps-action">
                     <Button type="primary" onClick={this.handleSubmit} disabled={disabled}> 下一步</Button>
                 </div>
             </Form>

@@ -11,102 +11,40 @@ import './styles.less'
 
 const fieldsData = (context) => [
     {
-        label:'项目名称',
-        fieldName:'name',
-        type:'input',
-        span:6,
-        fieldDecoratorOptions:{
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目名称'
-                }
-            ]
-        },
-    }, {
-        label:'状态',
-        fieldName:'status',
-        type:'select',
-        span:6,
-        options:[{label:'全部', key:''}].concat(context.state.statusData),
-        fieldDecoratorOptions:{
-            initialValue: {label:'全部', key:''},
-            rules:[
-                {
-                    required:true,
-                    message:'请输入项目代码'
-                }
-            ]
+        label: '合同编号',
+        fieldName: 'contractnumber',
+        type: 'input',
+        span: 6,
+    },
+    {
+        label: '经办状态',
+        fieldName: 'flag',
+        type: 'select',
+        span: 6,
+        options: [{label: '全部', key: ''}, {label: '由我经办', key: 1}, {label: '不由我经办', key: 0}],
+        fieldDecoratorOptions: {
+            initialValue: "",
         },
         componentProps: {
-            labelInValue:true,
+            // labelInValue: true,
         },
 
-    }, {
-        label:'项目代码',
-        fieldName:'code',
-        type:'input',
-        span:8,
-    },{
-        label:'项目名称1',
-        fieldName:'projectName1',
-        type:'input',
-        span:8,
-    }, {
-        label:'状态1',
-        fieldName:'status1',
-        type:'select',
-        span:8,
-        options:[
-            {
-                label:'全部',
-                key:'all'
-            },
-            {
-                label:'我方股东',
-                key:'1'
-            },
-            {
-                label:'他方股东',
-                key:'2'
-            }
-        ],
-        componentProps: {
-            labelInValue:true,
-        },
-    }, {
-        label:'项目代码1',
-        fieldName:'code1',
-        type:'input',
-        span:8,
-    },{
-        label:'项目名称2',
-        fieldName:'projectName2',
-        type:'input',
-        span:8,
-    }, {
-        label: '状态2',
-        fieldName: 'status2',
+    },
+    {
+        label: '状态',
+        fieldName: 'status',
         type: 'select',
-        span:8,
-        options: [
-            {
-                label: '全部',
-                key: 'all'
-            },
-            {
-                label: '我方股东',
-                key: '1'
-            },
-            {
-                label: '他方股东',
-                key: '2'
-            }
-        ],
-        componentProps: {
-            labelInValue: true,
+        span: 6,
+        options: [{label: '全部', key: ''}].concat(context.state.statusData),
+        fieldDecoratorOptions: {
+            initialValue: "",
         },
-    }
+        componentProps: {
+            // labelInValue: true,
+        },
+
+    },
+
 ]
 
 const getColumns =(context)=>[

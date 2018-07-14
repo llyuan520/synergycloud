@@ -128,7 +128,7 @@ class Step3 extends React.Component {
                 ]
             }
             stepsAction={
-                (getRouter(this).outputStatus && getRouter(this).outputStatus * 1 === 0) || getRouter(this).outputStatus === undefined &&
+                (((getRouter(this).outputStatus && getRouter(this).outputStatus * 1 === 0)) || getRouter(this).outputStatus === undefined) &&
                 <div className="steps-action">
                     <Button type="primary"
                             onClick={() => this.handleSave()}> 下一步 </Button>

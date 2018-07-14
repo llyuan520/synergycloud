@@ -4,7 +4,7 @@ import {Table, Popconfirm, Button, Select, message} from 'antd';
 import {DragDropContext, DragSource, DropTarget} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import {request, getQueryString, setSelectFormat} from 'utils'
+import {request, setSelectFormat} from 'utils'
 import './styles.less'
 
 

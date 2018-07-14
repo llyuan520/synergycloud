@@ -1,11 +1,11 @@
 // Created by liuliyuan on 2018/6/30
 import React,{Component} from 'react'
 import {withRouter} from 'react-router-dom'
-import { Form,Button,message} from 'antd';
+import { Form,Button} from 'antd';
 import CustomizeTabs from '../../../../components/Tabs/index'
 import TabPane1 from '../Step_1/tab1'
 import TabPane2 from './tab2'
-import { request,getQueryString } from  'utils'
+import { getQueryString } from  'utils'
 
 class Step2 extends Component {
     state={

@@ -212,9 +212,6 @@ class PopModal extends Component{
             //no default
         }
 
-        const { form } = this.props;
-        const { getFieldDecorator } = form;
-
         return(
             <Modal
                 maskClosable={false}
