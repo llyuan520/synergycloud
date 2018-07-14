@@ -19,6 +19,8 @@ import Contract from "./Contract";
 import ContractCreate from "./Contract/Create";
 import TemList from "./Template"
 import ProjectDetail from "./Project/ProjectDetail"
+import ContractDetail from "./Project/ContractDetail"
+import Company from "./Company"
 
 const routes = [
     {
@@ -41,22 +43,27 @@ const routes = [
         path: '/web/direct/cost',
         component: wrapPage('合同履约协同平台 – 成本测算', CostMeasure),
         name: '成本测算',
+        exact: true,
     }, {
         path: '/web/direct/send',
         component: wrapPage('合同履约协同平台 – 下发指令', SendDirect),
         name: '下发指令',
+        exact: true,
     }, {
         path: '/web/direct/sign',
         component: wrapPage('合同履约协同平台 – 签收指令', SignDirect),
         name: '签收指令',
+        exact: true,
     }, {
         path: '/web/direct/complete',
         component: wrapPage('合同履约协同平台 – 完工确认', CompleteConfirm),
         name: '完工确认',
+        exact: true,
     }, {
         path: '/web/direct/change',
         component: wrapPage('合同履约协同平台 – 变更结算', ChangeSettleAccounts),
         name: '变更结算',
+        exact: true,
     }, {
         path: '/web/output',
         name: '产值单',
@@ -87,9 +94,8 @@ const routes = [
     },
     {
         path: '/web/contract/create',
-        name: '合同结算单',
-        component: wrapPage('合同履约协同平台 – 合同结算单', ContractCreate),
-        exact: true,
+        name: '新建合同结算单',
+        component: wrapPage('合同履约协同平台 – 新建合同结算单', ContractCreate),
     }, {
         path: '/web/project',
         component: wrapPage('合同履约协同平台 – 项目管理', Project),
@@ -112,10 +118,21 @@ const routes = [
         name: '审批模板',
         exact: true,
     }, {
-        path:'/web/project/projectDetail',
-        component:wrapPage('合同履约协同平台 – 项目详情', ProjectDetail),
-        name:'项目详情',
+        path: '/web/project/projectDetail',
+        component: wrapPage('合同履约协同平台 – 项目详情', ProjectDetail),
+        name: '项目详情',
+        exact: true,
+    }, {
+        path:'/web/project/projectDetail/contractDetail',
+        component:wrapPage('合同履约协同平台 – 合同详情', ContractDetail),
+        name:'合同详情',
         exact:true,
+    }, {
+        path:'/web/company',
+        component:wrapPage('合同履约协同平台 - 企业管理', Company),
+        name: '企业管理',
+        // icon: 'api',
+        exact: true,
     }, {
         path: '/403',
         component: wrapPage('403', () => import('./Exception/403')),

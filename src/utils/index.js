@@ -14,8 +14,10 @@ const fMoney = (s, n = 2) => {
         return '';
     }
     n = n > 0 && n <= 20 ? n : 2;
-    /**添加一下代码 大数字用parseFloat不精确 */
-    s = s.toString().replace(/[^\d\\.-]/g, "");
+    if (s) {
+        /**添加一下代码 大数字用parseFloat不精确 */
+        s = s.toString().replace(/[^\d\\.-]/g, "");
+    }
     try {
         return (new BigNumber(s)).toFormat(n);
     } catch (e) {
@@ -56,7 +58,7 @@ const requestDict = async (type, callback) => {
 }
 
 //设置select值名不同
-const setSelectFormat = (data,name='value',value='name') => {
+const setSelectFormat = (data, name = 'value', value = 'name') => {
     if (data === undefined) {
         return []
     } else {
@@ -130,9 +132,50 @@ const getSelectFormat = (data, t) => {
  * 判断是否为空
  * @param val {string} 字符串
  */
-const isEmpty = val=> {
+const isEmpty = val => {
     return val === null || val === undefined || val.trim() === ''
 }
+
+
+/**
+ * 将路由的search传入，返回路由对象。类似Vue-router中的param
+ * @param search {string} 字符串
+ * fanzhe
+ */
+const strToObjRouter = (search) => {
+    const _sea = search.split("?")[1];
+    if (_sea) {
+        const arr = _sea.split("&");
+        let obj = {};
+        arr.forEach(item => {
+            const _itemArr = item.split("=");
+            if (_itemArr[1]) {
+                obj[_itemArr[0]] = _itemArr[1];
+            }
+        });
+        return obj;
+    }
+};
+/**
+ * 将改变后的路由search对象传入，再转化为字符串映射到路由的search。
+ * @param obj {object} 对象
+ * fanzhe
+ */
+const objToStrRouter = (obj={}) => {
+    let str = "?";
+    if (typeof obj === "object") {
+        for (let i in obj) {
+            str = str + i + "=" + obj[i] + "&"
+        }
+    }
+    return str
+};
+
+const getRouter = (_this) => {
+    return strToObjRouter(_this.props.location.search)
+}
+
+
 export {
     request,
     composeMenus,
@@ -144,5 +187,8 @@ export {
     setSelectFormat,
     getSelectFormat,
     parseJsonToParams,
-    isEmpty
+    isEmpty,
+    strToObjRouter,
+    objToStrRouter,
+    getRouter
 }

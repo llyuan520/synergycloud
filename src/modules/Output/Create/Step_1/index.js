@@ -9,6 +9,7 @@ import {getFields} from 'utils'
 import {requestDict, request, setSelectFormat} from 'utils'
 import TableForm from './TableForm.r';
 import _ from "lodash"
+import {objToStrRouter} from "../../../../utils";
 
 
 class Step1 extends Component {
@@ -24,15 +25,20 @@ class Step1 extends Component {
             outputnumber: '',
             status: '',
             itemsname: ''
-        }
+        },
+        page: 1
     }
 
     handleSubmit = (e) => {
         e && e.preventDefault();
         this.props.form.validateFields((err) => {
-            console.log(this.state.id);
+            const {is_submission, id} = this.state;
+            // 这里将是否为收货记录用一个is_submission字段保存在路由中，可以在页面去调用
             if (err) return;
-            this.props.history.push({pathname: '/web/output/create/fill', search: `?id=${this.state.id}`})
+            this.props.history.push({
+                pathname: '/web/output/create/fill',
+                search: objToStrRouter({id, is_submission})
+            })
         });
     }
 
@@ -45,23 +51,6 @@ class Step1 extends Component {
         })
     }
 
-    getConName(contractname) {
-        request("/con/contract/getContractByName", {params: {contractname}})
-        .then(res => {
-            this.setState({
-                contractname: setSelectFormat(res.data.contract)
-            })
-        })
-    }
-
-    getConNum(contractnumber) {
-        request("/con/contract/getContractByNumber", {params: {contractnumber}})
-        .then(res => {
-            this.setState({
-                contractnumber: setSelectFormat(res.data.contract)
-            })
-        })
-    }
 
     getList() {
         let params = this.state.query;
@@ -70,8 +59,10 @@ class Step1 extends Component {
                 delete params[i]
             }
         }
+        _.extend(this.state.query, {page: this.state.page});
         request('/con/contract/findListData', {params})
         .then(res => {
+            console.log(res);
             this.setState({
                 tableData: res.data,
                 count: res.count
@@ -88,59 +79,60 @@ class Step1 extends Component {
 
         const {form} = this.props;
         const {getFieldDecorator, getFieldValue} = form;
-        const {disabled, tableData, conName, conNum, statusData} = this.state;
+        const {disabled, tableData, conNum, statusData} = this.state;
+        let itime;
         return (
         <React.Fragment>
             <Form onSubmit={this.handleSubmit} layout="vertical" hideRequiredMark>
                 <div className="advancedForm">
                     <Card>
                         <p>合同列表</p>
-                        <Row gutter={24}>
+                        <Row gutter={24} className='content-flex-end'>
                             {
-                                getFields(form, [{
-                                    label: '合同名称：',
-                                    fieldName: 'number',
-                                    type: 'select',
-                                    span: 8,
-                                    options: [{label: '全部', key: ''}].concat(conName),
-                                    fieldDecoratorOptions: {
-                                        initialValue: {label: '全部', key: ''},
-                                    },
-                                    componentProps: {
-                                        labelInValue: true,
-                                        showSearch: true,
-                                        onSearch: (e) => {
-                                            this.getConName(e);
+                                getFields(form, [
+                                    {
+                                        label: '合同名称',
+                                        fieldName: 'outputnumber',
+                                        type: 'asyncSelect',
+                                        span: 8,
+                                        componentProps: {
+                                            fieldTextName: 'contract_name',
+                                            fieldValueName: 'id',
+                                            doNotFetchDidMount: false,
+                                            notShowAll: true,
+                                            url: `/con/contract/getContractByName`,
+                                            selectOptions: {
+                                                // onChange:this.handleCompanyChange,
+                                                defaultActiveFirstOption: true,
+                                                showSearch: true,
+                                                optionFilterProp: 'children',
+                                            },
                                         },
-                                        onSelect: (e) => {
-                                            this.setState({
-                                                query: _.extend(this.state.query, {itemsname: e})
-                                            })
+                                        fieldDecoratorOptions: {
+                                            //initialValue: this.props.areaId
+                                        }
+                                    }, {
+                                        label: '合同编号',
+                                        fieldName: 'outputNum',
+                                        type: 'asyncSelect',
+                                        span: 8,
+                                        componentProps: {
+                                            fieldTextName: 'number',
+                                            fieldValueName: 'id',
+                                            doNotFetchDidMount: false,
+                                            notShowAll: true,
+                                            url: `/con/contract/getContractByNumber`,
+                                            selectOptions: {
+                                                // onChange:this.handleCompanyChange,
+                                                defaultActiveFirstOption: true,
+                                                showSearch: true,
+                                                optionFilterProp: 'children',
+                                            },
+                                        },
+                                        fieldDecoratorOptions: {
+                                            //initialValue: this.props.areaId
                                         }
                                     },
-                                }, {
-                                    label: '合同编号：',
-                                    fieldName: 'type',
-                                    type: 'select',
-                                    span: 8,
-                                    options: [{label: '全部', key: ''}].concat(conNum),
-                                    fieldDecoratorOptions: {
-                                        initialValue: {label: '全部', key: ''},
-                                    },
-                                    componentProps: {
-                                        labelInValue: true,
-                                        showSearch: true,
-                                        onSearch: (e) => {
-                                            this.getConNum(e);
-                                        },
-                                        onSelect: (e) => {
-                                            this.setState({
-                                                query: _.extend(this.state.query, {outputnumber: e})
-                                            })
-                                        }
-                                    },
-                                },
-
                                     {
                                         label: '合同状态：',
                                         fieldName: 'type',
@@ -148,10 +140,9 @@ class Step1 extends Component {
                                         span: 8,
                                         options: [{label: '全部', key: ''}].concat(statusData),
                                         fieldDecoratorOptions: {
-                                            initialValue: {label: '全部', key: ''},
+                                            initialValue: "",
                                         },
                                         componentProps: {
-                                            labelInValue: true,
                                             onSelect: (e) => {
                                                 this.setState({
                                                     query: _.extend(this.state.query, {status: e})
@@ -197,7 +188,15 @@ class Step1 extends Component {
                             {getFieldDecorator('members', {
                                 initialValue: tableData,
                             })(<TableForm form={this.props.form}
-                                          next={(e) => this.setState({disabled: false, id: e[0].id})}/>)}
+                                          pageChange={(page) => {
+                                              this.setState({page}, () => this.getList())
+                                          }}
+                                          total={this.state.count}
+                                          next={(e) => this.setState({
+                                              disabled: false,
+                                              id: e[0].id,
+                                              is_submission: e[0].is_submission
+                                          })}/>)}
                         </Row>
                     </Card>
                 </div>

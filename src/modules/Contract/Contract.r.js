@@ -174,9 +174,9 @@ class Contract extends Component {
             //scroll:{ x:1300 },
             cardProps:{
                 title:<div>
-                    <Button type='primary' href={'/web/output/create'} style={{marginRight:5}} >
+                    <Button type='primary' href={'/web/contract/create/write'} style={{marginRight:5}} >
                         <Icon type="plus" />
-                        产值报告
+                        新增
                     </Button>
                 </div>
             },

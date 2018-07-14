@@ -1,155 +1,64 @@
 // Created by Lee on 2018/7/2
-import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
-import { SearchTable } from '../../components'
-import { getSelectFormat } from '../../utils'
+import React, {Component} from 'react';
+import {Button, Icon} from 'antd';
+import {SearchTable} from '../../components'
+import {getSelectFormat, objToStrRouter, requestDict, setSelectFormat} from '../../utils'
 import './styles.less'
+import {Form} from "antd/lib/index";
+import {Link} from "react-router-dom";
 
 const fieldsData = (context) => [
     {
-        label: '项目名称',
-        fieldName: 'name',
+        label: '合同编号',
+        fieldName: 'contractnumber',
         type: 'input',
         span: 6,
-    }, {
+    },
+    {
+        label: '经办状态',
+        fieldName: 'flag',
+        type: 'select',
+        span: 6,
+        options: [{label: '全部', key: ''}, {label: '由我经办', key: 1}, {label: '不由我经办', key: 0}],
+        fieldDecoratorOptions: {
+            initialValue: "",
+        },
+        componentProps: {
+            // labelInValue: true,
+        },
+
+    },
+    {
         label: '状态',
         fieldName: 'status',
         type: 'select',
         span: 6,
-        options: [{ label: '全部', key: '' }].concat(context.state.statusData),
+        options: [{label: '全部', key: ''}].concat(context.state.statusData),
         fieldDecoratorOptions: {
-            initialValue: { label: '全部', key: '' },
-            /*rules:[
-                {
-                    required:true,
-                    message:'请输入项目代码'
-                }
-            ]*/
+            initialValue: "",
         },
         componentProps: {
-            labelInValue: true,
+            // labelInValue: true,
         },
 
-    }, {
-        label: '项目代码',
-        fieldName: 'code',
-        type: 'input',
-        span: 8,
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请输入项目代码'
-                }
-            ]
-        },
-    }, {
-        label: '项目名称1',
-        fieldName: 'projectName1',
-        type: 'input',
-        span: 8,
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请输入项目名称'
-                }
-            ]
-        },
-    }, {
-        label: '状态1',
-        fieldName: 'status1',
-        type: 'select',
-        span: 8,
-        options: [
-            {
-                label: '全部',
-                key: 'all'
-            },
-            {
-                label: '我方股东',
-                key: '1'
-            },
-            {
-                label: '他方股东',
-                key: '2'
-            }
-        ],
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请选择状态'
-                }
-            ]
-        },
-        componentProps: {
-            labelInValue: true,
-        },
-    }, {
-        label: '项目代码1',
-        fieldName: 'code1',
-        type: 'input',
-        span: 8,
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请输入项目代码'
-                }
-            ]
-        },
-    }, {
-        label: '项目名称2',
-        fieldName: 'projectName2',
-        type: 'input',
-        span: 8,
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请输入项目名称'
-                }
-            ]
-        },
-    }, {
-        label: '状态2',
-        fieldName: 'status2',
-        type: 'select',
-        span: 8,
-        options: [
-            {
-                label: '全部',
-                key: 'all'
-            },
-            {
-                label: '我方股东',
-                key: '1'
-            },
-            {
-                label: '他方股东',
-                key: '2'
-            }
-        ],
-        fieldDecoratorOptions: {
-            rules: [
-                {
-                    required: true,
-                    message: '请选择状态'
-                }
-            ]
-        },
-        componentProps: {
-            labelInValue: true,
-        },
-    }
+    },
+
 ]
 
 const getColumns = (context) => [
     {
         title: '产值单号',
-        dataIndex: 'number',
         className: 'text-center',
+        render: (e) => (
+        <Link to={{
+            pathname: "/web/output/create/present",
+            search: objToStrRouter({
+                id: e.contract_id,
+                outputId: e.id,
+                isOutput: 1
+            })
+        }}>{e.number}</Link>
+        )
     }, {
         title: (
         <span className="contract-name-and-code">
@@ -160,7 +69,7 @@ const getColumns = (context) => [
         dataIndex: 'contractname',
         className: 'contract-info',
         sorter: true,
-        render:(text, record, index)=>{
+        render: (text, record) => {
             return (
             <React.Fragment>
                 <div className="contract-name-p1">{record.contractname}</div>
@@ -171,20 +80,25 @@ const getColumns = (context) => [
     }, {
         title: '含税金额',
         dataIndex: 'tax_amounts',
+        align: "center",
         sorter: true,
     }, {
         title: '发票状态',
-        dataIndex: 'invoice_status',
+        dataIndex: 'invoicetype',
+        align: "center",
         sorter: true,
-    },{
+    }, {
         title: '影像状态',
         dataIndex: 'image_status',
         sorter: true,
+        render: (value) => {
+            return getSelectFormat(context.state.imgStatus, value)
+        }
     }, {
         title: '产值单状态',
         dataIndex: 'output_status',
         sorter: true,
-        render: (value, row, index) => {
+        render: (value) => {
             return getSelectFormat(context.state.statusData, value)
         }
     }
@@ -194,23 +108,40 @@ const getColumns = (context) => [
 class Output extends Component {
 
 
-
     constructor() {
         super();
         this.state = {
             updateKey: Date.now(),
-            statusData: [
-                { label: '未进行', key: '0' },
-                { label: '进行中', key: '1' },
-                { label: '已完成', key: '2' }
-            ],
+            statusData: [],
+            imgStatus: [],
             value: null,
+            data: []
         }
     }
 
+    //去数据字典里面的状态
+    getStatus = () => {
+        requestDict(`['com.moya.contract.enums.OutputStatusEnum']`, result => {
+            this.setState({
+                statusData: setSelectFormat(result.OutputStatusEnum)
+            })
+        });
+        requestDict(`['com.moya.contract.enums.ImageStatusEnum']`, result => {
+            this.setState({
+                imgStatus: setSelectFormat(result.ImageStatusEnum)
+            })
+        })
+    };
+
+
+    componentDidMount() {
+        this.getStatus();
+    }
+
+
     render() {
         return (
-        <div className = "output-table-style">
+        <div className="output-table-style">
             <SearchTable
             searchOption={{
                 title: '产值单',
@@ -220,13 +151,13 @@ class Output extends Component {
                 key: this.state.updateKey,
                 pageSize: 10,
                 columns: getColumns(this),
-                //url:'/con/output/findListData',
-                url:'',
+                url: '/con/output/findListData',
+                // url: '',
                 //scroll:{ x:1300 },
                 cardProps: {
                     title: <div>
-                        <Button type='primary' href={'/web/Output/create'} style={{ marginRight: 5 }} >
-                            <Icon type="plus" />
+                        <Button type='primary' href={'/web/Output/create/write'} style={{marginRight: 5}}>
+                            <Icon type="plus"/>
                             产值提报
                         </Button>
                     </div>
@@ -241,5 +172,4 @@ class Output extends Component {
 }
 
 
-
-export default Output;
+export default Form.create()(Output);

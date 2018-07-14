@@ -11,7 +11,7 @@ class Step2 extends Component {
     state={
         updateKey:Date.now(),
         submitLoading: false,
-        data:{},
+        data:[],
 
         //初始值
         itemsId:'',

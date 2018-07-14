@@ -100,6 +100,7 @@ class PopModal extends Component {
 
     componentDidMount() {
         this.getModel();
+        this.getConName();
     }
 
     render() {
@@ -155,12 +156,12 @@ class PopModal extends Component {
                     <Row>
                         <Col span={12}>
                             <span className="span">产值类型：</span>
-                            <span className="item-text">{data.model.outputtype}</span>
+                            <span className="item-text">{data.model.output_type}</span>
                         </Col>
                         <Col span={12}>
                             <span className="span">发票类型：</span>
                             {/*{data.model.invoicetype}*/}
-                            <span className="item-text">{data.model.invoicetype}</span>
+                            <span className="item-text">{data.model.invoice_type}</span>
                         </Col>
                     </Row>
                 </div>
@@ -176,13 +177,13 @@ class PopModal extends Component {
                             span: 8,
                             options: [{label: '全部', key: ''}].concat(conName),
                             componentProps: {
-                                mode: "tags",
+                                mode: "multiple",
                                 labelInValue: true,
                                 showSearch: true,
                                 tokenSeparators: [','],
-                                onSearch: (e) => {
-                                    this.getConName(e);
-                                },
+                                // onSearch: (e) => {
+                                //     this.getConName(e);
+                                // },
                                 onSelect: (e) => {
                                     this.chooseUser(e)
                                 }

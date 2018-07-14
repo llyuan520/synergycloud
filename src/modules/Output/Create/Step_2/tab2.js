@@ -9,6 +9,7 @@ import './styles.less'
 import FormItems from "../../../../components/FormItems";
 import request from "../../../../utils/request";
 import {withRouter} from "react-router-dom";
+import {strToObjRouter} from "../../../../utils";
 
 const {FileUpload} = FormItems;
 
@@ -173,18 +174,19 @@ class TabPane2 extends React.Component {
     };
 
     getOutput() {
-        if (this.props.location.state) {
-            console.log(this.props.location.state.outputId);
-            request("/con/output/getEntry0", {params: {output_id: this.props.location.state.outputId}})
-            .then(res => {
-                console.log(res);
-                this.setState({
-                    data: res.data.datas.map((item, index) => {
-                        return item.key = index + 1
-                    })
-                })
+        const router = strToObjRouter(this.props.location.search);
+        request("/con/output/getEntry0", {params: {output_id: router.outputId}})
+        .then(res => {
+            console.log(res);
+            res.data.datas.forEach((item, index) => {
+                item.key = index+1;
+            });
+            this.setState({
+                data: res.data.datas
+            }, () => {
+                console.log(this.state.data);
             })
-        }
+        })
     }
 
     showModal = type => {

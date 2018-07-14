@@ -17,28 +17,33 @@ const normFile = (e) => {
 }
 
 
+/*
+ * 在该组件使用中，fieldName是antd中form的getFieldDecorator进行双向绑定。
+ * */
+
+
 export const getFields = (form,fieldsData=[],layout) =>{
 
     const {getFieldDecorator,setFieldsValue,getFieldValue} = form;
-   /* let topColResponsiveProps = {
-        span:rowItemNumbers
-    };
-    switch (parseInt(rowItemNumbers, 0)){
-        case 1:
-            topColResponsiveProps ={ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 };
-            break;
-        case 2:
-            topColResponsiveProps ={ xs: 24, sm: 12, md: 12, lg: 12, xl: 12 };
-            break
-        case 3:
-            topColResponsiveProps ={ xs: 24, sm: 12, md: 8, lg: 8, xl: 8 };
-            break
-        case 4:
-            topColResponsiveProps ={ xs: 24, sm: 12, md: 12, lg: 8, xl: 6 };
-            break
-        default:
-            //break
-    }*/
+    /* let topColResponsiveProps = {
+     span:rowItemNumbers
+     };
+     switch (parseInt(rowItemNumbers, 0)){
+     case 1:
+     topColResponsiveProps ={ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 };
+     break;
+     case 2:
+     topColResponsiveProps ={ xs: 24, sm: 12, md: 12, lg: 12, xl: 12 };
+     break
+     case 3:
+     topColResponsiveProps ={ xs: 24, sm: 12, md: 8, lg: 8, xl: 8 };
+     break
+     case 4:
+     topColResponsiveProps ={ xs: 24, sm: 12, md: 12, lg: 8, xl: 6 };
+     break
+     default:
+     //break
+     }*/
 
     let defaultFormItemStyle = layout === 'vertical' ? {} : {
         labelCol:{
@@ -97,6 +102,9 @@ export const getFields = (form,fieldsData=[],layout) =>{
             case 'companyName':
                 CusComponent = CusFormItem.CompanyName;
                 break;
+            case 'outputName':
+                CusComponent = CusFormItem.OutputName;
+                break;
             case 'asyncSelect':
                 CusComponent = CusFormItem.AsyncSelect;
                 break;
@@ -114,7 +122,7 @@ export const getFields = (form,fieldsData=[],layout) =>{
         if(type ==='companyName' || type === 'asyncSelect') {
             return (
                 <Col span={item['span'] || 8} key={i}>
-                    <CusComponent label={item['label']} fieldName={item['fieldName']}
+                    <CusComponent label={ item['label'] } hideLabel={ item['hideLabel'] } fieldName={item['fieldName']}
                                   fieldDecoratorOptions={item.fieldDecoratorOptions}
                                   decoratorOptions={item.fieldDecoratorOptions} formItemStyle={formItemStyle}
                                   form={form} {...item['componentProps']} componentProps={item['componentProps']}/>
@@ -236,3 +244,5 @@ export const getFields = (form,fieldsData=[],layout) =>{
     })
 
 }
+
+export default getFields

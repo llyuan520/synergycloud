@@ -123,8 +123,12 @@ export default class TableForm extends PureComponent {
         this.clickedCancel = false;
     }
 
-    render() {
+    componentDidMount(){
 
+    }
+
+
+    render() {
         const columns = [
             {
                 title:'分期编号',
@@ -134,7 +138,8 @@ export default class TableForm extends PureComponent {
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <Input autoFocus="autofocus"
+                            <Input value = {text}
+                                   autoFocus="autofocus"
                                    placeholder="分期编号"
                                    onChange={e => this.handleFieldChange(e, 'periodization_code', record.key)}
                                    onKeyPress={e => this.handleKeyPress(e, record.key)}
@@ -151,7 +156,8 @@ export default class TableForm extends PureComponent {
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <Input autoFocus="autofocus"
+                            <Input value = {text}
+                                   autoFocus="autofocus"
                                    placeholder="分期名称"
                                    onChange={e => this.handleFieldChange(e, 'periodization_name', record.key)}
                                    onKeyPress={e => this.handleKeyPress(e, record.key)}
@@ -168,7 +174,7 @@ export default class TableForm extends PureComponent {
                 render: (text,record)=>{
                     if(record.editable){
                         return (
-                            <Select labelInValue onChange= {(e) => this.handleSelectChange(e, 'tax_methods', record.key)} style={{width:'100%'}} >
+                            <Select value={{key:text}} labelInValue onChange= {(e) => this.handleSelectChange(e, 'tax_methods', record.key)} style={{width:'100%'}} >
                                 {
                                     this.state.options.map((option,i)=>(
                                         <Option key={i} value={option.key}>{option.label}</Option>
@@ -218,8 +224,8 @@ export default class TableForm extends PureComponent {
                 },
             }
         ];
-
         return (
+
             <React.Fragment>
                 <Table
                     loading={this.state.loading}

@@ -1,7 +1,7 @@
 // Created by liuliyuan on 2018/6/22
 import {createActions,handleActions} from 'redux-actions';
 import {fromJS} from 'immutable';
-export const {personal,token,loggedIn,userInfoStatus} = createActions({
+export const {personal,token,loggedIn,userInfoStatus,companyId} = createActions({
     PERSONAL:{
         /**增加*/
         INCREMENT:info => info,
@@ -23,6 +23,10 @@ export const {personal,token,loggedIn,userInfoStatus} = createActions({
         LOGIN:() => true,
         /**删除*/
         LOGOUT:() => false
+    },
+    COMPANY_ID:{
+        /**增加*/
+        INCREMENT:info => info,
     }
 })
 const initialState = fromJS({
@@ -44,6 +48,9 @@ const initialState = fromJS({
 
     /*是否完成了个人资料*/
     userInfoStatus:false,
+
+    /*企业Id*/
+    companyId:null,
 })
 
 export default handleActions({
@@ -56,6 +63,12 @@ export default handleActions({
     [userInfoStatus.increment]:(state,{payload})=>{
         return state.set('userInfoStatus',payload)
     },
+    [userInfoStatus.increment]:(state,{payload})=>{
+        return state.set('userInfoStatus',payload)
+    },
+    [companyId.increment]:(state,{payload})=>{
+        return state.set('companyId',payload)
+    },
     [loggedIn.login]:(state,{payload})=>{
         return state.set('loggedIn',payload)
     },
@@ -67,6 +80,14 @@ export default handleActions({
 
 export const changeUserInfoStatus = dispatch => async (res)=>{
     dispatch(userInfoStatus.increment(res))
+}
+
+export const saveCompanyId = dispatch => async (companyId) =>{
+    try {
+        dispatch(companyId.increment(companyId))
+    }catch (err){
+        console.log(err)
+    }
 }
 
 export const logout = dispatch => async ()=>{
