@@ -40,12 +40,11 @@ class TableFormStepTwo extends Component{
         }).then((data)=>{
             console.log(data);
             if(data.state === 'ok'){
-                let dataSource = {
 
-                }
+                let dataSource = data.data.model
 
                 this.setState({
-                    tabsOneData: dataSource
+                    tabsTwoData: dataSource
                 })
             }
         }).catch(err => {
