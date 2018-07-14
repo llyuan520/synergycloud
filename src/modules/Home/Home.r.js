@@ -107,7 +107,7 @@ class Home extends Component {
                     pieUpdateKey: Date.now(),
                 })
             }).catch(err => {
-                message.error(`${err.message}`)
+                // message.error(`${err.message}`)
             });
     }
     onChange = (activeKey) => {
@@ -170,7 +170,7 @@ class Home extends Component {
                 }
             })
             .catch(err => {
-                message.error(`${err.message}`)
+                // message.error(`${err.message}`)
             })
     }
     //变更管理的初始数据
@@ -186,7 +186,7 @@ class Home extends Component {
                 }
             })
             .catch(err => {
-                message.error(`${err.message}`)
+                // message.error(`${err.message}`)
             })
     }
 

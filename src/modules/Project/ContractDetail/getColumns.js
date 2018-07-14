@@ -23,7 +23,7 @@ export const getColumns = (buttonBoxIndex,context) => {
                 sorter: true,
             }, {
                 title: '签证总金额',
-                dataIndex: 'new_amount',
+                dataIndex: 'amount',
                 sorter: true,
             },{
                 title: '变更状态',
@@ -46,26 +46,26 @@ export const getColumns = (buttonBoxIndex,context) => {
         return [
             {
                 title: '产值单编号',
-                dataIndex: "name",
+                dataIndex: "number",
             },{
                 title: '提报金额（含税）',
-                dataIndex: 'contractcategory',
+                dataIndex: 'tax_amounts',
                 sorter: true,
             }, {
                 title: '发票类型',
-                dataIndex: 'new_amount',
+                dataIndex: 'invoicetype',
                 sorter: true,
             },{
                 title: '发票状态',
-                dataIndex: 'outputamounts',
+                dataIndex: 'invoicestatus',
                 sorter: true,
             },{
                 title: '影像状态',
-                dataIndex: 'contractstatus',
+                dataIndex: 'imagestatus',
                 sorter: true,
             }, {
                 title: '产值单状态',
-                dataIndex: 'currencystatus',
+                dataIndex: 'outputstatus',
                 sorter: true,
                 // render: (value, row, index) => {
                 //     return getSelectFormat(context.state.statusData, value)

@@ -28,7 +28,7 @@ class ButtonList extends Component{
             if(nextProps.ButtonBoxIndex === 0){
                 url = '/con/mdydirective/findMdyList'
             }else if(nextProps.ButtonBoxIndex === 1){
-                url = ''
+                url = '/con/output/findListData'
             }else if(nextProps.ButtonBoxIndex === 2){
                 url = ''
             }
