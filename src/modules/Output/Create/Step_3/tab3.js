@@ -218,7 +218,7 @@ class TabPane3 extends React.Component {
                     ),
                 })
             } else if (item.type === "goodsName") {
-                const options = this.state.data.map(d => <Option key={d.value}>{d.text}</Option>);
+                // const options = this.state.data.map(d => <Option key={d.value}>{d.text}</Option>);
                 this.columns.push({
                     title: item.title,
                     dataIndex: item.dataIndex,
@@ -231,7 +231,7 @@ class TabPane3 extends React.Component {
                         filterOption={false}
                         onChange={this.handleChange}
                         >
-                            {options}
+                            {/*{options}*/}
                         </Select>
                         )
                     }
