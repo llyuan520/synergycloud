@@ -59,7 +59,6 @@ const requestDict = async (type, callback) => {
 
 //设置select值名不同
 const setSelectFormat = (data, name = 'value', value = 'name') => {
-    console.log(name, value);
     if (data === undefined) {
         return []
     } else {
@@ -162,7 +161,7 @@ const strToObjRouter = (search) => {
  * @param obj {object} 对象
  * fanzhe
  */
-const objToStrRouter = (obj) => {
+const objToStrRouter = (obj={}) => {
     let str = "?";
     if (typeof obj === "object") {
         for (let i in obj) {

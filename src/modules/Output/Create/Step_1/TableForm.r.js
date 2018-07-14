@@ -48,31 +48,43 @@ const columns = [{
     }];
 
 export default class TableForm extends PureComponent {
-  render() {
-    const {value} = this.props;
-    const rowSelection = {
-      type: 'radio',
-      onChange: this.onChange,
-      onRowSelect: (selectedRowKeys, selectedRows) => {
-        this.setState({
-          id: selectedRowKeys[0],
-          selectedNodes: selectedRows[0],
-          onlyAdd: false,
-        })
-      },
-      onSelect: (...e) => {
-        this.props.next(e);
-          console.log(e);
-      },
-      rowSelection: {
-        type: 'radio',
-      },
-    };
-      return (
+    render() {
+        const {value} = this.props;
+        // const pagination = {
+        //     current: 1,
+        //     total: this.props.total,
+        //     onChange: (page) => {
+        //         console.log(page);
+        //     }
+        // };
+        const rowSelection = {
+            type: 'radio',
+            onChange: this.onChange,
+            onRowSelect: (selectedRowKeys, selectedRows) => {
+                this.setState({
+                    id: selectedRowKeys[0],
+                    selectedNodes: selectedRows[0],
+                    onlyAdd: false,
+                })
+            },
+            onSelect: (...e) => {
+                this.props.next(e);
+                console.log(e);
+            },
+            rowSelection: {
+                type: 'radio',
+            },
+        };
+        return (
 
-    <React.Fragment>
-      <Table rowKey={record => record.id} rowSelection={rowSelection} columns={columns} dataSource={value}/>
-    </React.Fragment>
-    );
-  }
+        <React.Fragment>
+            <Table
+            rowKey={record => record.id}
+            rowSelection={rowSelection}
+            columns={columns}
+            pagination={false}
+            dataSource={value}/>
+        </React.Fragment>
+        );
+    }
 }

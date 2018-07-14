@@ -58,47 +58,69 @@ const columnsDetails = [{
 },];
 
 const columnsList = [{
+    title: '发票id',
+    key: "fpxlh",
+    dataIndex: "fpxlh",
+    editable: true,
+}, {
+    title: '发票类型',
+    key: "fplx",
+    dataIndex: "fplx",
+    editable: true,
+}, {
+    title: '结算单号',
+    key: "jsdh",
+    dataIndex: "jsdh",
+    editable: true,
+    type: "date"
+}, {
     title: '发票代码',
-    key: "invoice_code",
-    dataIndex: "invoice_code",
+    key: "fpdm",
+    dataIndex: "fpdm",
     editable: true,
 }, {
     title: '发票号码',
-    key: "invoice_number",
-    dataIndex: "invoice_number",
+    key: "fphm",
+    dataIndex: "fphm",
     editable: true,
-}, {
-    title: '开票日期',
-    key: "make_invoicedate",
-    dataIndex: "make_invoicedate",
-    // editable: true,
-    type: "date"
-}, {
-    title: '税率',
-    key: "rate",
-    dataIndex: "rate",
-    editable: true,
+    type: "price",
 }, {
     title: '不含税金额',
-    key: "notax_amounts",
-    dataIndex: "notax_amounts",
+    key: "bhsje",
+    dataIndex: "bhsje",
+    editable: true,
+    type: "price",
+}, {
+    title: '税率',
+    key: "sl",
+    dataIndex: "sl",
     editable: true,
     type: "price",
 }, {
     title: '税额',
-    key: "tax",
-    dataIndex: "tax",
+    key: "se",
+    dataIndex: "se",
     editable: true,
     type: "price",
 }, {
     title: '含税金额',
-    key: "tax_amounts",
-    dataIndex: "tax_amounts",
+    key: "hsje",
+    dataIndex: "hsje",
     editable: true,
     type: "price",
 }, {
+    title: '开票日期',
+    key: "fpkprq",
+    dataIndex: "fpkprq",
+    editable: true,
+    type: "date",
+}, {
     title: '发票状态',
-}];
+    key: "fpzt",
+    dataIndex: "fpzt",
+    editable: true,
+    type: "price",
+},];
 
 
 class EditableCell extends React.Component {
@@ -240,12 +262,20 @@ class TabPane3 extends React.Component {
 
     // 自获取数据
     getList() {
-        console.log(1);
-        // is_submission字段判断是否为收货记录，0代表收货记录，1代表非收货记录。
+        /*第二步到第三步的时候需要把产值行带出来，通过判断是否收货记录来改变请求的不同接口。如果是第四部查看第三步tab页
+        和从产值列表点进去的时候就不能用这个两个接口。目前想到的方法还是共用一个路由特性字段isOutput，去判断两种大情况，后期可以优化这里。
+        虽然不知道地址太长有什么不好，但是这几个字段还是可以去优化。
+        isOutput=1表示从需要第三个接口
+         is_submission字段判断是否为收货记录，0代表收货记录，1代表非收货记录。*/
         const _router = strToObjRouter(this.props.location.search);
-        const API = _router.is_submission === "1" ? "/con/output/contractToOutput" : "/con/output/acceptLogsToOutput";
-        console.log(API);
-        request(API, {params: {contract_id: _router.id}})
+        let params = {contract_id: _router.id};
+        let API = _router.is_submission === "1" ? "/con/output/contractToOutput" : "/con/output/acceptLogsToOutput";
+        if (_router.isOutput + "" === "1") {
+            API = "/con/output/getOutputProject";
+            params = {output_id: _router.outputId}
+        }
+        console.log(API, params);
+        request(API, {params})
         .then((res => {
             console.log(res);
             let data = res.data;
@@ -357,7 +387,7 @@ class TabPane3 extends React.Component {
         const newData = {
             ticket_name: "大类名称" + count,
             countrygoodsname: '商品名称',
-            amounts: '数量/单位',
+            amounts: '1',
             price: '0',
             rate: '0.1',
             notax_amounts: '0',
@@ -373,7 +403,7 @@ class TabPane3 extends React.Component {
             dataSourceCount
         }, () => {
             console.log(this.state.dataSource);
-            this.props.setOutput && this.props.setOutput(dataSource, dataSourceCount)
+            this.props.setOutput && this.props.setOutput(this.state.dataSource, dataSourceCount)
         });
     }
 
@@ -479,35 +509,32 @@ class TabPane3 extends React.Component {
                 }
             </div>
             <Divider/>
-            {
-                getRouter(this).is_synergy !== "1" &&
-                <div className="m10">
-                    <p className="tab-title">发票列表</p>
-                    <div>
-                        <Button disabled={props.disabled} onClick={this.handleAddList} type="primary"
-                                style={{marginBottom: 16}}>
-                            添加发票
-                        </Button>
-                        <Button disabled={!hasSelectedList || props.disabled} onClick={this.handleDeleteList}
-                                style={{marginBottom: 16, marginLeft: 10}}>
-                            删除
-                        </Button>
-                        <span style={{marginLeft: 8}} className="red">
+            <div className="m10">
+                <p className="tab-title">发票列表</p>
+                <div>
+                    <Button disabled={props.disabled} onClick={this.handleAddList} type="primary"
+                            style={{marginBottom: 16}}>
+                        添加发票
+                    </Button>
+                    <Button disabled={!hasSelectedList || props.disabled} onClick={this.handleDeleteList}
+                            style={{marginBottom: 16, marginLeft: 10}}>
+                        删除
+                    </Button>
+                    <span style={{marginLeft: 8}} className="red">
                         {hasSelectedList ? `选择了 ${selectedRowKeysList.length} 列` : ''}
                     </span>
-                        <span className="r headerText">发票类型：增值税专票</span>
-                    </div>
-                    <Table rowKey={record => record.invoice_code} dataSource={dataList} pagination={false}
-                           columns={columnsList}
-                           rowSelection={rowSelectionList}/>
-                    {
-                        <span className="r footer-text">
+                    <span className="r headerText">发票类型：增值税专票</span>
+                </div>
+                <Table rowKey={record => record.invoice_code} dataSource={dataList} pagination={false}
+                       columns={columnsList}
+                       rowSelection={rowSelectionList}/>
+                {
+                    <span className="r footer-text">
                     <span>含税汇总:</span>
                     <span className="red">{fMoney((dataListCount) || "0")}</span>
                 </span>
-                    }
-                </div>
-            }
+                }
+            </div>
         </div>
         );
     }

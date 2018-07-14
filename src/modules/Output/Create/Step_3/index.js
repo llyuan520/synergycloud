@@ -11,7 +11,7 @@ import TabPane1 from "../Step_1/tab1";
 import {withRouter} from "react-router-dom";
 import request from "../../../../utils/request";
 import _ from "lodash"
-import {strToObjRouter} from "../../../../utils";
+import {getRouter, objToStrRouter, strToObjRouter} from "../../../../utils";
 
 
 class Step3 extends React.Component {
@@ -67,9 +67,10 @@ class Step3 extends React.Component {
             console.log(params);
             request("/con/output/saveProjectAndInvoice", {body: params, method: "POST"})
             .then(res => {
+                console.log(res);
                 if (res.state === "ok") {
                     message.success("保存成功！");
-                    resolve()
+                    resolve(res.data)
                 } else {
                     message.error(res.message);
                     reject('失败')
@@ -83,14 +84,17 @@ class Step3 extends React.Component {
     }
 
     handleSave() {
-        const routerChange = () => {
+        const routerChange = (res) => {
+            console.log(res[0]);
+            // console.log(objToStrRouter(_.extend(getRouter(this), {isOutput: 1})));
             this.props.history.push({
                 pathname: '/web/output/create/site',
-                search: this.props.location.search,
+                search: objToStrRouter(_.extend(getRouter(this), {isOutput: 1})),
+                state: res[0]
             })
         };
         Promise.all([this.save()])
-        .then(() => routerChange())
+        .then(res => routerChange(res))
         .catch(err => {
             console.log(err);
         });
@@ -124,6 +128,7 @@ class Step3 extends React.Component {
                 ]
             }
             stepsAction={
+                (getRouter(this).outputStatus && getRouter(this).outputStatus * 1 === 0) || getRouter(this).outputStatus === undefined &&
                 <div className="steps-action">
                     <Button type="primary"
                             onClick={() => this.handleSave()}> 下一步 </Button>

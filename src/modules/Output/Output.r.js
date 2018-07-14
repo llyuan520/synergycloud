@@ -2,15 +2,15 @@
 import React, {Component} from 'react';
 import {Button, Icon} from 'antd';
 import {SearchTable} from '../../components'
-import {getSelectFormat, requestDict, setSelectFormat} from '../../utils'
+import {getSelectFormat, objToStrRouter, requestDict, setSelectFormat} from '../../utils'
 import './styles.less'
 import {Form} from "antd/lib/index";
 import {Link} from "react-router-dom";
 
 const fieldsData = (context) => [
     {
-        label: '项目名称',
-        fieldName: 'outputnumber',
+        label: '合同编号',
+        fieldName: 'contractnumber',
         type: 'input',
         span: 6,
     },
@@ -50,7 +50,14 @@ const getColumns = (context) => [
         title: '产值单号',
         className: 'text-center',
         render: (e) => (
-        <Link to={{pathname: "/web/output/create/write", state: {outputId: e.id}}}>{e.number}</Link>
+        <Link to={{
+            pathname: "/web/output/create/present",
+            search: objToStrRouter({
+                id: e.contract_id,
+                outputId: e.id,
+                isOutput: 1
+            })
+        }}>{e.number}</Link>
         )
     }, {
         title: (
@@ -73,24 +80,26 @@ const getColumns = (context) => [
     }, {
         title: '含税金额',
         dataIndex: 'tax_amounts',
+        align: "center",
         sorter: true,
     }, {
         title: '发票状态',
         dataIndex: 'invoicetype',
+        align: "center",
         sorter: true,
     }, {
         title: '影像状态',
         dataIndex: 'image_status',
         sorter: true,
         render: (value) => {
-            return getSelectFormat(context.state.statusData, value)
+            return getSelectFormat(context.state.imgStatus, value)
         }
     }, {
         title: '产值单状态',
         dataIndex: 'output_status',
         sorter: true,
         render: (value) => {
-            return getSelectFormat(context.state.imgStatus, value)
+            return getSelectFormat(context.state.statusData, value)
         }
     }
 ];
@@ -147,7 +156,7 @@ class Output extends Component {
                 //scroll:{ x:1300 },
                 cardProps: {
                     title: <div>
-                        <Button type='primary' href={'/web/Output/create/present'} style={{marginRight: 5}}>
+                        <Button type='primary' href={'/web/Output/create/write'} style={{marginRight: 5}}>
                             <Icon type="plus"/>
                             产值提报
                         </Button>
